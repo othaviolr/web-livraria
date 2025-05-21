@@ -5,9 +5,9 @@ namespace WebApiLivraria.Application.Interfaces
     public interface IAutorService
     {
         Task<IEnumerable<AutorDto>> ListarAsync();
-        Task<AutorDto> ObterPorIdAsync(Guid id);
+        Task<AutorDto> ObterPorIdAsync(int id);
         Task AdicionarAsync(AutorDto autor);
         Task AtualizarAsync(AutorDto autor);
-        Task RemoverAsync(Guid id);
+        Task RemoverAsync(int id);
     }
 }

@@ -2,7 +2,6 @@
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Infrastructure.Context;
-using WebApiLivraria.Infrastructure.Data;
 
 namespace WebApiLivraria.Infrastructure.Repositories
 {
@@ -27,7 +26,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoverAsync(Guid id)
+        public async Task RemoverAsync(int id)
         {
             var genero = await _context.Generos.FindAsync(id);
             if (genero != null)
@@ -37,7 +36,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             }
         }
 
-        public async Task<Genero> ObterPorIdAsync(Guid id)
+        public async Task<Genero> ObterPorIdAsync(int id)
         {
             return await _context.Generos.FindAsync(id);
         }

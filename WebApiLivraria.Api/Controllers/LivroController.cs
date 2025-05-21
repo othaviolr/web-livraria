@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -15,21 +16,11 @@ namespace WebApiLivraria.Api.Controllers
             _livroService = livroService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var livros = await _livroService.ListarAsync();
-            return Ok(livros);
-        }
-
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById(int id)
         {
             var livro = await _livroService.ObterPorIdAsync(id);
-            if (livro == null)
-                return NotFound();
-
-            return Ok(livro);
+            return livro == null ? NotFound() : Ok(livro);
         }
 
         [HttpPost]
@@ -40,17 +31,15 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] LivroDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] LivroDto dto)
         {
-            if (id != dto.Id)
-                return BadRequest("ID do livro não confere.");
-
+            if (id != dto.Id) return BadRequest("ID do livro não confere.");
             await _livroService.AtualizarAsync(dto);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             await _livroService.RemoverAsync(id);
             return NoContent();

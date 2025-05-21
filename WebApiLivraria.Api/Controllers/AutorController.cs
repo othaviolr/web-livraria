@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -15,15 +16,8 @@ namespace WebApiLivraria.Api.Controllers
             _autorService = autorService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var autores = await _autorService.ListarAsync();
-            return Ok(autores);
-        }
-
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById(int id)
         {
             var autor = await _autorService.ObterPorIdAsync(id);
             return autor == null ? NotFound() : Ok(autor);
@@ -37,7 +31,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] AutorDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] AutorDto dto)
         {
             if (id != dto.Id) return BadRequest("ID inconsistente.");
             await _autorService.AtualizarAsync(dto);
@@ -45,7 +39,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             await _autorService.RemoverAsync(id);
             return NoContent();

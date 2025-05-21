@@ -2,10 +2,10 @@
 {
     public class LivroDto
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Titulo { get; set; }
-        public Guid AutorId { get; set; }
-        public Guid EditoraId { get; set; }
-        public List<Guid> Generos { get; set; } = new();
+        public int AutorId { get; set; }
+        public int EditoraId { get; set; }
+        public List<int> Generos { get; set; } = new();
     }
 }

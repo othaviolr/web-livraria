@@ -5,9 +5,9 @@ namespace WebApiLivraria.Domain.Interfaces
     public interface IEditoraRepository
     {
         Task<IEnumerable<Editora>> ListarAsync();
-        Task<Editora> ObterPorIdAsync(Guid id);
+        Task<Editora> ObterPorIdAsync(int id);
         Task AdicionarAsync(Editora editora);
         Task AtualizarAsync(Editora editora);
-        Task RemoverAsync(Guid id);
+        Task RemoverAsync(int id);
     }
 }

@@ -3,7 +3,6 @@ using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Application.Services;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Infrastructure.Context;
-using WebApiLivraria.Infrastructure.Data;
 using WebApiLivraria.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Registrar os repositórios (injeção de dependência)
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();

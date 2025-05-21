@@ -27,7 +27,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoverAsync(Guid id)
+        public async Task RemoverAsync(int id)
         {
             var livro = await _context.Livros.FindAsync(id);
             if (livro != null)
@@ -37,7 +37,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             }
         }
 
-        public async Task<Livro> ObterPorIdAsync(Guid id)
+        public async Task<Livro> ObterPorIdAsync(int id)
         {
             return await _context.Livros
                 .Include(l => l.LivroGeneros)

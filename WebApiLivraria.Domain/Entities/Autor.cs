@@ -4,12 +4,11 @@ namespace WebApiLivraria.Domain.Entities
 {
     public class Autor
     {
-        public Guid Id { get; private set; }
+        public int Id { get; private set; }
         public string Nome { get; private set; }
 
         public Autor(string nome)
         {
-            Id = Guid.NewGuid();
             Nome = nome;
         }
 

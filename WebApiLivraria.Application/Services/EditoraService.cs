@@ -24,7 +24,7 @@ namespace WebApiLivraria.Application.Services
             });
         }
 
-        public async Task<EditoraDto> ObterPorIdAsync(Guid id)
+        public async Task<EditoraDto> ObterPorIdAsync(int id)
         {
             var editora = await _editoraRepository.ObterPorIdAsync(id);
             if (editora == null) return null;
@@ -51,7 +51,7 @@ namespace WebApiLivraria.Application.Services
             await _editoraRepository.AtualizarAsync(editoraExistente);
         }
 
-        public async Task RemoverAsync(Guid id)
+        public async Task RemoverAsync(int id)
         {
             await _editoraRepository.RemoverAsync(id);
         }
