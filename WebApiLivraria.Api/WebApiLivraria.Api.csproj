@@ -19,4 +19,8 @@
     <ProjectReference Include="..\WebApiLivraria.Application\WebApiLivraria.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middlewares\" />
+  </ItemGroup>
+
 </Project>
