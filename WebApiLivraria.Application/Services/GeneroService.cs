@@ -1,4 +1,7 @@
-﻿using WebApiLivraria.Application.Dto;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
@@ -36,10 +39,14 @@ namespace WebApiLivraria.Application.Services
             };
         }
 
-        public async Task AdicionarAsync(GeneroDto dto)
+        public async Task<GeneroDto> AdicionarAsync(GeneroDto dto)
         {
             var genero = new Genero(dto.Nome);
             await _generoRepository.AdicionarAsync(genero);
+
+            // Atualiza o Id do DTO com o Id gerado
+            dto.Id = genero.Id;
+            return dto;
         }
 
         public async Task AtualizarAsync(GeneroDto dto)

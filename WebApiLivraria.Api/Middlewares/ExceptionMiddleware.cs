@@ -42,7 +42,8 @@ public class ExceptionMiddleware
 
         context.Response.StatusCode = (int)statusCode;
 
-        var resultado = JsonSerializer.Serialize(new { erro = mensagem });
-        await context.Response.WriteAsync(resultado);
+        var resposta = RespostaPadrao<string>.ComErro(mensagem);
+
+        await context.Response.WriteAsync(JsonSerializer.Serialize(resposta));
     }
 }

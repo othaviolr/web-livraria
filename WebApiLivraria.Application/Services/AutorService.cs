@@ -36,10 +36,16 @@ namespace WebApiLivraria.Application.Services
             };
         }
 
-        public async Task AdicionarAsync(AutorDto dto)
+        public async Task<AutorDto> AdicionarAsync(AutorDto dto)
         {
             var autor = new Autor(dto.Nome);
             await _autorRepository.AdicionarAsync(autor);
+
+            return new AutorDto
+            {
+                Id = autor.Id,
+                Nome = autor.Nome
+            };
         }
 
         public async Task AtualizarAsync(AutorDto dto)

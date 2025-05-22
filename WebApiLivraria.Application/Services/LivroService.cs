@@ -1,4 +1,7 @@
-﻿using WebApiLivraria.Application.Dto;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
@@ -49,7 +52,7 @@ namespace WebApiLivraria.Application.Services
             var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId);
 
             // Adiciona os relacionamentos com gêneros
-            foreach (var generoId in dto.Generos)
+            foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
             {
                 livro.AdicionarGenero(generoId);
             }
@@ -66,9 +69,9 @@ namespace WebApiLivraria.Application.Services
             livroExistente.AtualizarAutor(dto.AutorId);
             livroExistente.AtualizarEditora(dto.EditoraId);
 
-            // Atualiza os gêneros
             livroExistente.LimparGeneros();
-            foreach (var generoId in dto.Generos)
+
+            foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
             {
                 livroExistente.AdicionarGenero(generoId);
             }

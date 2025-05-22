@@ -1,4 +1,6 @@
-﻿using WebApiLivraria.Application.Dto;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebApiLivraria.Application.Dto;
 
 namespace WebApiLivraria.Application.Interfaces
 {
@@ -6,8 +8,8 @@ namespace WebApiLivraria.Application.Interfaces
     {
         Task<IEnumerable<EditoraDto>> ListarAsync();
         Task<EditoraDto> ObterPorIdAsync(int id);
-        Task AdicionarAsync(EditoraDto editora);
-        Task AtualizarAsync(EditoraDto editora);
+        Task AdicionarAsync(EditoraDto dto);
+        Task AtualizarAsync(EditoraDto dto);
         Task RemoverAsync(int id);
     }
 }

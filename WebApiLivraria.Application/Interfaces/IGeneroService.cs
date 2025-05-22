@@ -1,4 +1,6 @@
-﻿using WebApiLivraria.Application.Dto;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebApiLivraria.Application.Dto;
 
 namespace WebApiLivraria.Application.Interfaces
 {
@@ -6,8 +8,8 @@ namespace WebApiLivraria.Application.Interfaces
     {
         Task<IEnumerable<GeneroDto>> ListarAsync();
         Task<GeneroDto> ObterPorIdAsync(int id);
-        Task AdicionarAsync(GeneroDto genero);
-        Task AtualizarAsync(GeneroDto genero);
+        Task<GeneroDto> AdicionarAsync(GeneroDto dto);
+        Task AtualizarAsync(GeneroDto dto);
         Task RemoverAsync(int id);
     }
 }
