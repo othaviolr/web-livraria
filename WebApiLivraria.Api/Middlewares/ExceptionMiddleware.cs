@@ -1,49 +1,43 @@
 ﻿using System.Net;
 using System.Text.Json;
-using WebApiLivraria.Domain.Exceptions;
-
-namespace WebApiLivraria.Api.Middlewares;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
-        _logger = logger;
     }
 
-    public async Task Invoke(HttpContext context)
+    public async Task InvokeAsync(HttpContext httpContext)
     {
         try
         {
-            await _next(context);
+            await _next(httpContext);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erro inesperado: {Mensagem}", ex.Message);
-            await TratarErroAsync(context, ex);
+            await TratarExcecaoAsync(httpContext, ex);
         }
     }
 
-    private static async Task TratarErroAsync(HttpContext context, Exception exception)
+    private static Task TratarExcecaoAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-        var (statusCode, mensagem) = exception switch
+        var respostaErro = new
         {
-            EntidadeNaoEncontradaException => (HttpStatusCode.NotFound, exception.Message),
-            RequisicaoInvalidaException => (HttpStatusCode.BadRequest, exception.Message),
-            JaExisteException => (HttpStatusCode.Conflict, exception.Message),
-            _ => (HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado. Tente novamente mais tarde.")
+            sucesso = false,
+            mensagem = "Ocorreu um erro interno no servidor.",
+            detalhes = exception.Message // Opcional: remover em produção
         };
 
-        context.Response.StatusCode = (int)statusCode;
+        var json = JsonSerializer.Serialize(respostaErro);
 
-        var resposta = RespostaPadrao<string>.ComErro(mensagem);
-
-        await context.Response.WriteAsync(JsonSerializer.Serialize(resposta));
+        return context.Response.WriteAsync(json);
     }
 }

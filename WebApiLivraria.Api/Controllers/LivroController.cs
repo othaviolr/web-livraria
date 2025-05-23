@@ -24,7 +24,6 @@ namespace WebApiLivraria.Api.Controllers
             if (livro == null)
                 return NotFound(RespostaPadrao<LivroDto>.ComErro(MensagensLivro.LivroNaoEncontrado));
 
-            // Passa mensagem para o cliente junto com os dados
             return Ok(RespostaPadrao<LivroDto>.ComSucesso(livro, "Livro obtido com sucesso."));
         }
 
@@ -44,7 +43,7 @@ namespace WebApiLivraria.Api.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] LivroDto dto)
         {
             if (id != dto.Id)
-                return BadRequest(RespostaPadrao<LivroDto>.ComErro("O ID informado na URL não confere com o ID do objeto."));
+                return BadRequest(RespostaPadrao<string>.ComErro("O ID informado na URL não confere com o ID do objeto."));
 
             await _livroService.AtualizarAsync(dto);
 

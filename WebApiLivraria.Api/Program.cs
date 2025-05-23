@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using WebApiLivraria.Api.Middlewares;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Application.Services;
 using WebApiLivraria.Domain.Interfaces;
@@ -44,6 +43,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<TratamentoExcecaoMiddleware>();
 
 app.MapControllers();
 
