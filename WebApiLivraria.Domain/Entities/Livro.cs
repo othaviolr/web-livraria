@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WebApiLivraria.Domain.Entities
 {
@@ -7,14 +8,18 @@ namespace WebApiLivraria.Domain.Entities
         public int Id { get; private set; }
         public string Titulo { get; private set; }
         public int AutorId { get; private set; }
+        public Autor Autor { get; private set; } 
         public int EditoraId { get; private set; }
+        public DateTime AnoPublicacao { get; private set; } 
         public List<LivroGenero> LivroGeneros { get; private set; } = new();
+        public List<Avaliacao> Avaliacoes { get; private set; } = new(); 
 
-        public Livro(string titulo, int autorId, int editoraId)
+        public Livro(string titulo, int autorId, int editoraId, DateTime anoPublicacao)
         {
             Titulo = titulo;
             AutorId = autorId;
             EditoraId = editoraId;
+            AnoPublicacao = anoPublicacao;
         }
 
         protected Livro() { }
@@ -32,6 +37,11 @@ namespace WebApiLivraria.Domain.Entities
         public void AtualizarEditora(int editoraId)
         {
             EditoraId = editoraId;
+        }
+
+        public void AtualizarAnoPublicacao(DateTime ano)
+        {
+            AnoPublicacao = ano;
         }
 
         public void AdicionarGenero(int generoId)
@@ -53,5 +63,7 @@ namespace WebApiLivraria.Domain.Entities
         {
             LivroGeneros.Clear();
         }
+
+        public double NotaMedia => Avaliacoes.Any() ? Math.Round(Avaliacoes.Average(a => a.Nota), 2) : 0;
     }
 }
