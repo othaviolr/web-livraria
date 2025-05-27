@@ -33,7 +33,7 @@ public class ExceptionMiddleware
         {
             sucesso = false,
             mensagem = "Ocorreu um erro interno no servidor.",
-            detalhes = exception.Message // Opcional: remover em produção
+            detalhes = exception.Message
         };
 
         var json = JsonSerializer.Serialize(respostaErro);
