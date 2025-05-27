@@ -9,5 +9,7 @@ namespace WebApiLivraria.Domain.Interfaces
         Task AdicionarAsync(Livro livro);
         Task AtualizarAsync(Livro livro);
         Task RemoverAsync(int id);
+        Task<IEnumerable<Livro>> ObterLivrosComFiltroAsync(int? ano, string? genero);
+
     }
 }

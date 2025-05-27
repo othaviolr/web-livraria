@@ -1,8 +1,7 @@
-﻿using WebApiLivraria.Domain.Interfaces;  
-using WebApiLivraria.Domain.Entities;   
-using WebApiLivraria.Infrastructure.Context;  
+﻿using WebApiLivraria.Domain.Interfaces;
+using WebApiLivraria.Domain.Entities;
+using WebApiLivraria.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace WebApiLivraria.Infrastructure.Repositories
 {
@@ -41,6 +40,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
         {
             return await _context.Livros
                 .Include(l => l.LivroGeneros)
+                    .ThenInclude(lg => lg.Genero)
                 .FirstOrDefaultAsync(l => l.Id == id);
         }
 
@@ -48,7 +48,28 @@ namespace WebApiLivraria.Infrastructure.Repositories
         {
             return await _context.Livros
                 .Include(l => l.LivroGeneros)
+                    .ThenInclude(lg => lg.Genero)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Livro>> ObterLivrosComFiltroAsync(int? anoPublicacao, string? genero)
+        {
+            var query = _context.Livros
+                .Include(l => l.LivroGeneros)
+                    .ThenInclude(lg => lg.Genero)
+                .AsQueryable();
+
+            if (anoPublicacao.HasValue)
+            {
+                query = query.Where(l => l.AnoPublicacao.Year == anoPublicacao.Value);
+            }
+
+            if (!string.IsNullOrEmpty(genero))
+            {
+                query = query.Where(l => l.LivroGeneros.Any(g => g.Genero.Nome == genero));
+            }
+
+            return await query.ToListAsync();
         }
     }
 }

@@ -15,12 +15,12 @@ namespace WebApiLivraria.Infrastructure.Context
         public DbSet<Editora> Editoras { get; set; }
         public DbSet<Genero> Generos { get; set; }
         public DbSet<LivroGenero> LivroGeneros { get; set; }
+        public DbSet<Avaliacao> Avaliacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuração da entidade LivroGenero para relacionamento muitos-para-muitos
             modelBuilder.Entity<LivroGenero>()
                 .HasKey(lg => new { lg.LivroId, lg.GeneroId });
 
@@ -34,10 +34,11 @@ namespace WebApiLivraria.Infrastructure.Context
                 .WithMany()
                 .HasForeignKey(lg => lg.GeneroId);
 
-            // Configurações adicionais, se quiser, por exemplo:
-            // modelBuilder.Entity<Livro>().Property(l => l.Titulo).IsRequired().HasMaxLength(200);
-            // modelBuilder.Entity<Autor>().Property(a => a.Nome).IsRequired().HasMaxLength(100);
-            // ... etc
+            modelBuilder.Entity<Avaliacao>()
+                .HasOne(a => a.Livro)
+                .WithMany(l => l.Avaliacoes)
+                .HasForeignKey(a => a.LivroId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
