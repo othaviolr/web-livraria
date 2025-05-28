@@ -34,8 +34,11 @@ public class RankingLivroUseCase : IRankingLivroUseCase
             Id = livro.Id,
             Titulo = livro.Titulo,
             Autor = livro.Autor.Nome,
-            Genero = livro.Genero,
-            AnoPublicacao = livro.AnoPublicacao,
+
+            Genero = string.Join(", ", livro.LivroGeneros.Select(lg => lg.Genero.Nome)),
+
+            AnoPublicacao = livro.AnoPublicacao.Year,
+
             NotaMedia = livro.NotaMedia
         }).ToList();
     }

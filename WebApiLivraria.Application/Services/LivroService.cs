@@ -49,9 +49,10 @@ namespace WebApiLivraria.Application.Services
 
         public async Task AdicionarAsync(LivroDto dto)
         {
-            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId);
+            var dataPublicacao = new DateTime(dto.AnoPublicacao, 1, 1);
 
-            // Adiciona os relacionamentos com gêneros
+            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, dataPublicacao);
+
             foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
             {
                 livro.AdicionarGenero(generoId);

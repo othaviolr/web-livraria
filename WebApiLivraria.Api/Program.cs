@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Application.Services;
+using WebApiLivraria.Application.UseCases.RankingLivro;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Infrastructure.Context;
 using WebApiLivraria.Infrastructure.Repositories;
@@ -12,26 +13,24 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar os repositórios (injeção de dependência)
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();
 builder.Services.AddScoped<IAutorRepository, AutorRepository>();
 builder.Services.AddScoped<IGeneroRepository, GeneroRepository>();
 builder.Services.AddScoped<IEditoraRepository, EditoraRepository>();
 
-// Registrar os serviços de aplicação
 builder.Services.AddScoped<ILivroService, LivroService>();
 builder.Services.AddScoped<IAutorService, AutorService>();
 builder.Services.AddScoped<IGeneroService, GeneroService>();
 builder.Services.AddScoped<IEditoraService, EditoraService>();
+builder.Services.AddScoped<IRankingLivroUseCase, RankingLivroUseCase>();
+builder.Services.AddScoped<IRankingService, RankingService>();
 
-// Registrar controllers e swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configurar middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

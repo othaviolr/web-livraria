@@ -7,5 +7,6 @@
         public int AutorId { get; set; }
         public int EditoraId { get; set; }
         public List<int> Generos { get; set; } = new();
+        public int AnoPublicacao { get; set; }
     }
 }
