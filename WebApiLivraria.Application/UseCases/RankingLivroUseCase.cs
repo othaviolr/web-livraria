@@ -1,45 +1,43 @@
 ﻿using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Application.UseCases.RankingLivro;
 
-namespace WebApiLivraria.Application.UseCases.RankingLivro;
-
-public class RankingLivroUseCase : IRankingLivroUseCase
+namespace WebApiLivraria.Application.UseCases.RankingLivro
 {
-    private readonly ILivroRepository _livroRepository;
-
-    public RankingLivroUseCase(ILivroRepository livroRepository)
+    public class RankingLivroUseCase : IRankingLivroUseCase
     {
-        _livroRepository = livroRepository;
-    }
+        private readonly ILivroRepository _livroRepository;
 
-    public async Task<List<RankingLivroResponse>> ExecutarAsync(RankingLivroRequest request)
-    {
-        var livros = await _livroRepository.ObterLivrosComFiltroAsync(
-            request.Ano,
-            request.Genero
-        );
-
-        var livrosOrdenados = livros
-            .OrderByDescending(l => l.NotaMedia)
-            .ToList();
-
-        var livrosPaginados = livrosOrdenados
-            .Skip((request.Pagina - 1) * request.TamanhoPagina)
-            .Take(request.TamanhoPagina)
-            .ToList();
-
-        return livrosPaginados.Select((livro, index) => new RankingLivroResponse
+        public RankingLivroUseCase(ILivroRepository livroRepository)
         {
-            Posicao = ((request.Pagina - 1) * request.TamanhoPagina) + index + 1,
-            Id = livro.Id,
-            Titulo = livro.Titulo,
-            Autor = livro.Autor.Nome,
+            _livroRepository = livroRepository;
+        }
 
-            Genero = string.Join(", ", livro.LivroGeneros.Select(lg => lg.Genero.Nome)),
+        public async Task<List<RankingLivroResponse>> ExecutarAsync(RankingLivroRequest request)
+        {
+            var livros = await _livroRepository.ObterLivrosComFiltroAsync(
+                request.Ano,
+                request.Genero
+            );
 
-            AnoPublicacao = livro.AnoPublicacao.Year,
+            var livrosOrdenados = livros
+                .OrderByDescending(l => l.NotaMedia)
+                .ToList();
 
-            NotaMedia = livro.NotaMedia
-        }).ToList();
+            var livrosPaginados = livrosOrdenados
+                .Skip((request.Pagina - 1) * request.TamanhoPagina)
+                .Take(request.TamanhoPagina)
+                .ToList();
+
+            return livrosPaginados.Select((livro, index) => new RankingLivroResponse
+            {
+                Posicao = ((request.Pagina - 1) * request.TamanhoPagina) + index + 1,
+                Id = livro.Id,
+                Titulo = livro.Titulo,
+                Autor = livro.Autor.Nome,
+                Genero = string.Join(", ", livro.LivroGeneros.Select(g => g.Genero.Nome)),
+                AnoPublicacao = livro.AnoPublicacao.Year,
+                NotaMedia = livro.NotaMedia
+            }).ToList();
+        }
     }
 }

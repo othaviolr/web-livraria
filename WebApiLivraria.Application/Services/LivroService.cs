@@ -28,6 +28,7 @@ namespace WebApiLivraria.Application.Services
                 Titulo = l.Titulo,
                 AutorId = l.AutorId,
                 EditoraId = l.EditoraId,
+                AnoPublicacao = l.AnoPublicacao,
                 Generos = l.LivroGeneros.Select(g => g.GeneroId).ToList()
             });
         }
@@ -43,15 +44,14 @@ namespace WebApiLivraria.Application.Services
                 Titulo = livro.Titulo,
                 AutorId = livro.AutorId,
                 EditoraId = livro.EditoraId,
+                AnoPublicacao = livro.AnoPublicacao,
                 Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList()
             };
         }
 
         public async Task AdicionarAsync(LivroDto dto)
         {
-            var dataPublicacao = new DateTime(dto.AnoPublicacao, 1, 1);
-
-            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, dataPublicacao);
+            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, new DateTime(dto.AnoPublicacao.Year, 1, 1));
 
             foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
             {

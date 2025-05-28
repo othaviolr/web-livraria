@@ -32,8 +32,6 @@ public class TratamentoExcecaoMiddleware
 
         var json = JsonSerializer.Serialize(resposta);
 
-        // Aqui pode adicionar log da exceção ex, se quiser
-
         return context.Response.WriteAsync(json);
     }
 }

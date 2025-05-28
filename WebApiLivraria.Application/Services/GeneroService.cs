@@ -44,7 +44,6 @@ namespace WebApiLivraria.Application.Services
             var genero = new Genero(dto.Nome);
             await _generoRepository.AdicionarAsync(genero);
 
-            // Atualiza o Id do DTO com o Id gerado
             dto.Id = genero.Id;
             return dto;
         }
