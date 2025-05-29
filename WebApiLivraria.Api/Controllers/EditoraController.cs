@@ -30,12 +30,12 @@ namespace WebApiLivraria.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] EditoraDto dto)
         {
-            await _editoraService.AdicionarAsync(dto);
+            var editoraCriada = await _editoraService.AdicionarAsync(dto);
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = dto.Id },
-                RespostaPadrao<EditoraDto>.ComSucesso(dto, MensagensEditora.EditoraCriadaSucesso)
+                new { id = editoraCriada.Id },
+                RespostaPadrao<EditoraDto>.ComSucesso(editoraCriada, MensagensEditora.EditoraCriadaSucesso)
             );
         }
 

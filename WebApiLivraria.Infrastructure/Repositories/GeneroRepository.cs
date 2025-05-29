@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Infrastructure.Context;
@@ -44,6 +47,13 @@ namespace WebApiLivraria.Infrastructure.Repositories
         public async Task<IEnumerable<Genero>> ListarAsync()
         {
             return await _context.Generos.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Genero>> ListarPorIdsAsync(IEnumerable<int> ids)
+        {
+            return await _context.Generos
+                .Where(g => ids.Contains(g.Id))
+                .ToListAsync();
         }
     }
 }

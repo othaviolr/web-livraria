@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiLivraria.Application.Dto;
@@ -12,11 +13,19 @@ namespace WebApiLivraria.Application.Services
     {
         private readonly ILivroRepository _livroRepository;
         private readonly IGeneroRepository _generoRepository;
+        private readonly IAutorRepository _autorRepository;
+        private readonly IEditoraRepository _editoraRepository;
 
-        public LivroService(ILivroRepository livroRepository, IGeneroRepository generoRepository)
+        public LivroService(
+            ILivroRepository livroRepository,
+            IGeneroRepository generoRepository,
+            IAutorRepository autorRepository,
+            IEditoraRepository editoraRepository)
         {
             _livroRepository = livroRepository;
             _generoRepository = generoRepository;
+            _autorRepository = autorRepository;
+            _editoraRepository = editoraRepository;
         }
 
         public async Task<IEnumerable<LivroDto>> ListarAsync()
@@ -51,11 +60,24 @@ namespace WebApiLivraria.Application.Services
 
         public async Task AdicionarAsync(LivroDto dto)
         {
-            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, new DateTime(dto.AnoPublicacao.Year, 1, 1));
+            var autor = await _autorRepository.ObterPorIdAsync(dto.AutorId);
+            if (autor == null)
+                throw new Exception($"Autor com Id {dto.AutorId} não encontrado.");
+
+            var editora = await _editoraRepository.ObterPorIdAsync(dto.EditoraId);
+            if (editora == null)
+                throw new Exception($"Editora com Id {dto.EditoraId} não encontrada.");
+
+            var generosValidos = await _generoRepository.ListarPorIdsAsync(dto.Generos ?? Enumerable.Empty<int>());
+            if (generosValidos == null || !generosValidos.Any())
+                throw new Exception("Gêneros inválidos ou não encontrados.");
+
+            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, dto.AnoPublicacao);
 
             foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
             {
-                livro.AdicionarGenero(generoId);
+                if (generosValidos.Any(g => g.Id == generoId))
+                    livro.AdicionarGenero(generoId);
             }
 
             await _livroRepository.AdicionarAsync(livro);

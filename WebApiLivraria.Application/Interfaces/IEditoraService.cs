@@ -8,7 +8,7 @@ namespace WebApiLivraria.Application.Interfaces
     {
         Task<IEnumerable<EditoraDto>> ListarAsync();
         Task<EditoraDto> ObterPorIdAsync(int id);
-        Task AdicionarAsync(EditoraDto dto);
+        Task<EditoraDto> AdicionarAsync(EditoraDto dto);
         Task AtualizarAsync(EditoraDto dto);
         Task RemoverAsync(int id);
     }
