@@ -1,4 +1,6 @@
-﻿using WebApiLivraria.Domain.Entities;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebApiLivraria.Domain.Entities;
 
 namespace WebApiLivraria.Domain.Interfaces
 {
@@ -9,5 +11,7 @@ namespace WebApiLivraria.Domain.Interfaces
         Task AdicionarAsync(Genero genero);
         Task AtualizarAsync(Genero genero);
         Task RemoverAsync(int id);
+
+        Task<IEnumerable<Genero>> ListarPorIdsAsync(IEnumerable<int> ids);
     }
 }

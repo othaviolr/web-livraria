@@ -36,10 +36,17 @@ namespace WebApiLivraria.Application.Services
             };
         }
 
-        public async Task AdicionarAsync(EditoraDto dto)
+        public async Task<EditoraDto> AdicionarAsync(EditoraDto dto)
         {
             var editora = new Editora(dto.Nome);
+
             await _editoraRepository.AdicionarAsync(editora);
+
+            return new EditoraDto
+            {
+                Id = editora.Id,
+                Nome = editora.Nome
+            };
         }
 
         public async Task AtualizarAsync(EditoraDto dto)
