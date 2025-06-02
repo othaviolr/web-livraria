@@ -1,43 +1,22 @@
-﻿using WebApiLivraria.Domain.Interfaces;
+﻿using WebApiLivraria.Application.Services;
 using WebApiLivraria.Application.UseCases.RankingLivro;
+using WebApiLivraria.Domain.Interfaces;
 
 namespace WebApiLivraria.Application.UseCases.RankingLivro
 {
     public class RankingLivroUseCase : IRankingLivroUseCase
     {
-        private readonly ILivroRepository _livroRepository;
+        private readonly IRankingService _rankingService;
 
-        public RankingLivroUseCase(ILivroRepository livroRepository)
+        public RankingLivroUseCase(IRankingService rankingService)
         {
-            _livroRepository = livroRepository;
+            _rankingService = rankingService;
         }
 
         public async Task<List<RankingLivroResponse>> ExecutarAsync(RankingLivroRequest request)
         {
-            var livros = await _livroRepository.ObterLivrosComFiltroAsync(
-                request.Ano,
-                request.Genero
-            );
-
-            var livrosOrdenados = livros
-                .OrderByDescending(l => l.NotaMedia)
-                .ToList();
-
-            var livrosPaginados = livrosOrdenados
-                .Skip((request.Pagina - 1) * request.TamanhoPagina)
-                .Take(request.TamanhoPagina)
-                .ToList();
-
-            return livrosPaginados.Select((livro, index) => new RankingLivroResponse
-            {
-                Posicao = ((request.Pagina - 1) * request.TamanhoPagina) + index + 1,
-                Id = livro.Id,
-                Titulo = livro.Titulo,
-                Autor = livro.Autor.Nome,
-                Genero = string.Join(", ", livro.LivroGeneros.Select(g => g.Genero.Nome)),
-                AnoPublicacao = livro.AnoPublicacao.Year,
-                NotaMedia = livro.NotaMedia
-            }).ToList();
+            var ranking = await _rankingService.ObterRankingAsync(request);
+            return ranking;
         }
     }
 }

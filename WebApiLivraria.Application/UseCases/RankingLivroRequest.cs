@@ -1,5 +1,4 @@
 ﻿namespace WebApiLivraria.Application.UseCases.RankingLivro;
-
 public class RankingLivroRequest
 {
     public int? Ano { get; set; }
