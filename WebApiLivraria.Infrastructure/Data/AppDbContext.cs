@@ -16,6 +16,7 @@ namespace WebApiLivraria.Infrastructure.Context
         public DbSet<Genero> Generos { get; set; }
         public DbSet<LivroGenero> LivroGeneros { get; set; }
         public DbSet<Avaliacao> Avaliacoes { get; set; }
+        public DbSet<RankingLivro> RankingLivros { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +39,12 @@ namespace WebApiLivraria.Infrastructure.Context
                 .HasOne(a => a.Livro)
                 .WithMany(l => l.Avaliacoes)
                 .HasForeignKey(a => a.LivroId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RankingLivro>()
+                .HasOne(r => r.Livro)
+                .WithMany()
+                .HasForeignKey(r => r.LivroId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -55,8 +55,10 @@ namespace WebApiLivraria.Infrastructure.Repositories
         public async Task<IEnumerable<Livro>> ObterLivrosComFiltroAsync(int? anoPublicacao, string? genero)
         {
             var query = _context.Livros
+                .Include(l => l.Autor)
                 .Include(l => l.LivroGeneros)
                     .ThenInclude(lg => lg.Genero)
+                .Include(l => l.Avaliacoes)
                 .AsQueryable();
 
             if (anoPublicacao.HasValue)

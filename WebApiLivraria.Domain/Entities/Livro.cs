@@ -63,7 +63,6 @@ namespace WebApiLivraria.Domain.Entities
         {
             LivroGeneros.Clear();
         }
-
-        public double NotaMedia => Avaliacoes.Any() ? Math.Round(Avaliacoes.Average(a => a.Nota), 2) : 0;
+        public double NotaMedia => Avaliacoes.Any() ? Avaliacoes.Average(a => a.Nota) : 0;
     }
 }

@@ -1,22 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApiLivraria.Application.Services;
 using WebApiLivraria.Application.UseCases.RankingLivro;
+using WebApiLivraria.Application.Dto;
 
-[ApiController]
-[Route("api/[controller]")]
-public class RankingController : ControllerBase
+namespace WebApiLivraria.Api.Controllers
 {
-    private readonly IRankingService _rankingService;
-
-    public RankingController(IRankingService rankingService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RankingController : ControllerBase
     {
-        _rankingService = rankingService;
-    }
+        private readonly IRankingLivroUseCase _rankingLivroUseCase;
 
-    [HttpGet]
-    public async Task<IActionResult> ObterRanking([FromQuery] RankingLivroRequest request)
-    {
-        var ranking = await _rankingService.ObterRankingAsync(request);
-        return Ok(ranking);
+        public RankingController(IRankingLivroUseCase rankingLivroUseCase)
+        {
+            _rankingLivroUseCase = rankingLivroUseCase;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObterRanking([FromQuery] RankingLivroRequest request)
+        {
+            var resultado = await _rankingLivroUseCase.ExecutarAsync(request);
+
+            return Ok(RespostaPadrao<List<RankingLivroResponse>>.ComSucesso(
+                resultado,
+                "Ranking obtido com sucesso."
+            ));
+        }
     }
 }

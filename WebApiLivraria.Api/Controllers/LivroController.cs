@@ -2,6 +2,7 @@
 using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Constantes.Livro;
+using WebApiLivraria.Application.UseCases.RankingLivro;
 
 namespace WebApiLivraria.Api.Controllers
 {
