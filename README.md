@@ -16,13 +16,6 @@ API RESTful para gerenciamento de uma livraria online, com arquitetura DDD, Enti
 
 ---
 
-## 📐 Estrutura do Projeto
-
-O projeto segue o padrão de separação em múltiplos projetos:
-
-
----
-
 ## ✅ Funcionalidades
 
 - Cadastro de livros, autores e gêneros
