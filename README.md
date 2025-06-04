@@ -1,8 +1,6 @@
 # 📚 Livraria do Tavin - API
 
-API RESTful para gerenciamento de uma livraria online, com arquitetura DDD, Entity Framework Core e foco em qualidade de código. Projeto desenvolvido como demonstração de boas práticas e preparação para processos seletivos de empresas como Uber, iFood, Nubank, entre outras.
-
----
+API RESTful para gerenciamento de uma livraria online, com arquitetura DDD, Entity Framework Core e foco em qualidade de código.
 
 ## 🚀 Tecnologias Utilizadas
 
