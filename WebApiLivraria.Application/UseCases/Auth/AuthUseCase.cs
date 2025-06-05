@@ -1,24 +1,29 @@
 ﻿using Google.Apis.Auth;
 using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Domain.Entities;
+using Microsoft.Extensions.Configuration;
+using WebApiLivraria.Application.Services;
 
 namespace WebApiLivraria.Application.UseCases.Auth;
 
 public class AuthUseCase : IAuthUseCase
 {
     private readonly IUsuarioRepository _usuarioRepository;
-    private const string GoogleClientId = "659502960574-f6rqmigm8569v3gmaa77igr8of7rav6r.apps.googleusercontent.com";
+    private readonly ITokenService _tokenService;
+    private readonly string _googleClientId;
 
-    public AuthUseCase(IUsuarioRepository usuarioRepository)
+    public AuthUseCase(IUsuarioRepository usuarioRepository, ITokenService tokenService, IConfiguration configuration)
     {
         _usuarioRepository = usuarioRepository;
+        _tokenService = tokenService;
+        _googleClientId = configuration["Authentication:Google:ClientId"]!;
     }
 
     public async Task<string> LoginComGoogle(LoginGoogleRequest request)
     {
         var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, new GoogleJsonWebSignature.ValidationSettings
         {
-            Audience = new[] { GoogleClientId }
+            Audience = new[] { _googleClientId }
         });
 
         var usuario = await _usuarioRepository.ObterPorEmail(payload.Email);
@@ -28,6 +33,6 @@ public class AuthUseCase : IAuthUseCase
             await _usuarioRepository.Adicionar(usuario);
         }
 
-        return $"jwt-fake-para-{payload.Email}";
+        return _tokenService.GerarToken(usuario);
     }
 }

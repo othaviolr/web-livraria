@@ -17,7 +17,17 @@ public class AuthController : ControllerBase
     [HttpPost("login-google")]
     public async Task<IActionResult> LoginComGoogle([FromBody] LoginGoogleRequest request)
     {
-        var token = await _authUseCase.LoginComGoogle(request);
-        return Ok(new { Token = token });
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var token = await _authUseCase.LoginComGoogle(request);
+            return Ok(new { Token = token });
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(new { Message = ex.Message });
+        }
     }
 }
