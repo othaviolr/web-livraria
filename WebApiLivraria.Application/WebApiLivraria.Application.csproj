@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WebApiLivraria.Domain\WebApiLivraria.Domain.csproj" />
     <ProjectReference Include="..\WebApiLivraria.Infrastructure\WebApiLivraria.Infrastructure.csproj" />
   </ItemGroup>
