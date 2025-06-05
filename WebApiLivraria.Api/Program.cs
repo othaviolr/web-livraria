@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Application.Services;
+using WebApiLivraria.Application.UseCases.Auth;
 using WebApiLivraria.Application.UseCases.Avaliacao.Criar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
 using WebApiLivraria.Application.UseCases.RankingLivro;
 using WebApiLivraria.Domain.Interfaces;
+using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Infrastructure.Context;
 using WebApiLivraria.Infrastructure.Repositories;
 
@@ -29,6 +31,8 @@ builder.Services.AddScoped<IRankingService, RankingService>();
 builder.Services.AddScoped<IAvaliacaoRepository, AvaliacaoRepository>();
 builder.Services.AddScoped<ICriarAvaliacaoUseCase, CriarAvaliacaoUseCase>();
 builder.Services.AddScoped<IListarAvaliacoesPorLivroUseCase, ListarAvaliacoesPorLivroUseCase>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
