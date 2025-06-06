@@ -2,7 +2,7 @@
 
 Uma API RESTful robusta para gerenciamento de uma livraria online, com **DDD**, **EF Core** e foco em **escalabilidade, performance e qualidade de código**.
 
-> 🔮 Este projeto está evoluindo para se tornar uma **plataforma completa de e-commerce** com front-end em **React**.
+> 🔮 Este projeto está evoluindo para se tornar uma **plataforma completa de liavraria**.
 
 ---
 
