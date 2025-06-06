@@ -56,8 +56,8 @@ Uma API RESTful robusta para gerenciamento de uma livraria online, com **DDD**, 
 
 ## 📫 Contato
 
-- Desenvolvido com 💙 por Othavio
-- 🔗 GitHub | ✉️ Email
+Desenvolvido com 💙 por **Othavio**  
+[🔗 GitHub](https://github.com/othaviolr) | [✉️ Email](mailto:othavionogueira2003@gmail.com)
 
 ---
 
