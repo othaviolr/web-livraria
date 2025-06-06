@@ -1,11 +1,12 @@
 # 📚 Livraria do Tavin - API
 
-Uma API RESTful moderna para gerenciamento de uma livraria online.  
-Construída com **arquitetura DDD**, **Entity Framework Core**, e foco em **qualidade de código, escalabilidade e boas práticas**.
+Uma API RESTful robusta para gerenciamento de uma livraria online, com **DDD**, **EF Core** e foco em **escalabilidade, performance e qualidade de código**.
+
+> 🔮 Este projeto está evoluindo para se tornar uma **plataforma completa de e-commerce** com front-end em **React**.
 
 ---
 
-## 🛠️ Tecnologias e Ferramentas
+## ⚙️ Tecnologias e Ferramentas
 
 - ✅ **ASP.NET Core 8**
 - ✅ **Entity Framework Core**
@@ -13,47 +14,66 @@ Construída com **arquitetura DDD**, **Entity Framework Core**, e foco em **qual
 - ✅ **Domain-Driven Design (DDD)**
 - ✅ **AutoMapper**
 - ✅ **FluentValidation**
-- ✅ **Swagger / Swashbuckle** – documentação interativa
+- ✅ **Swagger / Swashbuckle**
+- ✅ **Google OAuth 2.0** – login social integrado
 
 ---
 
-## ✨ Funcionalidades Implementadas
+## ✨ Funcionalidades
 
 - 📘 Cadastro e gerenciamento de **livros**, **autores** e **gêneros**
 - 🔗 Relacionamento **n:n** entre livros e gêneros
-- ⭐ Sistema de **avaliação de livros** com notas e comentários
-- 📊 Cálculo automático da **média de avaliações**
-- 🏆 **Ranking de livros** com suporte a filtros por:
-  - 🎭 Gênero
-  - 📅 Ano de publicação
-- 📎 Estrutura modular e escalável, com separação de responsabilidades
+- ⭐ Avaliação de livros com notas e comentários
+- 📊 Cálculo da **média das avaliações**
+- 🏆 **Ranking de livros** com filtros:
+  - 🎭 Por gênero
+  - 📅 Por ano de publicação
+- 🔐 **Autenticação via Google**
+- 🧩 Arquitetura modular, limpa e escalável
 
 ---
 
-## 🚧 Em Desenvolvimento
+## 🚀 Em Breve
 
-- 🔐 Autenticação com **Google OAuth 2.0**
-- ❤️ Sistema de interação:
-  - Favoritar livros
-  - Adicionar à lista de desejos
-- 👤 Perfis de usuários com histórico de interações
-- 🛠️ Painel administrativo para gerenciamento completo
+- 🛍️ **E-commerce completo** com carrinho, pedidos e checkout
+- 💡 Front-end moderno com **React** + consumo da API
+- ❤️ Sistema de interação com livros:
+  - Favoritar
+  - Lista de desejos
+- 👤 Perfis de usuário com histórico
+- 🛠️ Painel administrativo
 
 ---
 
-## 🧪 Como Executar Localmente
+## 🧠 Arquitetura
+
+- Domain → Entidades e regras do domínio
+- Application → Casos de uso e lógica de aplicação
+- Infrastructure → Acesso a dados e integrações externas
+- API → Camada de apresentação com controllers REST
+
+---
+
+## 📫 Contato
+
+- Desenvolvido com 💙 por Othavio
+- 🔗 GitHub | ✉️ Email
+
+---
+
+## ▶️ Executando Localmente
 
 ```bash
 # 1. Clone o repositório
 git clone https://github.com/othaviolr/web-livraria.git
 
-# 2. Acesse a pasta do projeto
+# 2. Acesse a pasta
 cd web-livraria
 
-# 3. Configure a string de conexão no appsettings.json
+# 3. Configure o appsettings.json com a string de conexão
 
-# 4. Execute as migrations
+# 4. Aplique as migrations
 dotnet ef database update --project WebApiLivraria.Infrastructure
 
-# 5. Rode a aplicação
+# 5. Execute a API
 dotnet run --project WebApiLivraria.API
