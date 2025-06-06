@@ -181,6 +181,16 @@ UpgradeLog*.htm
 *.mdf
 *.ldf
 
+# Arquivos de banco de dados SQLite
+*.db
+*.sqlite
+
+# Configurações locais
+appsettings.Development.json
+
+# Pasta de migrações (opcional, normalmente versionada)
+# /Migrations/
+
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
