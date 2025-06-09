@@ -7,9 +7,12 @@ using WebApiLivraria.Application.Services;
 using WebApiLivraria.Application.UseCases.Auth;
 using WebApiLivraria.Application.UseCases.Avaliacao.Criar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
+using WebApiLivraria.Application.UseCases.Favorito;
+using WebApiLivraria.Application.UseCases.ListaDesejo;
 using WebApiLivraria.Application.UseCases.RankingLivro;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Domain.Repositories;
+using WebApiLivraria.Infra.Data.Repositories;
 using WebApiLivraria.Infrastructure.Context;
 using WebApiLivraria.Infrastructure.Repositories;
 
@@ -37,6 +40,16 @@ builder.Services.AddScoped<ICriarAvaliacaoUseCase, CriarAvaliacaoUseCase>();
 builder.Services.AddScoped<IListarAvaliacoesPorLivroUseCase, ListarAvaliacoesPorLivroUseCase>();
 builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddScoped<IFavoritoRepository, FavoritoRepository>();
+builder.Services.AddScoped<IAdicionarFavoritoUseCase, AdicionarFavoritoUseCase>();
+builder.Services.AddScoped<RemoverFavoritoUseCase>();
+builder.Services.AddScoped<ListarFavoritosUseCase>();
+
+builder.Services.AddScoped<IListaDesejoRepository, ListaDesejoRepository>();
+builder.Services.AddScoped<IAdicionarListaDesejoUseCase, AdicionarListaDesejoUseCase>();
+builder.Services.AddScoped<RemoverListaDesejoUseCase>();
+builder.Services.AddScoped<ListarListaDesejoUseCase>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
