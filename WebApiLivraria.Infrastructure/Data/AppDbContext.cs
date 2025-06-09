@@ -19,6 +19,7 @@ namespace WebApiLivraria.Infrastructure.Context
         public DbSet<RankingLivro> RankingLivros { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Favorito> Favoritos { get; set; }
+        public DbSet<ListaDesejo> ListasDesejo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
