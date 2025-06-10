@@ -28,7 +28,7 @@ Uma API RESTful robusta para gerenciamento de uma livraria online, com **DDD**, 
 - 🏆 **Ranking de livros** com filtros:
   - 🎭 Por gênero
   - 📅 Por ano de publicação
-  - ❤️ Sistema de interação com livros:
+- ❤️ Sistema de interação com livros:
   - Favoritar
   - Lista de desejos
 - 🔐 **Autenticação via Google**
