@@ -28,16 +28,20 @@ namespace WebApiLivraria.Application.Services
             _editoraRepository = editoraRepository;
         }
 
-        public async Task<IEnumerable<LivroDto>> ListarAsync()
+        public async Task<IEnumerable<LivroDto>> ListarAsync(string? search = null)
         {
-            var livros = await _livroRepository.ListarAsync();
+            var livros = await _livroRepository.ListarComFiltroAsync(search);
+
             return livros.Select(l => new LivroDto
             {
                 Id = l.Id,
                 Titulo = l.Titulo,
                 AutorId = l.AutorId,
+                AutorNome = l.Autor?.Nome,
                 EditoraId = l.EditoraId,
+                EditoraNome = l.Editora?.Nome,
                 AnoPublicacao = l.AnoPublicacao,
+                ImagemUrl = l.ImagemUrl,
                 Generos = l.LivroGeneros.Select(g => g.GeneroId).ToList()
             });
         }
@@ -45,6 +49,7 @@ namespace WebApiLivraria.Application.Services
         public async Task<LivroDto> ObterPorIdAsync(int id)
         {
             var livro = await _livroRepository.ObterPorIdAsync(id);
+
             if (livro == null) return null;
 
             return new LivroDto
@@ -52,8 +57,11 @@ namespace WebApiLivraria.Application.Services
                 Id = livro.Id,
                 Titulo = livro.Titulo,
                 AutorId = livro.AutorId,
+                AutorNome = livro.Autor?.Nome,
                 EditoraId = livro.EditoraId,
+                EditoraNome = livro.Editora?.Nome,
                 AnoPublicacao = livro.AnoPublicacao,
+                ImagemUrl = livro.ImagemUrl,
                 Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList()
             };
         }

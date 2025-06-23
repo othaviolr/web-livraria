@@ -2,7 +2,6 @@
 using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Constantes.Livro;
-using WebApiLivraria.Application.UseCases.RankingLivro;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -26,6 +25,13 @@ namespace WebApiLivraria.Api.Controllers
                 return NotFound(RespostaPadrao<LivroDto>.ComErro(MensagensLivro.LivroNaoEncontrado));
 
             return Ok(RespostaPadrao<LivroDto>.ComSucesso(livro, "Livro obtido com sucesso."));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Listar([FromQuery] string? search = null)
+        {
+            var livros = await _livroService.ListarAsync(search);
+            return Ok(RespostaPadrao<IEnumerable<LivroDto>>.ComSucesso(livros, "Livros listados com sucesso."));
         }
 
         [HttpPost]

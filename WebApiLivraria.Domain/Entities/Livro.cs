@@ -8,18 +8,21 @@ namespace WebApiLivraria.Domain.Entities
         public int Id { get; private set; }
         public string Titulo { get; private set; }
         public int AutorId { get; private set; }
-        public Autor Autor { get; private set; } 
+        public Autor Autor { get; private set; }
+        public Editora Editora { get; private set; }
         public int EditoraId { get; private set; }
         public DateTime AnoPublicacao { get; private set; } 
         public List<LivroGenero> LivroGeneros { get; private set; } = new();
-        public List<Avaliacao> Avaliacoes { get; private set; } = new(); 
+        public List<Avaliacao> Avaliacoes { get; private set; } = new();
+        public string? ImagemUrl { get; private set; }
 
-        public Livro(string titulo, int autorId, int editoraId, DateTime anoPublicacao)
+        public Livro(string titulo, int autorId, int editoraId, DateTime anoPublicacao, string? imagemUrl = null)
         {
             Titulo = titulo;
             AutorId = autorId;
             EditoraId = editoraId;
             AnoPublicacao = anoPublicacao;
+            ImagemUrl = imagemUrl;
         }
 
         protected Livro() { }
@@ -42,6 +45,11 @@ namespace WebApiLivraria.Domain.Entities
         public void AtualizarAnoPublicacao(DateTime ano)
         {
             AnoPublicacao = ano;
+        }
+
+        public void AtualizarImagemUrl(string? imagemUrl)
+        {
+            ImagemUrl = imagemUrl;
         }
 
         public void AdicionarGenero(int generoId)

@@ -39,6 +39,8 @@ namespace WebApiLivraria.Infrastructure.Repositories
         public async Task<Livro> ObterPorIdAsync(int id)
         {
             return await _context.Livros
+                .Include(l => l.Autor)
+                .Include(l => l.Editora)
                 .Include(l => l.LivroGeneros)
                     .ThenInclude(lg => lg.Genero)
                 .FirstOrDefaultAsync(l => l.Id == id);
@@ -47,15 +49,40 @@ namespace WebApiLivraria.Infrastructure.Repositories
         public async Task<IEnumerable<Livro>> ListarAsync()
         {
             return await _context.Livros
+                .Include(l => l.Autor)
+                .Include(l => l.Editora)
                 .Include(l => l.LivroGeneros)
                     .ThenInclude(lg => lg.Genero)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Livro>> ListarComFiltroAsync(string? search)
+        {
+            var query = _context.Livros
+                .Include(l => l.Autor)
+                .Include(l => l.Editora)
+                .Include(l => l.LivroGeneros)
+                    .ThenInclude(lg => lg.Genero)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var filtroLower = search.ToLower();
+                query = query.Where(l =>
+                    l.Titulo.ToLower().Contains(filtroLower) ||
+                    l.Autor.Nome.ToLower().Contains(filtroLower) ||
+                    l.Editora.Nome.ToLower().Contains(filtroLower)
+                );
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<Livro>> ObterLivrosComFiltroAsync(int? anoPublicacao, string? genero)
         {
             var query = _context.Livros
                 .Include(l => l.Autor)
+                .Include(l => l.Editora)
                 .Include(l => l.LivroGeneros)
                     .ThenInclude(lg => lg.Genero)
                 .Include(l => l.Avaliacoes)

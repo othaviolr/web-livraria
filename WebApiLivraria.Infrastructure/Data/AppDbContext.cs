@@ -49,6 +49,10 @@ namespace WebApiLivraria.Infrastructure.Context
                 .WithMany()
                 .HasForeignKey(r => r.LivroId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Livro>()
+                .Property(l => l.ImagemUrl)
+                .IsRequired(false);
         }
     }
 }
