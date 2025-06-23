@@ -19,38 +19,44 @@ using WebApiLivraria.Infrastructure.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+// Banco de dados
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("WebApiLivraria.Infrastructure")
+    ));
 
+// Repositórios
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();
 builder.Services.AddScoped<IAutorRepository, AutorRepository>();
 builder.Services.AddScoped<IGeneroRepository, GeneroRepository>();
 builder.Services.AddScoped<IEditoraRepository, EditoraRepository>();
 builder.Services.AddScoped<IAvaliacaoRepository, AvaliacaoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IFavoritoRepository, FavoritoRepository>();
+builder.Services.AddScoped<IListaDesejoRepository, ListaDesejoRepository>();
 
+// Serviços
 builder.Services.AddScoped<ILivroService, LivroService>();
 builder.Services.AddScoped<IAutorService, AutorService>();
 builder.Services.AddScoped<IGeneroService, GeneroService>();
 builder.Services.AddScoped<IEditoraService, EditoraService>();
 builder.Services.AddScoped<IRankingService, RankingService>();
 
+// UseCases
 builder.Services.AddScoped<IRankingLivroUseCase, RankingLivroUseCase>();
 builder.Services.AddScoped<ICriarAvaliacaoUseCase, CriarAvaliacaoUseCase>();
 builder.Services.AddScoped<IListarAvaliacoesPorLivroUseCase, ListarAvaliacoesPorLivroUseCase>();
 builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-
-builder.Services.AddScoped<IFavoritoRepository, FavoritoRepository>();
 builder.Services.AddScoped<IAdicionarFavoritoUseCase, AdicionarFavoritoUseCase>();
 builder.Services.AddScoped<RemoverFavoritoUseCase>();
 builder.Services.AddScoped<ListarFavoritosUseCase>();
-
-builder.Services.AddScoped<IListaDesejoRepository, ListaDesejoRepository>();
 builder.Services.AddScoped<IAdicionarListaDesejoUseCase, AdicionarListaDesejoUseCase>();
 builder.Services.AddScoped<RemoverListaDesejoUseCase>();
 builder.Services.AddScoped<ListarListaDesejoUseCase>();
 
+// Autenticação JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -67,12 +73,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// Controllers e Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
+// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -80,13 +98,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<TratamentoExcecaoMiddleware>();
-
 app.MapControllers();
-
 app.Run();
