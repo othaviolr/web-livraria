@@ -11,5 +11,6 @@
         public string? ImagemUrl { get; set; }
         public DateTime AnoPublicacao { get; set; }
         public List<int> Generos { get; set; } = new();
+        public string? Sinopse { get; set; }
     }
 }

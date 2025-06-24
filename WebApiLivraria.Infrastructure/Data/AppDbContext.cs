@@ -20,6 +20,7 @@ namespace WebApiLivraria.Infrastructure.Context
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Favorito> Favoritos { get; set; }
         public DbSet<ListaDesejo> ListasDesejo { get; set; }
+        public DbSet<Sinopse> Sinopses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,6 +54,15 @@ namespace WebApiLivraria.Infrastructure.Context
             modelBuilder.Entity<Livro>()
                 .Property(l => l.ImagemUrl)
                 .IsRequired(false);
+
+            modelBuilder.Entity<Sinopse>()
+                .HasKey(s => s.LivroId);
+
+            modelBuilder.Entity<Livro>()
+                .HasOne(l => l.Sinopse)
+                .WithOne(s => s.Livro)
+                .HasForeignKey<Sinopse>(s => s.LivroId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
