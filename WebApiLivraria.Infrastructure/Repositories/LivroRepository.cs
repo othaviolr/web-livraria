@@ -43,6 +43,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
                 .Include(l => l.Editora)
                 .Include(l => l.LivroGeneros)
                     .ThenInclude(lg => lg.Genero)
+                .Include(l => l.Sinopse)
                 .FirstOrDefaultAsync(l => l.Id == id);
         }
 
@@ -53,6 +54,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
                 .Include(l => l.Editora)
                 .Include(l => l.LivroGeneros)
                     .ThenInclude(lg => lg.Genero)
+                .Include(l => l.Sinopse)
                 .ToListAsync();
         }
 
@@ -63,6 +65,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
                 .Include(l => l.Editora)
                 .Include(l => l.LivroGeneros)
                     .ThenInclude(lg => lg.Genero)
+                .Include(l => l.Sinopse)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -86,6 +89,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
                 .Include(l => l.LivroGeneros)
                     .ThenInclude(lg => lg.Genero)
                 .Include(l => l.Avaliacoes)
+                .Include(l => l.Sinopse)
                 .AsQueryable();
 
             if (anoPublicacao.HasValue)

@@ -42,7 +42,8 @@ namespace WebApiLivraria.Application.Services
                 EditoraNome = l.Editora?.Nome,
                 AnoPublicacao = l.AnoPublicacao,
                 ImagemUrl = l.ImagemUrl,
-                Generos = l.LivroGeneros.Select(g => g.GeneroId).ToList()
+                Generos = l.LivroGeneros.Select(g => g.GeneroId).ToList(),
+                Sinopse = l.Sinopse?.Texto
             });
         }
 
@@ -62,11 +63,12 @@ namespace WebApiLivraria.Application.Services
                 EditoraNome = livro.Editora?.Nome,
                 AnoPublicacao = livro.AnoPublicacao,
                 ImagemUrl = livro.ImagemUrl,
-                Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList()
+                Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList(),
+                Sinopse = livro.Sinopse?.Texto
             };
         }
 
-        public async Task AdicionarAsync(LivroDto dto)
+        public async Task<LivroDto> AdicionarAsync(LivroDto dto)
         {
             var autor = await _autorRepository.ObterPorIdAsync(dto.AutorId);
             if (autor == null)
@@ -80,7 +82,7 @@ namespace WebApiLivraria.Application.Services
             if (generosValidos == null || !generosValidos.Any())
                 throw new Exception("Gêneros inválidos ou não encontrados.");
 
-            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, dto.AnoPublicacao);
+            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, dto.AnoPublicacao, dto.ImagemUrl);
 
             foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
             {
@@ -89,6 +91,26 @@ namespace WebApiLivraria.Application.Services
             }
 
             await _livroRepository.AdicionarAsync(livro);
+
+            if (!string.IsNullOrWhiteSpace(dto.Sinopse))
+            {
+                livro.AtualizarSinopse(dto.Sinopse);
+                await _livroRepository.AtualizarAsync(livro);
+            }
+
+            return new LivroDto
+            {
+                Id = livro.Id,
+                Titulo = livro.Titulo,
+                AutorId = livro.AutorId,
+                AutorNome = autor.Nome,
+                EditoraId = livro.EditoraId,
+                EditoraNome = editora.Nome,
+                AnoPublicacao = livro.AnoPublicacao,
+                ImagemUrl = livro.ImagemUrl,
+                Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList(),
+                Sinopse = livro.Sinopse?.Texto
+            };
         }
 
         public async Task AtualizarAsync(LivroDto dto)
@@ -99,6 +121,13 @@ namespace WebApiLivraria.Application.Services
             livroExistente.AtualizarTitulo(dto.Titulo);
             livroExistente.AtualizarAutor(dto.AutorId);
             livroExistente.AtualizarEditora(dto.EditoraId);
+            livroExistente.AtualizarAnoPublicacao(dto.AnoPublicacao);
+            livroExistente.AtualizarImagemUrl(dto.ImagemUrl);
+
+            if (!string.IsNullOrWhiteSpace(dto.Sinopse))
+            {
+                livroExistente.AtualizarSinopse(dto.Sinopse);
+            }
 
             livroExistente.LimparGeneros();
 
