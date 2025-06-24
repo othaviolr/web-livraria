@@ -8,7 +8,7 @@ namespace WebApiLivraria.Application.Interfaces
     {
         Task<IEnumerable<LivroDto>> ListarAsync(string? search = null);
         Task<LivroDto> ObterPorIdAsync(int id);
-        Task AdicionarAsync(LivroDto dto);
+        Task<LivroDto> AdicionarAsync(LivroDto dto);
         Task AtualizarAsync(LivroDto dto);
         Task RemoverAsync(int id);
     }

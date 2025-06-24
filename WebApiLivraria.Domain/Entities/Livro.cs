@@ -58,6 +58,10 @@ namespace WebApiLivraria.Domain.Entities
         {
             if (Sinopse == null)
             {
+                if (Id == 0)
+                {
+                    throw new InvalidOperationException("Não é possível criar sinopse antes de o livro ter um Id.");
+                }
                 Sinopse = new Sinopse(this.Id, texto);
             }
             else

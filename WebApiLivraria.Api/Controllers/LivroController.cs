@@ -37,12 +37,12 @@ namespace WebApiLivraria.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] LivroDto dto)
         {
-            await _livroService.AdicionarAsync(dto);
+            var livroCriado = await _livroService.AdicionarAsync(dto);
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = dto.Id },
-                RespostaPadrao<LivroDto>.ComSucesso(dto, MensagensLivro.LivroCriadoSucesso)
+                new { id = livroCriado.Id },
+                RespostaPadrao<LivroDto>.ComSucesso(livroCriado, MensagensLivro.LivroCriadoSucesso)
             );
         }
 
