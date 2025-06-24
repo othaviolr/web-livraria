@@ -12,5 +12,7 @@
         public DateTime AnoPublicacao { get; set; }
         public List<int> Generos { get; set; } = new();
         public string? Sinopse { get; set; }
+        public int NumeroPaginas { get; set; }
+        public string? Idioma { get; set; }
     }
 }

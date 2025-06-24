@@ -18,12 +18,24 @@ namespace WebApiLivraria.Domain.Entities
         public string? ImagemUrl { get; private set; }
         public virtual Sinopse Sinopse { get; private set; }
 
-        public Livro(string titulo, int autorId, int editoraId, DateTime anoPublicacao, string? imagemUrl = null)
+        public int NumeroPaginas { get; private set; }
+        public string Idioma { get; private set; }
+
+        public Livro(
+            string titulo,
+            int autorId,
+            int editoraId,
+            DateTime anoPublicacao,
+            int numeroPaginas,
+            string idioma,
+            string? imagemUrl = null)
         {
             Titulo = titulo;
             AutorId = autorId;
             EditoraId = editoraId;
             AnoPublicacao = anoPublicacao;
+            NumeroPaginas = numeroPaginas;
+            Idioma = idioma;
             ImagemUrl = imagemUrl;
         }
 
@@ -88,6 +100,16 @@ namespace WebApiLivraria.Domain.Entities
         public void LimparGeneros()
         {
             LivroGeneros.Clear();
+        }
+
+        public void AtualizarNumeroPaginas(int numeroPaginas)
+        {
+            NumeroPaginas = numeroPaginas;
+        }
+
+        public void AtualizarIdioma(string idioma)
+        {
+            Idioma = idioma;
         }
 
         public double NotaMedia => Avaliacoes.Any() ? Avaliacoes.Average(a => a.Nota) : 0;

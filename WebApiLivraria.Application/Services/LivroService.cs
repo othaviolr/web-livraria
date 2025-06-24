@@ -42,6 +42,8 @@ namespace WebApiLivraria.Application.Services
                 EditoraNome = l.Editora?.Nome,
                 AnoPublicacao = l.AnoPublicacao,
                 ImagemUrl = l.ImagemUrl,
+                NumeroPaginas = l.NumeroPaginas,
+                Idioma = l.Idioma,
                 Generos = l.LivroGeneros.Select(g => g.GeneroId).ToList(),
                 Sinopse = l.Sinopse?.Texto
             });
@@ -63,6 +65,8 @@ namespace WebApiLivraria.Application.Services
                 EditoraNome = livro.Editora?.Nome,
                 AnoPublicacao = livro.AnoPublicacao,
                 ImagemUrl = livro.ImagemUrl,
+                NumeroPaginas = livro.NumeroPaginas,
+                Idioma = livro.Idioma,
                 Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList(),
                 Sinopse = livro.Sinopse?.Texto
             };
@@ -82,7 +86,7 @@ namespace WebApiLivraria.Application.Services
             if (generosValidos == null || !generosValidos.Any())
                 throw new Exception("Gêneros inválidos ou não encontrados.");
 
-            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, dto.AnoPublicacao, dto.ImagemUrl);
+            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, dto.AnoPublicacao, dto.NumeroPaginas, dto.Idioma, dto.ImagemUrl);
 
             foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
             {
@@ -108,6 +112,8 @@ namespace WebApiLivraria.Application.Services
                 EditoraNome = editora.Nome,
                 AnoPublicacao = livro.AnoPublicacao,
                 ImagemUrl = livro.ImagemUrl,
+                NumeroPaginas = livro.NumeroPaginas,
+                Idioma = livro.Idioma,
                 Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList(),
                 Sinopse = livro.Sinopse?.Texto
             };
@@ -123,6 +129,8 @@ namespace WebApiLivraria.Application.Services
             livroExistente.AtualizarEditora(dto.EditoraId);
             livroExistente.AtualizarAnoPublicacao(dto.AnoPublicacao);
             livroExistente.AtualizarImagemUrl(dto.ImagemUrl);
+            livroExistente.AtualizarNumeroPaginas(dto.NumeroPaginas);
+            livroExistente.AtualizarIdioma(dto.Idioma);
 
             if (!string.IsNullOrWhiteSpace(dto.Sinopse))
             {
