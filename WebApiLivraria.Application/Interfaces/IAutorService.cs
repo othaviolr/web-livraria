@@ -11,5 +11,6 @@ namespace WebApiLivraria.Application.Interfaces
         Task<AutorDto> AdicionarAsync(AutorDto autor);
         Task AtualizarAsync(AutorDto autor);
         Task RemoverAsync(int id);
+        Task<List<AutorDto>> ObterTodosAsync();
     }
 }

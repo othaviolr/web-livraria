@@ -57,5 +57,12 @@ namespace WebApiLivraria.Api.Controllers
 
             return Ok(RespostaPadrao<string>.ComSucesso(MensagensAutor.AutorRemovidoSucesso));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var autores = await _autorService.ObterTodosAsync();
+            return Ok(RespostaPadrao<List<AutorDto>>.ComSucesso(autores, "Autores listados com sucesso."));
+        }
     }
 }
