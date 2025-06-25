@@ -26,6 +26,28 @@ namespace WebApiLivraria.Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Autor>(entity =>
+            {
+                entity.Property(a => a.Nome)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(a => a.Biografia)
+                    .HasMaxLength(2000)
+                    .IsRequired(false);
+
+                entity.Property(a => a.LocalNascimento)
+                    .HasMaxLength(200)
+                    .IsRequired(false);
+
+                entity.Property(a => a.FotoUrl)
+                    .HasMaxLength(500)
+                    .IsRequired(false);
+
+                entity.Property(a => a.DataNascimento)
+                    .IsRequired(false);
+            });
+
             modelBuilder.Entity<LivroGenero>()
                 .HasKey(lg => new { lg.LivroId, lg.GeneroId });
 
