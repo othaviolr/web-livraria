@@ -59,9 +59,9 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string filtro = null)
         {
-            var autores = await _autorService.ObterTodosAsync();
+            var autores = await _autorService.ObterTodosAsync(filtro);
             return Ok(RespostaPadrao<List<AutorDto>>.ComSucesso(autores, "Autores listados com sucesso."));
         }
     }

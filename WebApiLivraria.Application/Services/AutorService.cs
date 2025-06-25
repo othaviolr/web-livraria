@@ -23,9 +23,9 @@ namespace WebApiLivraria.Application.Services
             return autores.Select(a => MapToDto(a));
         }
 
-        public async Task<List<AutorDto>> ObterTodosAsync()
+        public async Task<List<AutorDto>> ObterTodosAsync(string filtro = null)
         {
-            var autores = await _autorRepository.ListarAsync();
+            var autores = await _autorRepository.ListarAsync(filtro);
             return autores.Select(a => MapToDto(a)).ToList();
         }
 

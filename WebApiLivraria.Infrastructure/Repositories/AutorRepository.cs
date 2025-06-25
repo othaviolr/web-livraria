@@ -3,6 +3,7 @@ using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Infrastructure.Context;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebApiLivraria.Infrastructure.Repositories
@@ -43,9 +44,17 @@ namespace WebApiLivraria.Infrastructure.Repositories
             return await _context.Autores.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Autor>> ListarAsync()
+        public async Task<IEnumerable<Autor>> ListarAsync(string filtro = null)
         {
-            return await _context.Autores.ToListAsync();
+            var query = _context.Autores.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filtro))
+            {
+                filtro = filtro.ToLower();
+                query = query.Where(a => a.Nome.ToLower().Contains(filtro));
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<int> ObterMaiorIdAsync()
