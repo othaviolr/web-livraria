@@ -2,6 +2,8 @@
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Infrastructure.Context;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Infrastructure.Repositories
 {
@@ -44,6 +46,11 @@ namespace WebApiLivraria.Infrastructure.Repositories
         public async Task<IEnumerable<Autor>> ListarAsync()
         {
             return await _context.Autores.ToListAsync();
+        }
+
+        public async Task<int> ObterMaiorIdAsync()
+        {
+            return await _context.Autores.MaxAsync(a => (int?)a.Id) ?? 0;
         }
     }
 }

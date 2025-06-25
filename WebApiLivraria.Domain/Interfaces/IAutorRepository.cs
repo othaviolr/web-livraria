@@ -1,4 +1,6 @@
 ﻿using WebApiLivraria.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Domain.Interfaces
 {
@@ -9,5 +11,7 @@ namespace WebApiLivraria.Domain.Interfaces
         Task AdicionarAsync(Autor autor);
         Task AtualizarAsync(Autor autor);
         Task RemoverAsync(int id);
+
+        Task<int> ObterMaiorIdAsync();
     }
 }
