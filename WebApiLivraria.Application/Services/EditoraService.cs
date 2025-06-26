@@ -20,7 +20,9 @@ namespace WebApiLivraria.Application.Services
             return editoras.Select(e => new EditoraDto
             {
                 Id = e.Id,
-                Nome = e.Nome
+                Nome = e.Nome,
+                Biografia = e.Biografia,
+                ImagemUrl = e.ImagemUrl
             });
         }
 
@@ -32,20 +34,24 @@ namespace WebApiLivraria.Application.Services
             return new EditoraDto
             {
                 Id = editora.Id,
-                Nome = editora.Nome
+                Nome = editora.Nome,
+                Biografia = editora.Biografia,
+                ImagemUrl = editora.ImagemUrl
             };
         }
 
         public async Task<EditoraDto> AdicionarAsync(EditoraDto dto)
         {
-            var editora = new Editora(dto.Nome);
+            var editora = new Editora(dto.Nome, dto.Biografia, dto.ImagemUrl);
 
             await _editoraRepository.AdicionarAsync(editora);
 
             return new EditoraDto
             {
                 Id = editora.Id,
-                Nome = editora.Nome
+                Nome = editora.Nome,
+                Biografia = editora.Biografia,
+                ImagemUrl = editora.ImagemUrl
             };
         }
 
@@ -55,6 +61,9 @@ namespace WebApiLivraria.Application.Services
             if (editoraExistente == null) return;
 
             editoraExistente.AtualizarNome(dto.Nome);
+            editoraExistente.AtualizarBiografia(dto.Biografia);
+            editoraExistente.AtualizarImagemUrl(dto.ImagemUrl);
+
             await _editoraRepository.AtualizarAsync(editoraExistente);
         }
 
