@@ -57,5 +57,12 @@ namespace WebApiLivraria.Api.Controllers
 
             return Ok(RespostaPadrao<string>.ComSucesso(MensagensEditora.EditoraRemovidaSucesso));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var editoras = await _editoraService.ListarAsync();
+            return Ok(RespostaPadrao<IEnumerable<EditoraDto>>.ComSucesso(editoras, "Editoras listadas com sucesso."));
+        }
     }
 }
