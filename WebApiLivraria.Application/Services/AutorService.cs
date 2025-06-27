@@ -43,6 +43,7 @@ namespace WebApiLivraria.Application.Services
 
             var autor = new Autor(
                 dto.Nome,
+                dto.EditoraId,
                 dto.Biografia,
                 dto.DataNascimento,
                 dto.LocalNascimento,
@@ -63,6 +64,7 @@ namespace WebApiLivraria.Application.Services
 
             autorExistente.Atualizar(
                 dto.Nome,
+                dto.EditoraId,
                 dto.Biografia,
                 dto.DataNascimento,
                 dto.LocalNascimento,
@@ -83,6 +85,7 @@ namespace WebApiLivraria.Application.Services
             {
                 Id = autor.Id,
                 Nome = autor.Nome,
+                EditoraId = autor.EditoraId,
                 Biografia = autor.Biografia,
                 DataNascimento = autor.DataNascimento,
                 LocalNascimento = autor.LocalNascimento,
