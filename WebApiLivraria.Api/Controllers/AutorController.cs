@@ -2,6 +2,8 @@
 using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Constantes.Autor;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -59,9 +61,10 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string filtro = null)
+        public async Task<IActionResult> GetAll([FromQuery] string filtro = null, [FromQuery] int? editoraId = null)
         {
-            var autores = await _autorService.ObterTodosAsync(filtro);
+            var autores = await _autorService.ObterTodosAsync(filtro, editoraId);
+
             return Ok(RespostaPadrao<List<AutorDto>>.ComSucesso(autores, "Autores listados com sucesso."));
         }
     }

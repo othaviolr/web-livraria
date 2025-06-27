@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Infrastructure.Context;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using WebApiLivraria.Infrastructure.Data;
 
 namespace WebApiLivraria.Infrastructure.Repositories
 {
@@ -17,10 +19,36 @@ namespace WebApiLivraria.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AdicionarAsync(Autor autor)
+        public async Task<IEnumerable<Autor>> ListarAsync(string filtro = null, int? editoraId = null)
         {
-            await _context.Autores.AddAsync(autor);
+            var query = _context.Autores.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filtro))
+            {
+                var filtroLower = filtro.ToLower();
+                query = query.Where(a => a.Nome.ToLower().Contains(filtroLower));
+            }
+
+            if (editoraId.HasValue)
+            {
+                query = query.Where(a => a.EditoraId == editoraId.Value);
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<Autor> ObterPorIdAsync(int id)
+        {
+            return await _context.Autores
+                .Include(a => a.Livros)
+                .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<Autor> AdicionarAsync(Autor autor)
+        {
+            _context.Autores.Add(autor);
             await _context.SaveChangesAsync();
+            return autor;
         }
 
         public async Task AtualizarAsync(Autor autor)
@@ -37,29 +65,6 @@ namespace WebApiLivraria.Infrastructure.Repositories
                 _context.Autores.Remove(autor);
                 await _context.SaveChangesAsync();
             }
-        }
-
-        public async Task<Autor> ObterPorIdAsync(int id)
-        {
-            return await _context.Autores.FindAsync(id);
-        }
-
-        public async Task<IEnumerable<Autor>> ListarAsync(string filtro = null)
-        {
-            var query = _context.Autores.AsQueryable();
-
-            if (!string.IsNullOrEmpty(filtro))
-            {
-                filtro = filtro.ToLower();
-                query = query.Where(a => a.Nome.ToLower().Contains(filtro));
-            }
-
-            return await query.ToListAsync();
-        }
-
-        public async Task<int> ObterMaiorIdAsync()
-        {
-            return await _context.Autores.MaxAsync(a => (int?)a.Id) ?? 0;
         }
     }
 }
