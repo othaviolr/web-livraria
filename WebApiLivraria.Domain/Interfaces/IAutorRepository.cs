@@ -1,18 +1,15 @@
-﻿using WebApiLivraria.Domain.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApiLivraria.Domain.Entities;
 
-namespace WebApiLivraria.Domain.Interfaces
+namespace WebApiLivraria.Application.Interfaces
 {
     public interface IAutorRepository
     {
-        Task<IEnumerable<Autor>> ListarAsync(string filtro = null);
-
+        Task<IEnumerable<Autor>> ListarAsync(string filtro = null, int? editoraId = null);
         Task<Autor> ObterPorIdAsync(int id);
-        Task AdicionarAsync(Autor autor);
+        Task<Autor> AdicionarAsync(Autor autor);
         Task AtualizarAsync(Autor autor);
         Task RemoverAsync(int id);
-
-        Task<int> ObterMaiorIdAsync();
     }
 }

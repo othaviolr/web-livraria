@@ -23,9 +23,9 @@ namespace WebApiLivraria.Application.Services
             return autores.Select(a => MapToDto(a));
         }
 
-        public async Task<List<AutorDto>> ObterTodosAsync(string filtro = null)
+        public async Task<List<AutorDto>> ObterTodosAsync(string filtro = null, int? editoraId = null)
         {
-            var autores = await _autorRepository.ListarAsync(filtro);
+            var autores = await _autorRepository.ListarAsync(filtro, editoraId);
             return autores.Select(a => MapToDto(a)).ToList();
         }
 
@@ -38,9 +38,6 @@ namespace WebApiLivraria.Application.Services
 
         public async Task<AutorDto> AdicionarAsync(AutorDto dto)
         {
-            var ultimoId = await _autorRepository.ObterMaiorIdAsync();
-            int novoId = ultimoId + 1;
-
             var autor = new Autor(
                 dto.Nome,
                 dto.EditoraId,
@@ -50,7 +47,6 @@ namespace WebApiLivraria.Application.Services
                 dto.FotoUrl
             );
 
-            autor.SetId(novoId);
 
             await _autorRepository.AdicionarAsync(autor);
 
