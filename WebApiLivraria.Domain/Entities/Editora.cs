@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace WebApiLivraria.Domain.Entities
 {
@@ -8,6 +8,8 @@ namespace WebApiLivraria.Domain.Entities
         public string Nome { get; private set; }
         public string Biografia { get; private set; }
         public string ImagemUrl { get; private set; }
+
+        public ICollection<Autor> Autores { get; private set; } = new List<Autor>();
 
         public Editora(string nome, string biografia, string imagemUrl)
         {

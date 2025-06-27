@@ -12,18 +12,26 @@ namespace WebApiLivraria.Domain.Entities
         public string? LocalNascimento { get; private set; }
         public string? FotoUrl { get; private set; }
 
+        public int? EditoraId { get; private set; }
+        public Editora? Editora { get; private set; }
+
         public ICollection<Livro> Livros { get; private set; }
 
-        protected Autor() { }
+        protected Autor()
+        {
+            Livros = new List<Livro>();
+        }
 
         public Autor(
             string nome,
+            int? editoraId = null,
             string? biografia = null,
             DateTime? dataNascimento = null,
             string? localNascimento = null,
             string? fotoUrl = null)
         {
             Nome = nome;
+            EditoraId = editoraId;
             Biografia = biografia;
             DataNascimento = dataNascimento;
             LocalNascimento = localNascimento;
@@ -38,12 +46,14 @@ namespace WebApiLivraria.Domain.Entities
 
         public void Atualizar(
             string nome,
+            int? editoraId,
             string? biografia,
             DateTime? dataNascimento,
             string? localNascimento,
             string? fotoUrl)
         {
             Nome = nome;
+            EditoraId = editoraId;
             Biografia = biografia;
             DataNascimento = dataNascimento;
             LocalNascimento = localNascimento;

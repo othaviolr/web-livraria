@@ -46,6 +46,30 @@ namespace WebApiLivraria.Infrastructure.Context
 
                 entity.Property(a => a.DataNascimento)
                     .IsRequired(false);
+
+                entity.HasOne(a => a.Editora)
+                      .WithMany(e => e.Autores)
+                      .HasForeignKey(a => a.EditoraId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Editora>(entity =>
+            {
+                entity.Property(e => e.Nome)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Biografia)
+                    .IsRequired()
+                    .HasMaxLength(2000);
+
+                entity.Property(e => e.ImagemUrl)
+                    .IsRequired();
+
+                entity.HasMany(e => e.Autores)
+                      .WithOne(a => a.Editora)
+                      .HasForeignKey(a => a.EditoraId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<LivroGenero>()
