@@ -26,13 +26,19 @@ namespace WebApiLivraria.Application.Services
             var chaveSimetrica = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveSecreta));
             var credenciais = new SigningCredentials(chaveSimetrica, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, usuario.Nome),
-                new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
+                new Claim("id", usuario.Id.ToString()),
+                new Claim(ClaimTypes.Name, usuario.Nome),
+                new Claim(ClaimTypes.Email, usuario.Email),
+                new Claim(ClaimTypes.Role, usuario.Role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            if (!string.IsNullOrEmpty(usuario.NomeUsuario))
+            {
+                claims.Add(new Claim("nomeUsuario", usuario.NomeUsuario));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

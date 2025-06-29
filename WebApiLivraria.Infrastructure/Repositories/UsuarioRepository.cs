@@ -19,9 +19,20 @@ public class UsuarioRepository : IUsuarioRepository
         return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
     }
 
+    public async Task<Usuario?> ObterPorId(Guid id)
+    {
+        return await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+    }
+
     public async Task Adicionar(Usuario usuario)
     {
         _context.Usuarios.Add(usuario);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task Atualizar(Usuario usuario)
+    {
+        _context.Usuarios.Update(usuario);
         await _context.SaveChangesAsync();
     }
 }
