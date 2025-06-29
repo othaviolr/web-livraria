@@ -33,7 +33,15 @@ public class UsuariosController : ControllerBase
         var usuario = await _usuarioRepository.ObterPorId(userId);
         if (usuario == null) return NotFound();
 
-        return Ok(usuario);
+        var perfilDto = new UsuarioPerfilDto
+        {
+            NomeUsuario = usuario.NomeUsuario,
+            FotoUrl = usuario.FotoUrl,
+            Cidade = usuario.Cidade,
+            Role = usuario.Role
+        };
+
+        return Ok(perfilDto);
     }
 
     [HttpPut("perfil")]
@@ -49,6 +57,14 @@ public class UsuariosController : ControllerBase
 
         await _usuarioRepository.Atualizar(usuario);
 
-        return Ok(usuario);
+        var perfilDto = new UsuarioPerfilDto
+        {
+            NomeUsuario = usuario.NomeUsuario,
+            FotoUrl = usuario.FotoUrl,
+            Cidade = usuario.Cidade,
+            Role = usuario.Role
+        };
+
+        return Ok(perfilDto);
     }
 }
