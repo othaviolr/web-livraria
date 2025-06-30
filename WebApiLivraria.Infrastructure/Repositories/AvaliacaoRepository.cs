@@ -22,6 +22,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             return await _context.Avaliacoes
                 .AsNoTracking()
                 .Where(a => a.LivroId == livroId)
+                .Include(a => a.Usuario)
                 .ToListAsync();
         }
 
@@ -45,6 +46,19 @@ namespace WebApiLivraria.Infrastructure.Repositories
                 _context.Avaliacoes.Remove(avaliacao);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<double> ObterMediaNotasPorLivroAsync(int livroId)
+        {
+            return await _context.Avaliacoes
+                .Where(a => a.LivroId == livroId)
+                .AverageAsync(a => (double?)a.Nota) ?? 0.0;
+        }
+
+        public async Task<int> ObterQuantidadeAvaliacoesPorLivroAsync(int livroId)
+        {
+            return await _context.Avaliacoes
+                .CountAsync(a => a.LivroId == livroId);
         }
     }
 }

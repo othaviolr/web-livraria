@@ -15,4 +15,8 @@
     <ProjectReference Include="..\WebApiLivraria.Infrastructure\WebApiLivraria.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UseCases\Avaliacao\Editar\" />
+  </ItemGroup>
+
 </Project>

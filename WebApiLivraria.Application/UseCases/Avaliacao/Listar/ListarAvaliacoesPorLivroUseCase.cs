@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiLivraria.Domain.Interfaces;
+using WebApiLivraria.Application.Dto;
 
 namespace WebApiLivraria.Application.UseCases.Avaliacao.Listar
 {
@@ -25,7 +26,7 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Listar
                 UsuarioId = a.UsuarioId,
                 Nota = a.Nota,
                 Comentario = a.Comentario,
-                DataAvaliacao = a.DataAvaliacao
+                DataAvaliacao = a.DataCriacao
             }).ToList();
         }
     }
