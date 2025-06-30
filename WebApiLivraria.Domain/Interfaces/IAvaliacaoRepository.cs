@@ -10,5 +10,7 @@ namespace WebApiLivraria.Domain.Interfaces
         Task AdicionarAsync(Avaliacao avaliacao);
         Task AtualizarAsync(Avaliacao avaliacao);
         Task RemoverAsync(int id);
+        Task<double> ObterMediaNotasPorLivroAsync(int livroId);
+        Task<int> ObterQuantidadeAvaliacoesPorLivroAsync(int livroId);
     }
 }

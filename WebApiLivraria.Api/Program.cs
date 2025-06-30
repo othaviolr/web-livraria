@@ -7,6 +7,7 @@ using WebApiLivraria.Application.Services;
 using WebApiLivraria.Application.UseCases.Auth;
 using WebApiLivraria.Application.UseCases.Avaliacao.Criar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
+using WebApiLivraria.Application.UseCases.Avaliacao.Resumo;
 using WebApiLivraria.Application.UseCases.Favorito;
 using WebApiLivraria.Application.UseCases.ListaDesejo;
 using WebApiLivraria.Application.UseCases.RankingLivro;
@@ -47,6 +48,9 @@ builder.Services.AddScoped<IRankingService, RankingService>();
 builder.Services.AddScoped<IRankingLivroUseCase, RankingLivroUseCase>();
 builder.Services.AddScoped<ICriarAvaliacaoUseCase, CriarAvaliacaoUseCase>();
 builder.Services.AddScoped<IListarAvaliacoesPorLivroUseCase, ListarAvaliacoesPorLivroUseCase>();
+
+builder.Services.AddScoped<IObterResumoAvaliacaoLivroUseCase, ObterResumoAvaliacaoLivroUseCase>();
+
 builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAdicionarFavoritoUseCase, AdicionarFavoritoUseCase>();
