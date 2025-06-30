@@ -72,7 +72,7 @@ namespace WebApiLivraria.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DataAvaliacao")
+                    b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("LivroId")
@@ -81,12 +81,14 @@ namespace WebApiLivraria.Infrastructure.Migrations
                     b.Property<int>("Nota")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("LivroId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Avaliacoes");
                 });
@@ -342,7 +344,15 @@ namespace WebApiLivraria.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WebApiLivraria.Domain.Entities.Usuario", "Usuario")
+                        .WithMany("Avaliacoes")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Livro");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("WebApiLivraria.Domain.Entities.Favorito", b =>
@@ -461,6 +471,11 @@ namespace WebApiLivraria.Infrastructure.Migrations
 
                     b.Navigation("Sinopse")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApiLivraria.Domain.Entities.Usuario", b =>
+                {
+                    b.Navigation("Avaliacoes");
                 });
 #pragma warning restore 612, 618
         }
