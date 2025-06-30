@@ -91,6 +91,12 @@ namespace WebApiLivraria.Infrastructure.Context
                 .HasForeignKey(a => a.LivroId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Avaliacao>()
+                .HasOne(a => a.Usuario)
+                .WithMany(u => u.Avaliacoes)
+                .HasForeignKey(a => a.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<RankingLivro>()
                 .HasOne(r => r.Livro)
                 .WithMany()
