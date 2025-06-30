@@ -12,5 +12,6 @@ namespace WebApiLivraria.Domain.Interfaces
         Task RemoverAsync(int id);
         Task<double> ObterMediaNotasPorLivroAsync(int livroId);
         Task<int> ObterQuantidadeAvaliacoesPorLivroAsync(int livroId);
+        Task<Avaliacao> ObterPorIdAsync(int id);
     }
 }
