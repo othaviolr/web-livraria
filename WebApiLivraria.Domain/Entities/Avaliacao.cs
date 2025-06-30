@@ -1,7 +1,7 @@
-﻿using WebApiLivraria.Domain.Entities;
+﻿using System;
 
 namespace WebApiLivraria.Domain.Entities
-{ 
+{
     public class Avaliacao
     {
         public int Id { get; private set; }
@@ -21,6 +21,13 @@ namespace WebApiLivraria.Domain.Entities
             UsuarioId = usuarioId;
             Nota = nota;
             Comentario = comentario;
+            DataCriacao = DateTime.UtcNow;
+        }
+
+        public void Atualizar(int novaNota, string novoComentario)
+        {
+            Nota = novaNota;
+            Comentario = novoComentario;
             DataCriacao = DateTime.UtcNow;
         }
 

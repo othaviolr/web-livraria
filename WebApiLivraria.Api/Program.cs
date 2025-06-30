@@ -6,6 +6,8 @@ using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Application.Services;
 using WebApiLivraria.Application.UseCases.Auth;
 using WebApiLivraria.Application.UseCases.Avaliacao.Criar;
+using WebApiLivraria.Application.UseCases.Avaliacao.Editar;
+using WebApiLivraria.Application.UseCases.Avaliacao.Excluir;
 using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Resumo;
 using WebApiLivraria.Application.UseCases.Favorito;
@@ -48,9 +50,9 @@ builder.Services.AddScoped<IRankingService, RankingService>();
 builder.Services.AddScoped<IRankingLivroUseCase, RankingLivroUseCase>();
 builder.Services.AddScoped<ICriarAvaliacaoUseCase, CriarAvaliacaoUseCase>();
 builder.Services.AddScoped<IListarAvaliacoesPorLivroUseCase, ListarAvaliacoesPorLivroUseCase>();
-
 builder.Services.AddScoped<IObterResumoAvaliacaoLivroUseCase, ObterResumoAvaliacaoLivroUseCase>();
-
+builder.Services.AddScoped<IEditarAvaliacaoUseCase, EditarAvaliacaoUseCase>();
+builder.Services.AddScoped<IExcluirAvaliacaoUseCase, ExcluirAvaliacaoUseCase>();
 builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAdicionarFavoritoUseCase, AdicionarFavoritoUseCase>();

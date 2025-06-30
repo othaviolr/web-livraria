@@ -60,5 +60,10 @@ namespace WebApiLivraria.Infrastructure.Repositories
             return await _context.Avaliacoes
                 .CountAsync(a => a.LivroId == livroId);
         }
+
+        public async Task<Avaliacao> ObterPorIdAsync(int id)
+        {
+            return await _context.Avaliacoes.FindAsync(id);
+        }
     }
 }
