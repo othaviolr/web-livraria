@@ -1,4 +1,6 @@
 ﻿using WebApiLivraria.Domain.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Application.UseCases.Avaliacao.Excluir
 {
@@ -11,7 +13,7 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Excluir
             _avaliacaoRepository = avaliacaoRepository;
         }
 
-        public async Task ExecutarAsync(int id, int usuarioId)
+        public async Task ExecutarAsync(int id, Guid usuarioId)
         {
             var avaliacao = await _avaliacaoRepository.ObterPorIdAsync(id);
             if (avaliacao == null)

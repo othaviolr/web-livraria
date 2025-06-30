@@ -8,14 +8,14 @@ namespace WebApiLivraria.Domain.Entities
         public int LivroId { get; private set; }
         public Livro Livro { get; private set; }
 
-        public int UsuarioId { get; private set; }
+        public Guid UsuarioId { get; private set; }
         public Usuario Usuario { get; private set; }
 
         public int Nota { get; private set; }
         public string Comentario { get; private set; }
         public DateTime DataCriacao { get; private set; }
 
-        public Avaliacao(int livroId, int usuarioId, int nota, string comentario)
+        public Avaliacao(int livroId, Guid usuarioId, int nota, string comentario)
         {
             LivroId = livroId;
             UsuarioId = usuarioId;

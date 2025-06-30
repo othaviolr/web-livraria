@@ -1,4 +1,6 @@
-﻿using WebApiLivraria.Domain.Interfaces;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebApiLivraria.Domain.Interfaces;
 
 namespace WebApiLivraria.Application.UseCases.Avaliacao.Editar
 {

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using WebApiLivraria.Application.UseCases.Avaliacao.Criar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Resumo;
 using WebApiLivraria.Application.UseCases.Avaliacao.Editar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Excluir;
 using WebApiLivraria.Application.Dto;
+using System;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -35,8 +38,18 @@ namespace WebApiLivraria.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Criar([FromBody] CriarAvaliacaoRequest request)
         {
-            await _criarAvaliacaoUseCase.ExecutarAsync(request);
-            return Ok(RespostaPadrao<string>.ComSucesso("Avaliação criada com sucesso."));
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                await _criarAvaliacaoUseCase.ExecutarAsync(request);
+                return Ok(RespostaPadrao<string>.ComSucesso("Avaliação criada com sucesso."));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(RespostaPadrao<string>.ComErro($"Erro ao criar avaliação: {ex.Message}"));
+            }
         }
 
         [HttpGet("{livroId}")]
@@ -56,18 +69,51 @@ namespace WebApiLivraria.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Editar(int id, [FromBody] EditarAvaliacaoRequest request)
         {
-            if (id != request.Id)
-                return BadRequest("Id da avaliação inconsistente.");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            await _editarAvaliacaoUseCase.ExecutarAsync(request);
-            return Ok(RespostaPadrao<string>.ComSucesso("Avaliação atualizada com sucesso."));
+            if (id != request.Id)
+                return BadRequest(RespostaPadrao<string>.ComErro("Id da avaliação inconsistente."));
+
+            try
+            {
+                await _editarAvaliacaoUseCase.ExecutarAsync(request);
+                return Ok(RespostaPadrao<string>.ComSucesso("Avaliação atualizada com sucesso."));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(RespostaPadrao<string>.ComErro(knf.Message));
+            }
+            catch (UnauthorizedAccessException ua)
+            {
+                return Unauthorized(RespostaPadrao<string>.ComErro(ua.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(RespostaPadrao<string>.ComErro($"Erro ao atualizar avaliação: {ex.Message}"));
+            }
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Excluir(int id, [FromQuery] int usuarioId)
+        public async Task<IActionResult> Excluir(int id, [FromQuery] Guid usuarioId)
         {
-            await _excluirAvaliacaoUseCase.ExecutarAsync(id, usuarioId);
-            return Ok(RespostaPadrao<string>.ComSucesso("Avaliação excluída com sucesso."));
+            try
+            {
+                await _excluirAvaliacaoUseCase.ExecutarAsync(id, usuarioId);
+                return Ok(RespostaPadrao<string>.ComSucesso("Avaliação excluída com sucesso."));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(RespostaPadrao<string>.ComErro(knf.Message));
+            }
+            catch (UnauthorizedAccessException ua)
+            {
+                return Unauthorized(RespostaPadrao<string>.ComErro(ua.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(RespostaPadrao<string>.ComErro($"Erro ao excluir avaliação: {ex.Message}"));
+            }
         }
     }
 }

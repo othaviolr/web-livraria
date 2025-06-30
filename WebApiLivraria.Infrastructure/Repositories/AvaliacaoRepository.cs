@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
@@ -23,6 +24,15 @@ namespace WebApiLivraria.Infrastructure.Repositories
                 .AsNoTracking()
                 .Where(a => a.LivroId == livroId)
                 .Include(a => a.Usuario)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Avaliacao>> ListarPorUsuarioIdAsync(Guid usuarioId)
+        {
+            return await _context.Avaliacoes
+                .AsNoTracking()
+                .Where(a => a.UsuarioId == usuarioId)
+                .Include(a => a.Livro)
                 .ToListAsync();
         }
 
