@@ -1,4 +1,5 @@
 ﻿using System;
+using WebApiLivraria.Application.Dto;
 
 namespace WebApiLivraria.Application.UseCases.Avaliacao.Listar
 {
@@ -6,9 +7,10 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Listar
     {
         public int Id { get; set; }
         public int LivroId { get; set; }
-        public Guid UsuarioId { get; set; }
         public int Nota { get; set; }
         public string Comentario { get; set; } = string.Empty;
         public DateTime DataAvaliacao { get; set; }
+
+        public UsuarioResumoDto Usuario { get; set; }
     }
 }

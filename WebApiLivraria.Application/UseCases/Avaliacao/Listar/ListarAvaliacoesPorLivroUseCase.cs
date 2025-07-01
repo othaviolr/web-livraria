@@ -23,10 +23,15 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Listar
             {
                 Id = a.Id,
                 LivroId = a.LivroId,
-                UsuarioId = a.UsuarioId,
                 Nota = a.Nota,
                 Comentario = a.Comentario,
-                DataAvaliacao = a.DataCriacao
+                DataAvaliacao = a.DataCriacao,
+                Usuario = new UsuarioResumoDto
+                {
+                    Nome = a.Usuario?.Nome ?? "",
+                    NomeUsuario = a.Usuario?.NomeUsuario ?? "",
+                    FotoUrl = a.Usuario?.FotoUrl ?? ""
+                }
             }).ToList();
         }
     }
