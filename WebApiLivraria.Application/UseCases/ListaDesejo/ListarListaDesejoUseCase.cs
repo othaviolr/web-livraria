@@ -25,5 +25,10 @@ namespace WebApiLivraria.Application.UseCases.ListaDesejo
                 DataCriacao = ld.DataCriacao
             }).ToList();
         }
+
+        public async Task<bool> VerificarListaDesejo(Guid usuarioId, int livroId)
+        {
+            return await _listaDesejoRepository.Existe(usuarioId, livroId);
+        }
     }
 }

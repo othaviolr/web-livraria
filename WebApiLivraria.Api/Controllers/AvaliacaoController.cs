@@ -52,7 +52,6 @@ namespace WebApiLivraria.Api.Controllers
             }
         }
 
-        // Atualizei a rota aqui para ficar: GET api/avaliacao/livro/{livroId}
         [HttpGet("livro/{livroId}")]
         public async Task<IActionResult> ListarPorLivro(int livroId)
         {
