@@ -1,3 +1,8 @@
-﻿namespace WebApiLivraria.Application.UseCases.ListaDesejo;
-
-public record AdicionarListaDesejoRequest(Guid UsuarioId, Guid LivroId);
+﻿namespace WebApiLivraria.Application.UseCases.ListaDesejo
+{
+    public class AdicionarListaDesejoRequest
+    {
+        public int LivroId { get; set; }
+        public Guid UsuarioId { get; set; }
+    }
+}

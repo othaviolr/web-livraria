@@ -4,22 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApiLivraria.Domain.Repositories;
 
-namespace WebApiLivraria.Application.UseCases.ListaDesejo;
-
-public class ListarListaDesejoUseCase
+namespace WebApiLivraria.Application.UseCases.ListaDesejo
 {
-    private readonly IListaDesejoRepository _repository;
-
-    public ListarListaDesejoUseCase(IListaDesejoRepository repository)
+    public class ListarListaDesejoUseCase
     {
-        _repository = repository;
-    }
+        private readonly IListaDesejoRepository _listaDesejoRepository;
 
-    public async Task<List<ListaDesejoResponse>> Executar(Guid usuarioId)
-    {
-        var lista = await _repository.ListarPorUsuario(usuarioId);
+        public ListarListaDesejoUseCase(IListaDesejoRepository listaDesejoRepository)
+        {
+            _listaDesejoRepository = listaDesejoRepository;
+        }
 
-        return lista.Select(ld => new ListaDesejoResponse(ld.Id, ld.UsuarioId, ld.LivroId, ld.DataCriacao))
-                    .ToList();
+        public async Task<List<ListaDesejoResponse>> Executar(Guid usuarioId)
+        {
+            var listaDesejos = await _listaDesejoRepository.ListarPorUsuario(usuarioId);
+
+            return listaDesejos.Select(ld => new ListaDesejoResponse
+            {
+                LivroId = ld.LivroId,
+                DataCriacao = ld.DataCriacao
+            }).ToList();
+        }
     }
 }

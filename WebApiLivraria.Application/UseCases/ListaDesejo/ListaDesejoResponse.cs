@@ -1,5 +1,10 @@
 ﻿using System;
 
-namespace WebApiLivraria.Application.UseCases.ListaDesejo;
-
-public record ListaDesejoResponse(Guid Id, Guid UsuarioId, Guid LivroId, DateTime DataAdicionado);
+namespace WebApiLivraria.Application.UseCases.ListaDesejo
+{
+    public class ListaDesejoResponse
+    {
+        public int LivroId { get; set; }
+        public DateTime DataCriacao { get; set; }
+    }
+}
