@@ -21,4 +21,9 @@ public class ListarFavoritosUseCase
             DataCriacao = f.DataCriacao
         }).ToList();
     }
+
+    public async Task<bool> VerificarFavorito(Guid usuarioId, int livroId)
+    {
+        return await _favoritoRepository.Existe(usuarioId, livroId);
+    }
 }
