@@ -2,19 +2,20 @@
 using System.Threading.Tasks;
 using WebApiLivraria.Domain.Repositories;
 
-namespace WebApiLivraria.Application.UseCases.ListaDesejo;
-
-public class RemoverListaDesejoUseCase
+namespace WebApiLivraria.Application.UseCases.ListaDesejo
 {
-    private readonly IListaDesejoRepository _repository;
-
-    public RemoverListaDesejoUseCase(IListaDesejoRepository repository)
+    public class RemoverListaDesejoUseCase
     {
-        _repository = repository;
-    }
+        private readonly IListaDesejoRepository _listaDesejoRepository;
 
-    public async Task Executar(Guid usuarioId, Guid livroId)
-    {
-        await _repository.Remover(usuarioId, livroId);
+        public RemoverListaDesejoUseCase(IListaDesejoRepository listaDesejoRepository)
+        {
+            _listaDesejoRepository = listaDesejoRepository;
+        }
+
+        public async Task Executar(Guid usuarioId, int livroId)
+        {
+            await _listaDesejoRepository.Remover(usuarioId, livroId);
+        }
     }
 }

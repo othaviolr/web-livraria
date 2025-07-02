@@ -4,7 +4,7 @@ public class Favorito
 {
     public Guid Id { get; private set; }
     public Guid UsuarioId { get; private set; }
-    public Guid LivroId { get; private set; }
+    public int LivroId { get; private set; }
     public DateTime DataCriacao { get; private set; }
 
     public Usuario Usuario { get; private set; }
@@ -12,7 +12,7 @@ public class Favorito
 
     protected Favorito() { }
 
-    public Favorito(Guid usuarioId, Guid livroId)
+    public Favorito(Guid usuarioId, int livroId)
     {
         Id = Guid.NewGuid();
         UsuarioId = usuarioId;

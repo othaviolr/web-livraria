@@ -2,6 +2,6 @@
 
 public class FavoritoResponse
 {
-    public Guid LivroId { get; set; }
+    public int LivroId { get; set; }
     public DateTime DataCriacao { get; set; }
 }

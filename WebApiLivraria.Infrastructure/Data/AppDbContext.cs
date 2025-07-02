@@ -18,7 +18,7 @@ namespace WebApiLivraria.Infrastructure.Context
         public DbSet<Avaliacao> Avaliacoes { get; set; }
         public DbSet<RankingLivro> RankingLivros { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Favorito> Favoritos { get; set; }
+        public DbSet<Favorito> Favoritos { get; set; }        
         public DbSet<ListaDesejo> ListasDesejo { get; set; }
         public DbSet<Sinopse> Sinopses { get; set; }
 
@@ -115,6 +115,45 @@ namespace WebApiLivraria.Infrastructure.Context
                 .WithOne(s => s.Livro)
                 .HasForeignKey<Sinopse>(s => s.LivroId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
+
+            modelBuilder.Entity<Favorito>(entity =>
+            {
+                entity.HasKey(f => f.Id);
+
+                entity.HasOne(f => f.Usuario)
+                      .WithMany()
+                      .HasForeignKey(f => f.UsuarioId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(f => f.Livro)
+                      .WithMany()
+                      .HasForeignKey(f => f.LivroId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(f => f.DataCriacao)
+                      .IsRequired();
+            });
+
+
+            modelBuilder.Entity<ListaDesejo>(entity =>
+            {
+                entity.HasKey(ld => ld.Id);
+
+                entity.HasOne(ld => ld.Usuario)
+                      .WithMany()
+                      .HasForeignKey(ld => ld.UsuarioId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(ld => ld.Livro)
+                      .WithMany()
+                      .HasForeignKey(ld => ld.LivroId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(ld => ld.DataCriacao)
+                      .IsRequired();
+            });
         }
     }
 }

@@ -29,7 +29,7 @@ public class FavoritoController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Remover([FromQuery] Guid usuarioId, [FromQuery] Guid livroId)
+    public async Task<IActionResult> Remover([FromQuery] Guid usuarioId, [FromQuery] int livroId)
     {
         await _removerUseCase.Executar(usuarioId, livroId);
         return NoContent();

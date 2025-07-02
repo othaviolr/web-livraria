@@ -20,7 +20,7 @@ public class FavoritoRepository : IFavoritoRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task Remover(Guid usuarioId, Guid livroId)
+    public async Task Remover(Guid usuarioId, int livroId)
     {
         var favorito = await _context.Favoritos
             .FirstOrDefaultAsync(f => f.UsuarioId == usuarioId && f.LivroId == livroId);
@@ -32,7 +32,7 @@ public class FavoritoRepository : IFavoritoRepository
         }
     }
 
-    public async Task<bool> Existe(Guid usuarioId, Guid livroId)
+    public async Task<bool> Existe(Guid usuarioId, int livroId)
     {
         return await _context.Favoritos
             .AnyAsync(f => f.UsuarioId == usuarioId && f.LivroId == livroId);
