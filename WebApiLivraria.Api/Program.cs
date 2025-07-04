@@ -12,6 +12,7 @@ using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Resumo;
 using WebApiLivraria.Application.UseCases.Favorito;
 using WebApiLivraria.Application.UseCases.ListaDesejo;
+using WebApiLivraria.Application.UseCases.Leitura.Atualizar;
 using WebApiLivraria.Application.UseCases.RankingLivro;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Domain.Repositories;
@@ -61,6 +62,7 @@ builder.Services.AddScoped<ListarFavoritosUseCase>();
 builder.Services.AddScoped<IAdicionarListaDesejoUseCase, AdicionarListaDesejoUseCase>();
 builder.Services.AddScoped<RemoverListaDesejoUseCase>();
 builder.Services.AddScoped<ListarListaDesejoUseCase>();
+builder.Services.AddScoped<AtualizarLeituraUseCase>();
 
 // Autenticação JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
