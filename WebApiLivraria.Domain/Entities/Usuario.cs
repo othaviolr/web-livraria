@@ -1,34 +1,56 @@
-﻿namespace WebApiLivraria.Domain.Entities
+﻿using WebApiLivraria.Domain.Entities;
+
+public class Usuario
 {
-    public class Usuario
+    public Guid Id { get; private set; }
+    public string Nome { get; private set; }
+    public string Email { get; private set; }
+
+    public string? NomeUsuario { get; private set; }
+    public string? FotoUrl { get; private set; }
+    public string? Cidade { get; private set; }
+    public string Role { get; private set; } = "Leitor";
+
+    public string? SenhaHash { get; private set; }
+    public string? TokenRecuperacaoSenha { get; private set; }
+    public DateTime? DataExpiracaoTokenRecuperacaoSenha { get; private set; }
+
+    public ICollection<Avaliacao> Avaliacoes { get; private set; } = new List<Avaliacao>();
+
+    protected Usuario() { }
+
+    public Usuario(string nome, string email, string? senhaHash = null)
     {
-        public Guid Id { get; private set; }
-        public string Nome { get; private set; }
-        public string Email { get; private set; }
+        Id = Guid.NewGuid();
+        Nome = nome;
+        Email = email;
+        SenhaHash = senhaHash;
+        Role = "Leitor";
+    }
 
-        public string? NomeUsuario { get; private set; }
-        public string? FotoUrl { get; private set; }
-        public string? Cidade { get; private set; }
-        public string Role { get; private set; } = "Leitor";
+    public void AtualizarPerfil(string nomeUsuario, string? fotoUrl, string? cidade, string role)
+    {
+        NomeUsuario = nomeUsuario;
+        FotoUrl = fotoUrl;
+        Cidade = cidade;
+        Role = role;
+    }
 
-        public ICollection<Avaliacao> Avaliacoes { get; private set; } = new List<Avaliacao>();
+    public void DefinirSenha(string senhaHash)
+    {
+        SenhaHash = senhaHash;
+    }
 
-        protected Usuario() { }
+    public void DefinirTokenRecuperacaoSenha(string token, DateTime dataExpiracao)
+    {
+        TokenRecuperacaoSenha = token;
+        DataExpiracaoTokenRecuperacaoSenha = dataExpiracao;
+    }
 
-        public Usuario(string nome, string email)
-        {
-            Id = Guid.NewGuid();
-            Nome = nome;
-            Email = email;
-            Role = "Leitor";
-        }
-
-        public void AtualizarPerfil(string nomeUsuario, string? fotoUrl, string? cidade, string role)
-        {
-            NomeUsuario = nomeUsuario;
-            FotoUrl = fotoUrl;
-            Cidade = cidade;
-            Role = role;
-        }
+    public void RedefinirSenha(string novaSenhaHash)
+    {
+        SenhaHash = novaSenhaHash;
+        TokenRecuperacaoSenha = null;
+        DataExpiracaoTokenRecuperacaoSenha = null;
     }
 }

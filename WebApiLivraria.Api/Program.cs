@@ -14,6 +14,7 @@ using WebApiLivraria.Application.UseCases.Favorito;
 using WebApiLivraria.Application.UseCases.ListaDesejo;
 using WebApiLivraria.Application.UseCases.Leitura.Atualizar;
 using WebApiLivraria.Application.UseCases.RankingLivro;
+using WebApiLivraria.Application.UseCases.Usuarios.Login;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Infra.Data.Repositories;
@@ -64,6 +65,8 @@ builder.Services.AddScoped<RemoverListaDesejoUseCase>();
 builder.Services.AddScoped<ListarListaDesejoUseCase>();
 builder.Services.AddScoped<AtualizarLeituraUseCase>();
 
+builder.Services.AddScoped<LoginUsuarioUseCase>();
+
 // Autenticação JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -77,7 +80,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = configuration["Jwt:Issuer"],
             ValidAudience = configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                Encoding.UTF8.GetBytes(configuration["Jwt:ChaveSecreta"])) 
         };
     });
 
@@ -109,7 +112,9 @@ app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<TratamentoExcecaoMiddleware>();
+
 app.MapControllers();
 app.Run();
