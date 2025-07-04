@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApiLivraria.Domain.Entities;
+using WebApiLivraria.Infrastructure.Data.Mappings;
 
 namespace WebApiLivraria.Infrastructure.Context
 {
@@ -18,9 +19,10 @@ namespace WebApiLivraria.Infrastructure.Context
         public DbSet<Avaliacao> Avaliacoes { get; set; }
         public DbSet<RankingLivro> RankingLivros { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Favorito> Favoritos { get; set; }        
+        public DbSet<Favorito> Favoritos { get; set; }
         public DbSet<ListaDesejo> ListasDesejo { get; set; }
         public DbSet<Sinopse> Sinopses { get; set; }
+        public DbSet<Leitura> Leituras { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -116,8 +118,6 @@ namespace WebApiLivraria.Infrastructure.Context
                 .HasForeignKey<Sinopse>(s => s.LivroId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
-
             modelBuilder.Entity<Favorito>(entity =>
             {
                 entity.HasKey(f => f.Id);
@@ -136,7 +136,6 @@ namespace WebApiLivraria.Infrastructure.Context
                       .IsRequired();
             });
 
-
             modelBuilder.Entity<ListaDesejo>(entity =>
             {
                 entity.HasKey(ld => ld.Id);
@@ -154,6 +153,8 @@ namespace WebApiLivraria.Infrastructure.Context
                 entity.Property(ld => ld.DataCriacao)
                       .IsRequired();
             });
+
+            modelBuilder.ApplyConfiguration(new LeituraConfiguration());
         }
     }
 }
