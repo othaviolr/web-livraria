@@ -28,6 +28,35 @@ namespace WebApiLivraria.Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.Property(u => u.Nome)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(u => u.Email)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(u => u.NomeUsuario)
+                    .HasMaxLength(100);
+
+                entity.Property(u => u.FotoUrl)
+                    .HasMaxLength(500);
+
+                entity.Property(u => u.Cidade)
+                    .HasMaxLength(100);
+
+                entity.Property(u => u.Role)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property<string>("SenhaHash")
+                      .HasColumnName("SenhaHash")
+                      .HasMaxLength(255)
+                      .IsRequired(false);
+            });
+
             modelBuilder.Entity<Autor>(entity =>
             {
                 entity.Property(a => a.Nome)
