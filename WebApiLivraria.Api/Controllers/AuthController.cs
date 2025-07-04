@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApiLivraria.Application.UseCases.Auth;
 using WebApiLivraria.Application.UseCases.Usuarios.Login;
+using WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario;
 
 namespace WebApiLivraria.Api.Controllers;
 
@@ -10,11 +11,16 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthUseCase _authUseCase;
     private readonly LoginUsuarioUseCase _loginUsuarioUseCase;
+    private readonly RegistrarUsuarioUseCase _registrarUsuarioUseCase;
 
-    public AuthController(IAuthUseCase authUseCase, LoginUsuarioUseCase loginUsuarioUseCase)
+    public AuthController(
+        IAuthUseCase authUseCase,
+        LoginUsuarioUseCase loginUsuarioUseCase,
+        RegistrarUsuarioUseCase registrarUsuarioUseCase)
     {
         _authUseCase = authUseCase;
         _loginUsuarioUseCase = loginUsuarioUseCase;
+        _registrarUsuarioUseCase = registrarUsuarioUseCase;
     }
 
     [HttpPost("login-google")]
@@ -48,6 +54,23 @@ public class AuthController : ControllerBase
         catch (Exception ex)
         {
             return Unauthorized(new { Message = ex.Message });
+        }
+    }
+
+    [HttpPost("registrar")]
+    public async Task<IActionResult> Registrar([FromBody] RegistrarUsuarioRequest request)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var usuarioId = await _registrarUsuarioUseCase.Executar(request);
+            return CreatedAtAction(nameof(Registrar), new { id = usuarioId });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message });
         }
     }
 }

@@ -15,6 +15,7 @@ using WebApiLivraria.Application.UseCases.ListaDesejo;
 using WebApiLivraria.Application.UseCases.Leitura.Atualizar;
 using WebApiLivraria.Application.UseCases.RankingLivro;
 using WebApiLivraria.Application.UseCases.Usuarios.Login;
+using WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Infra.Data.Repositories;
@@ -66,6 +67,7 @@ builder.Services.AddScoped<ListarListaDesejoUseCase>();
 builder.Services.AddScoped<AtualizarLeituraUseCase>();
 
 builder.Services.AddScoped<LoginUsuarioUseCase>();
+builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 
 // Autenticação JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -80,7 +82,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = configuration["Jwt:Issuer"],
             ValidAudience = configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration["Jwt:ChaveSecreta"])) 
+                Encoding.UTF8.GetBytes(configuration["Jwt:ChaveSecreta"]))
         };
     });
 
@@ -89,6 +91,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
