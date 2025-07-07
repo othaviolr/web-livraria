@@ -9,6 +9,7 @@ public class Usuario
     public string? NomeUsuario { get; private set; }
     public string? FotoUrl { get; private set; }
     public string? Cidade { get; private set; }
+    public string? Bio { get; private set; }
     public string Role { get; private set; } = "Leitor";
 
     public string? SenhaHash { get; private set; }
@@ -16,6 +17,8 @@ public class Usuario
     public DateTime? DataExpiracaoTokenRecuperacaoSenha { get; private set; }
 
     public ICollection<Avaliacao> Avaliacoes { get; private set; } = new List<Avaliacao>();
+    public ICollection<Favorito> Favoritos { get; private set; } = new List<Favorito>();
+    public ICollection<Leitura> LivrosLidos { get; private set; } = new List<Leitura>();
 
     protected Usuario() { }
 
@@ -28,12 +31,13 @@ public class Usuario
         Role = "Leitor";
     }
 
-    public void AtualizarPerfil(string nomeUsuario, string? fotoUrl, string? cidade, string role)
+    public void AtualizarPerfil(string nomeUsuario, string? fotoUrl, string? cidade, string role, string? bio)
     {
         NomeUsuario = nomeUsuario;
         FotoUrl = fotoUrl;
         Cidade = cidade;
         Role = role;
+        Bio = bio;
     }
 
     public void DefinirSenha(string senhaHash)

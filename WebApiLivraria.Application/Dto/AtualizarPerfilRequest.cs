@@ -6,4 +6,5 @@ public class AtualizarPerfilRequest
     public string? FotoUrl { get; set; }
     public string? Cidade { get; set; }
     public string Role { get; set; } = "Leitor";
+    public string? Bio { get; set; }
 }

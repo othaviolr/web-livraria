@@ -49,4 +49,15 @@ public class UsuarioRepository : IUsuarioRepository
         _context.Usuarios.Remove(usuario);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Usuario?> ObterPorNomeUsuarioComRelacionamentosAsync(string nomeUsuario)
+    {
+        return await _context.Usuarios
+            .Include(u => u.Avaliacoes)          
+                .ThenInclude(a => a.Livro)         
+            .Include(u => u.Favoritos)             
+                .ThenInclude(f => f.Livro)         
+            .Include(u => u.LivrosLidos)           
+            .FirstOrDefaultAsync(u => u.NomeUsuario == nomeUsuario);
+    }
 }

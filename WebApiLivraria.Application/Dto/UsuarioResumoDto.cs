@@ -5,5 +5,6 @@
         public string Nome { get; set; }
         public string NomeUsuario { get; set; }
         public string FotoUrl { get; set; }
+        public string? Bio { get; set; }
     }
 }
