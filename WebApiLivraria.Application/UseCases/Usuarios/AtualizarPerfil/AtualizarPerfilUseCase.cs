@@ -18,7 +18,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil
             if (usuario == null)
                 return false;
 
-            usuario.AtualizarPerfil(request.NomeUsuario, request.FotoUrl, request.Cidade, request.Role);
+            usuario.AtualizarPerfil(request.NomeUsuario, request.FotoUrl, request.Cidade, request.Role, request.Bio);
 
             await _usuarioRepository.Atualizar(usuario);
             return true;
