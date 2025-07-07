@@ -43,4 +43,10 @@ public class UsuarioRepository : IUsuarioRepository
                 .ThenInclude(a => a.Livro)
             .FirstOrDefaultAsync(u => u.Id == id);
     }
+
+    public async Task Remover(Usuario usuario)
+    {
+        _context.Usuarios.Remove(usuario);
+        await _context.SaveChangesAsync();
+    }
 }
