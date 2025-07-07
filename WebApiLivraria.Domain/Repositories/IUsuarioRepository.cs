@@ -9,4 +9,5 @@ public interface IUsuarioRepository
     Task Adicionar(Usuario usuario);
     Task Atualizar(Usuario usuario);  
     Task<Usuario?> ObterPorIdComAvaliacoesAsync(Guid id);
+    Task Remover(Usuario usuario);
 }

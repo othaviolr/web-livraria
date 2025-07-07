@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebApiLivraria.Application.UseCases.Usuarios;
 using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
 using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
+using WebApiLivraria.Application.UseCases.Usuarios.Excluir;
 using WebApiLivraria.Domain.Repositories;
 
 namespace WebApiLivraria.Api.Controllers
@@ -19,15 +20,18 @@ namespace WebApiLivraria.Api.Controllers
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ObterPerfilCompletoUseCase _obterPerfilCompletoUseCase;
         private readonly AtualizarPerfilUseCase _atualizarPerfilUseCase;
+        private readonly ExcluirUsuarioUseCase _excluirUsuarioUseCase;
 
         public UsuariosController(
             IUsuarioRepository usuarioRepository,
             ObterPerfilCompletoUseCase obterPerfilCompletoUseCase,
-            AtualizarPerfilUseCase atualizarPerfilUseCase)
+            AtualizarPerfilUseCase atualizarPerfilUseCase,
+            ExcluirUsuarioUseCase excluirUsuarioUseCase)
         {
             _usuarioRepository = usuarioRepository;
             _obterPerfilCompletoUseCase = obterPerfilCompletoUseCase;
             _atualizarPerfilUseCase = atualizarPerfilUseCase;
+            _excluirUsuarioUseCase = excluirUsuarioUseCase;
         }
 
         private Guid ObterUsuarioIdDoToken()
@@ -44,7 +48,6 @@ namespace WebApiLivraria.Api.Controllers
                 return Unauthorized();
 
             var perfilDto = await _obterPerfilCompletoUseCase.ExecutarAsync(userId);
-
             if (perfilDto == null)
                 return NotFound();
 
@@ -59,6 +62,20 @@ namespace WebApiLivraria.Api.Controllers
                 return Unauthorized();
 
             var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(userId, request);
+            if (!sucesso)
+                return NotFound();
+
+            return NoContent();
+        }
+
+        [HttpDelete("perfil")]
+        public async Task<IActionResult> ExcluirPerfil()
+        {
+            var userId = ObterUsuarioIdDoToken();
+            if (userId == Guid.Empty)
+                return Unauthorized();
+
+            var sucesso = await _excluirUsuarioUseCase.ExecutarAsync(userId);
             if (!sucesso)
                 return NotFound();
 
