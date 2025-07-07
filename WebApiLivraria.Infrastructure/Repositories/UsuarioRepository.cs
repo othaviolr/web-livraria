@@ -35,4 +35,12 @@ public class UsuarioRepository : IUsuarioRepository
         _context.Usuarios.Update(usuario);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Usuario?> ObterPorIdComAvaliacoesAsync(Guid id)
+    {
+        return await _context.Usuarios
+            .Include(u => u.Avaliacoes)
+                .ThenInclude(a => a.Livro)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
 }
