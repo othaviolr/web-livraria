@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
 using WebApiLivraria.Application.UseCases.Usuarios;
+using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
+using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
 using WebApiLivraria.Domain.Repositories;
 
 namespace WebApiLivraria.Api.Controllers
@@ -15,13 +18,16 @@ namespace WebApiLivraria.Api.Controllers
     {
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ObterPerfilCompletoUseCase _obterPerfilCompletoUseCase;
+        private readonly AtualizarPerfilUseCase _atualizarPerfilUseCase;
 
         public UsuariosController(
             IUsuarioRepository usuarioRepository,
-            ObterPerfilCompletoUseCase obterPerfilCompletoUseCase)
+            ObterPerfilCompletoUseCase obterPerfilCompletoUseCase,
+            AtualizarPerfilUseCase atualizarPerfilUseCase)
         {
             _usuarioRepository = usuarioRepository;
             _obterPerfilCompletoUseCase = obterPerfilCompletoUseCase;
+            _atualizarPerfilUseCase = atualizarPerfilUseCase;
         }
 
         private Guid ObterUsuarioIdDoToken()
@@ -49,24 +55,14 @@ namespace WebApiLivraria.Api.Controllers
         public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilRequest request)
         {
             var userId = ObterUsuarioIdDoToken();
-            if (userId == Guid.Empty) return Unauthorized();
+            if (userId == Guid.Empty)
+                return Unauthorized();
 
-            var usuario = await _usuarioRepository.ObterPorId(userId);
-            if (usuario == null) return NotFound();
+            var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(userId, request);
+            if (!sucesso)
+                return NotFound();
 
-            usuario.AtualizarPerfil(request.NomeUsuario, request.FotoUrl, request.Cidade, request.Role);
-
-            await _usuarioRepository.Atualizar(usuario);
-
-            var perfilDto = new UsuarioPerfilDto
-            {
-                NomeUsuario = usuario.NomeUsuario,
-                FotoUrl = usuario.FotoUrl,
-                Cidade = usuario.Cidade,
-                Role = usuario.Role
-            };
-
-            return Ok(perfilDto);
+            return NoContent();
         }
     }
 }

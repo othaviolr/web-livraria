@@ -22,6 +22,7 @@ using WebApiLivraria.Infra.Data.Repositories;
 using WebApiLivraria.Infrastructure.Context;
 using WebApiLivraria.Infrastructure.Repositories;
 using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
+using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -67,6 +68,7 @@ builder.Services.AddScoped<RemoverListaDesejoUseCase>();
 builder.Services.AddScoped<ListarListaDesejoUseCase>();
 builder.Services.AddScoped<AtualizarLeituraUseCase>();
 builder.Services.AddScoped<ObterPerfilCompletoUseCase>();
+builder.Services.AddScoped<AtualizarPerfilUseCase>();
 
 builder.Services.AddScoped<LoginUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
