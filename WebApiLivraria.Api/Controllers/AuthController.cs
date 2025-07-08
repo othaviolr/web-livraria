@@ -1,7 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System;
+using System.Threading.Tasks;
 using WebApiLivraria.Application.UseCases.Auth;
+using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
 using WebApiLivraria.Application.UseCases.Usuarios.Login;
 using WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario;
+using WebApiLivraria.Application.UseCases.Usuarios;
 
 namespace WebApiLivraria.Api.Controllers;
 
@@ -12,15 +18,18 @@ public class AuthController : ControllerBase
     private readonly IAuthUseCase _authUseCase;
     private readonly LoginUsuarioUseCase _loginUsuarioUseCase;
     private readonly RegistrarUsuarioUseCase _registrarUsuarioUseCase;
+    private readonly AtualizarPerfilUseCase _atualizarPerfilUseCase;
 
     public AuthController(
         IAuthUseCase authUseCase,
         LoginUsuarioUseCase loginUsuarioUseCase,
-        RegistrarUsuarioUseCase registrarUsuarioUseCase)
+        RegistrarUsuarioUseCase registrarUsuarioUseCase,
+        AtualizarPerfilUseCase atualizarPerfilUseCase)
     {
         _authUseCase = authUseCase;
         _loginUsuarioUseCase = loginUsuarioUseCase;
         _registrarUsuarioUseCase = registrarUsuarioUseCase;
+        _atualizarPerfilUseCase = atualizarPerfilUseCase;
     }
 
     [HttpPost("login-google")]
@@ -72,5 +81,21 @@ public class AuthController : ControllerBase
         {
             return BadRequest(new { Message = ex.Message });
         }
+    }
+
+    [HttpPut("perfil")]
+    [Authorize]
+    public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilRequest request)
+    {
+        var usuarioIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(usuarioIdStr, out var usuarioId))
+            return Unauthorized(new { message = "Usuário não autenticado." });
+
+        var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(usuarioId, request);
+
+        if (!sucesso)
+            return NotFound(new { message = "Usuário não encontrado." });
+
+        return Ok(new { message = "Perfil atualizado com sucesso." });
     }
 }

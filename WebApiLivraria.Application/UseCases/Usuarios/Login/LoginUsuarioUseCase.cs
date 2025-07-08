@@ -48,8 +48,8 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.Login
 
         private string GerarToken(Usuario usuario)
         {
-            var chaveSecreta = _configuration["Jwt:ChaveSecreta"]
-                ?? throw new InvalidOperationException("Configuração JWT:ChaveSecreta não encontrada");
+            var chaveSecreta = _configuration["Jwt:Key"]
+                ?? throw new InvalidOperationException("Configuração JWT:Key não encontrada");
             var issuer = _configuration["Jwt:Issuer"]
                 ?? throw new InvalidOperationException("Configuração JWT:Issuer não encontrada");
             var audience = _configuration["Jwt:Audience"]
