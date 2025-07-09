@@ -1,18 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System;
-using System.Threading.Tasks;
 using WebApiLivraria.Application.UseCases.Auth;
+using WebApiLivraria.Application.UseCases.Usuarios;
 using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
 using WebApiLivraria.Application.UseCases.Usuarios.Login;
 using WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario;
-using WebApiLivraria.Application.UseCases.Usuarios;
 
 namespace WebApiLivraria.Api.Controllers;
 
 [ApiController]
-[Route("auth")]
+[Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthUseCase _authUseCase;
@@ -87,15 +85,22 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilRequest request)
     {
-        var usuarioIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(usuarioIdStr, out var usuarioId))
-            return Unauthorized(new { message = "Usuário não autenticado." });
+        try
+        {
+            var usuarioIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(usuarioIdStr, out var usuarioId))
+                return Unauthorized(new { message = "Usuário não autenticado." });
 
-        var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(usuarioId, request);
+            var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(usuarioId, request);
 
-        if (!sucesso)
-            return NotFound(new { message = "Usuário não encontrado." });
+            if (!sucesso)
+                return NotFound(new { message = "Usuário não encontrado." });
 
-        return Ok(new { message = "Perfil atualizado com sucesso." });
+            return Ok(new { message = "Perfil atualizado com sucesso." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = $"Erro ao atualizar perfil: {ex.Message}" });
+        }
     }
 }
