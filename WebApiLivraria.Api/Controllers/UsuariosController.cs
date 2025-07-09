@@ -63,15 +63,27 @@ namespace WebApiLivraria.Api.Controllers
         [Authorize]
         public async Task<IActionResult> ObterPerfil()
         {
-            var userId = ObterUsuarioIdDoToken();
-            if (userId == Guid.Empty)
-                return Unauthorized();
+            try
+            {
+                var userId = ObterUsuarioIdDoToken();
+                if (userId == Guid.Empty)
+                    return Unauthorized();
 
-            var perfilDto = await _obterPerfilCompletoUseCase.ExecutarAsync(userId);
-            if (perfilDto == null)
-                return NotFound();
+                var perfilDto = await _obterPerfilCompletoUseCase.ExecutarAsync(userId);
+                if (perfilDto == null)
+                    return NotFound();
 
-            return Ok(perfilDto);
+                return Ok(perfilDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro interno: " + ex.Message,
+                    Stack = ex.StackTrace
+                });
+            }
         }
 
         [HttpPut("perfil")]
@@ -103,5 +115,6 @@ namespace WebApiLivraria.Api.Controllers
 
             return NoContent();
         }
+
     }
 }

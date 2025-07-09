@@ -11,7 +11,7 @@ namespace WebApiLivraria.Infrastructure.Data.Mappings
             builder.HasKey(l => l.Id);
 
             builder.Property(l => l.Status)
-                .HasConversion<int>()
+                .HasConversion<string>() 
                 .IsRequired();
 
             builder.Property(l => l.DataAtualizacao)

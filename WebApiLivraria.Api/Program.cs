@@ -155,6 +155,7 @@ app.UseAuthorization();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<TratamentoExcecaoMiddleware>();
+app.UseDeveloperExceptionPage();
 
 app.MapControllers();
 app.Run();
