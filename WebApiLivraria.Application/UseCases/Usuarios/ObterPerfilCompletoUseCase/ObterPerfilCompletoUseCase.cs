@@ -17,11 +17,12 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCas
         public async Task<UsuarioPerfilDto> ExecutarAsync(Guid usuarioId)
         {
             var usuario = await _usuarioRepository.ObterPorIdComDetalhesAsync(usuarioId);
-
             if (usuario == null)
                 throw new Exception("Usuário não encontrado");
 
             var contagemStatus = await _usuarioRepository.ObterContagemLivrosPorStatusAsync(usuarioId);
+
+            var quantidadeFavoritos = await _usuarioRepository.ObterQuantidadeFavoritosAsync(usuarioId);
 
             var livrosMarcados = usuario.LivrosLidos.Select(l => new LivroResumoDto
             {
@@ -51,7 +52,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCas
                 Role = usuario.Role,
                 Bio = usuario.Bio,
 
-                QuantidadeFavoritos = contagemStatus.TryGetValue(StatusLeitura.QueroLer, out var favoritos) ? favoritos : 0,
+                QuantidadeFavoritos = quantidadeFavoritos,
                 QuantidadeQueroLer = contagemStatus.TryGetValue(StatusLeitura.QueroLer, out var queroLer) ? queroLer : 0,
                 QuantidadeLendo = contagemStatus.TryGetValue(StatusLeitura.Lendo, out var lendo) ? lendo : 0,
                 QuantidadeLido = contagemStatus.TryGetValue(StatusLeitura.Lido, out var lido) ? lido : 0,

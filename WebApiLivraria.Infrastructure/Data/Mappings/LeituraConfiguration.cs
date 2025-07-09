@@ -11,19 +11,19 @@ namespace WebApiLivraria.Infrastructure.Data.Mappings
             builder.HasKey(l => l.Id);
 
             builder.Property(l => l.Status)
-                .HasConversion<string>()
+                .HasConversion<int>()
                 .IsRequired();
 
             builder.Property(l => l.DataAtualizacao)
                 .IsRequired();
 
             builder.HasOne(l => l.Livro)
-                .WithMany()
+                .WithMany(l => l.Leituras)
                 .HasForeignKey(l => l.LivroId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(l => l.Usuario)
-                .WithMany()
+                .WithMany(u => u.LivrosLidos)
                 .HasForeignKey(l => l.UsuarioId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

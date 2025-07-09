@@ -21,6 +21,8 @@ namespace WebApiLivraria.Domain.Entities
         public int NumeroPaginas { get; private set; }
         public string Idioma { get; private set; }
 
+        public ICollection<Leitura> Leituras { get; private set; } = new List<Leitura>();
+
         public Livro(
             string titulo,
             int autorId,
@@ -110,6 +112,27 @@ namespace WebApiLivraria.Domain.Entities
         public void AtualizarIdioma(string idioma)
         {
             Idioma = idioma;
+        }
+
+        public void AdicionarOuAtualizarLeitura(Leitura leitura)
+        {
+            var leituraExistente = Leituras.FirstOrDefault(l => l.UsuarioId == leitura.UsuarioId && l.LivroId == leitura.LivroId);
+
+            if (leituraExistente == null)
+            {
+                Leituras.Add(leitura);
+            }
+            else
+            {
+                leituraExistente.AtualizarStatus(leitura.Status);
+            }
+        }
+
+        public void RemoverLeitura(Guid usuarioId)
+        {
+            var leitura = Leituras.FirstOrDefault(l => l.UsuarioId == usuarioId);
+            if (leitura != null)
+                Leituras.Remove(leitura);
         }
 
         public double NotaMedia => Avaliacoes.Any() ? Avaliacoes.Average(a => a.Nota) : 0;
