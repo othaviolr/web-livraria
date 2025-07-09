@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApiLivraria.Domain.Entities;
+using WebApiLivraria.Domain.Enums;
 using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Infrastructure.Context;
 
@@ -53,11 +54,44 @@ public class UsuarioRepository : IUsuarioRepository
     public async Task<Usuario?> ObterPorNomeUsuarioComRelacionamentosAsync(string nomeUsuario)
     {
         return await _context.Usuarios
-            .Include(u => u.Avaliacoes)          
-                .ThenInclude(a => a.Livro)         
-            .Include(u => u.Favoritos)             
-                .ThenInclude(f => f.Livro)         
-            .Include(u => u.LivrosLidos)           
+            .Include(u => u.Avaliacoes)
+                .ThenInclude(a => a.Livro)
+            .Include(u => u.Favoritos)
+                .ThenInclude(f => f.Livro)
+            .Include(u => u.LivrosLidos)
             .FirstOrDefaultAsync(u => u.NomeUsuario == nomeUsuario);
+    }
+
+    public async Task<Usuario?> ObterPorIdComDetalhesAsync(Guid id)
+    {
+        return await _context.Usuarios
+            .Include(u => u.Avaliacoes)
+                .ThenInclude(a => a.Livro)
+            .Include(u => u.Favoritos)
+                .ThenInclude(f => f.Livro)
+            .Include(u => u.LivrosLidos) 
+                .ThenInclude(l => l.Livro)
+                    .ThenInclude(l => l.Autor)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<Dictionary<StatusLeitura, int>> ObterContagemLivrosPorStatusAsync(Guid usuarioId)
+    {
+        var leituras = await _context.Leituras
+            .Where(l => l.UsuarioId == usuarioId)
+            .GroupBy(l => l.Status)
+            .Select(g => new { Status = g.Key, Quantidade = g.Count() })
+            .ToListAsync();
+
+        var resultado = Enum.GetValues(typeof(StatusLeitura))
+            .Cast<StatusLeitura>()
+            .ToDictionary(status => status, status => 0);
+
+        foreach (var item in leituras)
+        {
+            resultado[item.Status] = item.Quantidade;
+        }
+
+        return resultado;
     }
 }
