@@ -94,4 +94,8 @@ public class UsuarioRepository : IUsuarioRepository
 
         return resultado;
     }
+    public async Task<int> ObterQuantidadeFavoritosAsync(Guid usuarioId)
+    {
+        return await _context.Favoritos.CountAsync(f => f.UsuarioId == usuarioId);
+    }
 }
