@@ -18,10 +18,22 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil
             if (usuario == null)
                 return false;
 
-            usuario.AtualizarPerfil(request.NomeUsuario, request.FotoUrl, request.Cidade, request.Role, request.Bio);
+            if (string.IsNullOrWhiteSpace(request.NomeUsuario))
+                throw new ArgumentException("Nome de usuário é obrigatório.");
 
-            await _usuarioRepository.Atualizar(usuario);
-            return true;
+            if (string.IsNullOrWhiteSpace(request.Role))
+                request.Role = "Leitor";
+
+            try
+            {
+                usuario.AtualizarPerfil(request.NomeUsuario, request.FotoUrl, request.Cidade, request.Role, request.Bio);
+                await _usuarioRepository.Atualizar(usuario);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Falha ao atualizar perfil: {ex.Message}", ex);
+            }
         }
     }
 }
