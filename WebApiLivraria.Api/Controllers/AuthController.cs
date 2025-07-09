@@ -51,16 +51,25 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> LoginTradicional([FromBody] LoginUsuarioRequest request)
     {
         if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            return BadRequest(new { message = string.Join("; ", errors) });
+        }
 
         try
         {
             var response = await _loginUsuarioUseCase.Executar(request);
+
+            if (response == null || string.IsNullOrEmpty(response.Token))
+            {
+                return Unauthorized(new { message = "Email ou senha inválidos." });
+            }
+
             return Ok(response);
         }
         catch (Exception ex)
         {
-            return Unauthorized(new { Message = ex.Message });
+            return Unauthorized(new { message = ex.Message });
         }
     }
 
