@@ -17,6 +17,7 @@ public class Usuario
     public DateTime? DataExpiracaoTokenRecuperacaoSenha { get; private set; }
 
     public ICollection<Avaliacao> Avaliacoes { get; private set; } = new List<Avaliacao>();
+    public ICollection<ListaDesejo> ListasDesejo { get; private set; } = new List<ListaDesejo>();
     public ICollection<Favorito> Favoritos { get; private set; } = new List<Favorito>();
     public ICollection<Leitura> LivrosLidos { get; private set; } = new List<Leitura>();
 

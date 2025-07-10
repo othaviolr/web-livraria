@@ -21,6 +21,8 @@ namespace WebApiLivraria.Domain.Entities
         public int NumeroPaginas { get; private set; }
         public string Idioma { get; private set; }
 
+        public ICollection<Favorito> Favoritos { get; private set; } = new List<Favorito>();
+        public ICollection<ListaDesejo> ListasDesejo { get; private set; } = new List<ListaDesejo>();
         public ICollection<Leitura> Leituras { get; private set; } = new List<Leitura>();
 
         public Livro(
