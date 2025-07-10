@@ -41,17 +41,19 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 .ToList();
 
             var resenhas = usuario.Avaliacoes
-                .OrderByDescending(a => a.DataCriacao)
-                .Take(3)
-                .Select(a => new ResenhaDto
-                {
-                    LivroId = a.Livro.Id,
-                    Titulo = a.Livro.Titulo,
-                    Nota = a.Nota,
-                    Comentario = a.Comentario,
-                    Data = a.DataCriacao
-                })
-                .ToList();
+          .OrderByDescending(a => a.DataCriacao)
+          .Take(3)
+          .Select(a => new ResenhaDto
+          {
+              LivroId = a.Livro?.Id ?? 0,
+              Titulo = a.Livro?.Titulo ?? "Título desconhecido",
+              Autor = a.Livro?.Autor?.Nome ?? "Autor desconhecido",
+              ImagemUrl = string.IsNullOrEmpty(a.Livro?.ImagemUrl) ? "/default-book.png" : a.Livro.ImagemUrl,
+              Nota = a.Nota,
+              Comentario = a.Comentario,
+              Data = a.DataCriacao
+          })
+          .ToList();
 
             return new UsuarioPerfilPublicoDto
             {

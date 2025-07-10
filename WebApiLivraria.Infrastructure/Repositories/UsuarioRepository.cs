@@ -56,11 +56,13 @@ namespace WebApiLivraria.Infrastructure.Repositories
             return await _context.Usuarios
                 .Include(u => u.Avaliacoes)
                     .ThenInclude(a => a.Livro)
+                        .ThenInclude(l => l.Autor)  
                 .Include(u => u.Favoritos)
                     .ThenInclude(f => f.Livro)
+                        .ThenInclude(l => l.Autor)   
                 .Include(u => u.LivrosLidos)
-                    .ThenInclude(l => l.Livro)
-                        .ThenInclude(l => l.Autor)
+                    .ThenInclude(ll => ll.Livro)
+                        .ThenInclude(l => l.Autor)  
                 .FirstOrDefaultAsync(u => u.NomeUsuario == nomeUsuario);
         }
 
@@ -69,10 +71,12 @@ namespace WebApiLivraria.Infrastructure.Repositories
             return await _context.Usuarios
                 .Include(u => u.Avaliacoes)
                     .ThenInclude(a => a.Livro)
+                        .ThenInclude(l => l.Autor)
                 .Include(u => u.Favoritos)
                     .ThenInclude(f => f.Livro)
+                        .ThenInclude(l => l.Autor)
                 .Include(u => u.LivrosLidos)
-                    .ThenInclude(l => l.Livro)
+                    .ThenInclude(ll => ll.Livro)
                         .ThenInclude(l => l.Autor)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
