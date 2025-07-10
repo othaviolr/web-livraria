@@ -152,12 +152,12 @@ namespace WebApiLivraria.Infrastructure.Context
                 entity.HasKey(f => f.Id);
 
                 entity.HasOne(f => f.Usuario)
-                      .WithMany()
+                      .WithMany(u => u.Favoritos)
                       .HasForeignKey(f => f.UsuarioId)
                       .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(f => f.Livro)
-                      .WithMany()
+                      .WithMany(l => l.Favoritos)
                       .HasForeignKey(f => f.LivroId)
                       .OnDelete(DeleteBehavior.Cascade);
 
@@ -170,12 +170,12 @@ namespace WebApiLivraria.Infrastructure.Context
                 entity.HasKey(ld => ld.Id);
 
                 entity.HasOne(ld => ld.Usuario)
-                      .WithMany()
+                      .WithMany(u => u.ListasDesejo)
                       .HasForeignKey(ld => ld.UsuarioId)
                       .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(ld => ld.Livro)
-                      .WithMany()
+                      .WithMany(l => l.ListasDesejo)
                       .HasForeignKey(ld => ld.LivroId)
                       .OnDelete(DeleteBehavior.Cascade);
 
