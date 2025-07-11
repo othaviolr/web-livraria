@@ -61,6 +61,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 NomeUsuario = usuario.NomeUsuario!,
                 FotoUrl = usuario.FotoUrl,
                 Bio = usuario.Bio,
+                Cidade = usuario.Cidade,
                 LivrosLidos = livrosLidos,
                 Favoritos = favoritos,
                 ResenhasRecentes = resenhas
