@@ -52,7 +52,6 @@ public class FavoritoController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Retorna o erro detalhado com stacktrace no corpo da resposta
             return StatusCode(500, new
             {
                 message = "Ocorreu um erro inesperado no servidor.",
