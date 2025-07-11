@@ -41,19 +41,25 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 .ToList();
 
             var resenhas = usuario.Avaliacoes
-          .OrderByDescending(a => a.DataCriacao)
-          .Take(3)
-          .Select(a => new ResenhaDto
-          {
-              LivroId = a.Livro?.Id ?? 0,
-              Titulo = a.Livro?.Titulo ?? "Título desconhecido",
-              Autor = a.Livro?.Autor?.Nome ?? "Autor desconhecido",
-              ImagemUrl = string.IsNullOrEmpty(a.Livro?.ImagemUrl) ? "/default-book.png" : a.Livro.ImagemUrl,
-              Nota = a.Nota,
-              Comentario = a.Comentario,
-              Data = a.DataCriacao
-          })
-          .ToList();
+                .OrderByDescending(a => a.DataCriacao)
+                .Take(3)
+                .Select(a => new ResenhaDto
+                {
+                    LivroId = a.Livro?.Id ?? 0,
+                    Titulo = a.Livro?.Titulo ?? "Título desconhecido",
+                    Autor = a.Livro?.Autor?.Nome ?? "Autor desconhecido",
+                    ImagemUrl = string.IsNullOrEmpty(a.Livro?.ImagemUrl) ? "/default-book.png" : a.Livro.ImagemUrl,
+                    Nota = a.Nota,
+                    Comentario = a.Comentario,
+                    Data = a.DataCriacao
+                })
+                .ToList();
+
+            var statusLeituraContagem = usuario.LivrosLidos
+                .GroupBy(l => l.Status)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            var totalResenhas = usuario.Avaliacoes.Count;
 
             return new UsuarioPerfilPublicoDto
             {
@@ -64,7 +70,14 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 Cidade = usuario.Cidade,
                 LivrosLidos = livrosLidos,
                 Favoritos = favoritos,
-                ResenhasRecentes = resenhas
+                ResenhasRecentes = resenhas,
+
+                TotalLido = statusLeituraContagem.GetValueOrDefault(StatusLeitura.Lido),
+                TotalLendo = statusLeituraContagem.GetValueOrDefault(StatusLeitura.Lendo),
+                TotalQueroLer = statusLeituraContagem.GetValueOrDefault(StatusLeitura.QueroLer),
+                TotalRelendo = statusLeituraContagem.GetValueOrDefault(StatusLeitura.Relendo),
+                TotalAbandonei = statusLeituraContagem.GetValueOrDefault(StatusLeitura.Abandonei),
+                TotalResenhas = totalResenhas
             };
         }
     }
