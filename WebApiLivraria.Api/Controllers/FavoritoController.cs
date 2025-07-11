@@ -50,9 +50,15 @@ public class FavoritoController : ControllerBase
         {
             return Unauthorized();
         }
-        catch
+        catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ocorreu um erro inesperado no servidor." });
+            // Retorna o erro detalhado com stacktrace no corpo da resposta
+            return StatusCode(500, new
+            {
+                message = "Ocorreu um erro inesperado no servidor.",
+                detail = ex.Message,
+                stackTrace = ex.StackTrace
+            });
         }
     }
 

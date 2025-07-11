@@ -12,8 +12,8 @@ using WebApiLivraria.Infrastructure.Context;
 namespace WebApiLivraria.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250702004101_CriarFavoritosEListaDesejo")]
-    partial class CriarFavoritosEListaDesejo
+    [Migration("20250711205841_CriarTabelaFavoritosLimpa")]
+    partial class CriarTabelaFavoritosLimpa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,58 @@ namespace WebApiLivraria.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Usuario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Cidade")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("DataExpiracaoTokenRecuperacaoSenha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("FotoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NomeUsuario")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SenhaHash")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("SenhaHash");
+
+                    b.Property<string>("TokenRecuperacaoSenha")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuarios");
+                });
 
             modelBuilder.Entity("WebApiLivraria.Domain.Entities.Autor", b =>
                 {
@@ -164,6 +216,34 @@ namespace WebApiLivraria.Infrastructure.Migrations
                     b.ToTable("Generos");
                 });
 
+            modelBuilder.Entity("WebApiLivraria.Domain.Entities.Leitura", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DataAtualizacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LivroId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivroId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Leituras");
+                });
+
             modelBuilder.Entity("WebApiLivraria.Domain.Entities.ListaDesejo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -291,38 +371,6 @@ namespace WebApiLivraria.Infrastructure.Migrations
                     b.ToTable("Sinopses");
                 });
 
-            modelBuilder.Entity("WebApiLivraria.Domain.Entities.Usuario", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Cidade")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FotoUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NomeUsuario")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Usuarios");
-                });
-
             modelBuilder.Entity("WebApiLivraria.Domain.Entities.Autor", b =>
                 {
                     b.HasOne("WebApiLivraria.Domain.Entities.Editora", "Editora")
@@ -341,7 +389,7 @@ namespace WebApiLivraria.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApiLivraria.Domain.Entities.Usuario", "Usuario")
+                    b.HasOne("Usuario", "Usuario")
                         .WithMany("Avaliacoes")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -355,13 +403,32 @@ namespace WebApiLivraria.Infrastructure.Migrations
             modelBuilder.Entity("WebApiLivraria.Domain.Entities.Favorito", b =>
                 {
                     b.HasOne("WebApiLivraria.Domain.Entities.Livro", "Livro")
-                        .WithMany()
+                        .WithMany("Favoritos")
                         .HasForeignKey("LivroId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApiLivraria.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
+                    b.HasOne("Usuario", "Usuario")
+                        .WithMany("Favoritos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Livro");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("WebApiLivraria.Domain.Entities.Leitura", b =>
+                {
+                    b.HasOne("WebApiLivraria.Domain.Entities.Livro", "Livro")
+                        .WithMany("Leituras")
+                        .HasForeignKey("LivroId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Usuario", "Usuario")
+                        .WithMany("LivrosLidos")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -374,13 +441,13 @@ namespace WebApiLivraria.Infrastructure.Migrations
             modelBuilder.Entity("WebApiLivraria.Domain.Entities.ListaDesejo", b =>
                 {
                     b.HasOne("WebApiLivraria.Domain.Entities.Livro", "Livro")
-                        .WithMany()
+                        .WithMany("ListasDesejo")
                         .HasForeignKey("LivroId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApiLivraria.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
+                    b.HasOne("Usuario", "Usuario")
+                        .WithMany("ListasDesejo")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -450,6 +517,17 @@ namespace WebApiLivraria.Infrastructure.Migrations
                     b.Navigation("Livro");
                 });
 
+            modelBuilder.Entity("Usuario", b =>
+                {
+                    b.Navigation("Avaliacoes");
+
+                    b.Navigation("Favoritos");
+
+                    b.Navigation("ListasDesejo");
+
+                    b.Navigation("LivrosLidos");
+                });
+
             modelBuilder.Entity("WebApiLivraria.Domain.Entities.Autor", b =>
                 {
                     b.Navigation("Livros");
@@ -464,15 +542,16 @@ namespace WebApiLivraria.Infrastructure.Migrations
                 {
                     b.Navigation("Avaliacoes");
 
+                    b.Navigation("Favoritos");
+
+                    b.Navigation("Leituras");
+
+                    b.Navigation("ListasDesejo");
+
                     b.Navigation("LivroGeneros");
 
                     b.Navigation("Sinopse")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("WebApiLivraria.Domain.Entities.Usuario", b =>
-                {
-                    b.Navigation("Avaliacoes");
                 });
 #pragma warning restore 612, 618
         }
