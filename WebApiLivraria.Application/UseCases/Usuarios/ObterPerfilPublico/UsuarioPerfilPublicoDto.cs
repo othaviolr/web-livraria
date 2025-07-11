@@ -6,6 +6,7 @@
         public string NomeUsuario { get; set; } = null!;
         public string? FotoUrl { get; set; }
         public string? Bio { get; set; }
+        public string? Cidade { get; set; }
 
         public List<LivroResumoDto> LivrosLidos { get; set; } = new();
         public List<LivroResumoDto> Favoritos { get; set; } = new();
