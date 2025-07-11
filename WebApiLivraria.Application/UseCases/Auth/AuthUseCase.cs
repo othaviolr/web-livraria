@@ -27,10 +27,14 @@ public class AuthUseCase : IAuthUseCase
         });
 
         var usuario = await _usuarioRepository.ObterPorEmail(payload.Email);
+
         if (usuario is null)
         {
             usuario = new Usuario(payload.Name, payload.Email);
             await _usuarioRepository.Adicionar(usuario);
+
+            // Recarrega para garantir que o Id foi preenchido corretamente
+            usuario = await _usuarioRepository.ObterPorEmail(payload.Email);
         }
 
         return _tokenService.GerarToken(usuario);
