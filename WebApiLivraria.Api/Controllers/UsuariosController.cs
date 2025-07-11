@@ -31,7 +31,7 @@ namespace WebApiLivraria.Api.Controllers
             IObterPerfilPublicoUseCase obterPerfilPublicoUseCase,
             AtualizarPerfilUseCase atualizarPerfilUseCase,
             ExcluirUsuarioUseCase excluirUsuarioUseCase,
-            ObterResumoStatusLeituraUseCase obterResumoStatusLeituraUseCase // <- injetado
+            ObterResumoStatusLeituraUseCase obterResumoStatusLeituraUseCase
         )
         {
             _usuarioRepository = usuarioRepository;
