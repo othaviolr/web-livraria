@@ -23,6 +23,7 @@ namespace WebApiLivraria.Infrastructure.Context
         public DbSet<ListaDesejo> ListasDesejo { get; set; }
         public DbSet<Sinopse> Sinopses { get; set; }
         public DbSet<Leitura> Leituras { get; set; }
+        public DbSet<UsuarioSeguindo> UsuariosSeguindo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -184,6 +185,8 @@ namespace WebApiLivraria.Infrastructure.Context
             });
 
             modelBuilder.ApplyConfiguration(new LeituraConfiguration());
+
+            modelBuilder.ApplyConfiguration(new UsuarioSeguindoMap());
         }
     }
 }

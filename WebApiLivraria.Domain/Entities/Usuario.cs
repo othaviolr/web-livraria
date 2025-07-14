@@ -20,6 +20,8 @@ public class Usuario
     public ICollection<ListaDesejo> ListasDesejo { get; private set; } = new List<ListaDesejo>();
     public ICollection<Favorito> Favoritos { get; private set; } = new List<Favorito>();
     public ICollection<Leitura> LivrosLidos { get; private set; } = new List<Leitura>();
+    public ICollection<UsuarioSeguindo> Seguidores { get; private set; } = new List<UsuarioSeguindo>();
+    public ICollection<UsuarioSeguindo> Seguindo { get; private set; } = new List<UsuarioSeguindo>();
 
     protected Usuario() { }
 

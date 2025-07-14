@@ -47,6 +47,7 @@ builder.Services.AddScoped<IAvaliacaoRepository, AvaliacaoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IFavoritoRepository, FavoritoRepository>();
 builder.Services.AddScoped<IListaDesejoRepository, ListaDesejoRepository>();
+builder.Services.AddScoped<IUsuarioSeguindoRepository, UsuarioSeguindoRepository>();
 
 // Serviços
 builder.Services.AddScoped<ILivroService, LivroService>();
