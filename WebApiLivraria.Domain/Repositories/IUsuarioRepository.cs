@@ -17,5 +17,6 @@ namespace WebApiLivraria.Domain.Repositories
         Task<Dictionary<StatusLeitura, int>> ObterContagemLivrosPorStatusAsync(Guid usuarioId);
 
         Task<int> ObterQuantidadeFavoritosAsync(Guid usuarioId);
+        Task<bool> ExistePorIdAsync(Guid id);
     }
 }
