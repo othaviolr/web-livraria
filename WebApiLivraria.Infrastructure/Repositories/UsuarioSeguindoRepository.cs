@@ -24,6 +24,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
         {
             var relacionamento = await _context.UsuariosSeguindo
                 .FirstOrDefaultAsync(us => us.SeguidorId == seguidorId && us.SeguindoId == seguindoId);
+
             if (relacionamento != null)
             {
                 _context.UsuariosSeguindo.Remove(relacionamento);
