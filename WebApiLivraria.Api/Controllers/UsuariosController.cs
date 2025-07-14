@@ -10,7 +10,11 @@ using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
 using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico;
 using WebApiLivraria.Application.UseCases.Usuarios.Excluir;
 using WebApiLivraria.Application.UseCases.Leitura.Resumo;
+using WebApiLivraria.Application.Requests.UsuarioSeguindo;
+using WebApiLivraria.Application.UseCases.UsuarioSeguindo;
 using WebApiLivraria.Domain.Repositories;
+using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguidores;
+using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguindo;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -24,6 +28,10 @@ namespace WebApiLivraria.Api.Controllers
         private readonly AtualizarPerfilUseCase _atualizarPerfilUseCase;
         private readonly ExcluirUsuarioUseCase _excluirUsuarioUseCase;
         private readonly ObterResumoStatusLeituraUseCase _obterResumoStatusLeituraUseCase;
+        private readonly SeguirUsuarioHandler _seguirUsuarioHandler;
+        private readonly DeixarDeSeguirUsuarioHandler _deixarDeSeguirUsuarioHandler;
+        private readonly ObterSeguidoresHandler _obterSeguidoresHandler;
+        private readonly ObterSeguindoHandler _obterSeguindoHandler;
 
         public UsuariosController(
             IUsuarioRepository usuarioRepository,
@@ -31,7 +39,11 @@ namespace WebApiLivraria.Api.Controllers
             IObterPerfilPublicoUseCase obterPerfilPublicoUseCase,
             AtualizarPerfilUseCase atualizarPerfilUseCase,
             ExcluirUsuarioUseCase excluirUsuarioUseCase,
-            ObterResumoStatusLeituraUseCase obterResumoStatusLeituraUseCase
+            ObterResumoStatusLeituraUseCase obterResumoStatusLeituraUseCase,
+            SeguirUsuarioHandler seguirUsuarioHandler,
+            DeixarDeSeguirUsuarioHandler deixarDeSeguirUsuarioHandler,
+            ObterSeguidoresHandler obterSeguidoresHandler,
+            ObterSeguindoHandler obterSeguindoHandler
         )
         {
             _usuarioRepository = usuarioRepository;
@@ -40,6 +52,10 @@ namespace WebApiLivraria.Api.Controllers
             _atualizarPerfilUseCase = atualizarPerfilUseCase;
             _excluirUsuarioUseCase = excluirUsuarioUseCase;
             _obterResumoStatusLeituraUseCase = obterResumoStatusLeituraUseCase;
+            _seguirUsuarioHandler = seguirUsuarioHandler;
+            _deixarDeSeguirUsuarioHandler = deixarDeSeguirUsuarioHandler;
+            _obterSeguidoresHandler = obterSeguidoresHandler;
+            _obterSeguindoHandler = obterSeguindoHandler;
         }
 
         private Guid ObterUsuarioIdDoToken()
@@ -68,27 +84,15 @@ namespace WebApiLivraria.Api.Controllers
         [Authorize]
         public async Task<IActionResult> ObterPerfil()
         {
-            try
-            {
-                var userId = ObterUsuarioIdDoToken();
-                if (userId == Guid.Empty)
-                    return Unauthorized();
+            var userId = ObterUsuarioIdDoToken();
+            if (userId == Guid.Empty)
+                return Unauthorized();
 
-                var perfilDto = await _obterPerfilCompletoUseCase.ExecutarAsync(userId);
-                if (perfilDto == null)
-                    return NotFound();
+            var perfilDto = await _obterPerfilCompletoUseCase.ExecutarAsync(userId);
+            if (perfilDto == null)
+                return NotFound();
 
-                return Ok(perfilDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    Sucesso = false,
-                    Mensagem = "Erro interno: " + ex.Message,
-                    Stack = ex.StackTrace
-                });
-            }
+            return Ok(perfilDto);
         }
 
         [HttpPut("perfil")]
@@ -130,8 +134,61 @@ namespace WebApiLivraria.Api.Controllers
                 return Unauthorized();
 
             var resumo = await _obterResumoStatusLeituraUseCase.ExecutarAsync(userId);
-
             return Ok(resumo);
+        }
+
+        [HttpPost("{id}/seguir")]
+        [Authorize]
+        public async Task<IActionResult> SeguirUsuario(Guid id)
+        {
+            var usuarioLogadoId = ObterUsuarioIdDoToken();
+            if (usuarioLogadoId == Guid.Empty)
+                return Unauthorized();
+
+            var request = new SeguirUsuarioRequest
+            {
+                UsuarioIdParaSeguir = id
+            };
+
+            await _seguirUsuarioHandler.HandleAsync(usuarioLogadoId, request);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}/deixar-de-seguir")]
+        [Authorize]
+        public async Task<IActionResult> DeixarDeSeguirUsuario(Guid id)
+        {
+            var usuarioLogadoId = ObterUsuarioIdDoToken();
+            if (usuarioLogadoId == Guid.Empty)
+                return Unauthorized();
+
+            var request = new DeixarDeSeguirRequest
+            {
+                UsuarioIdParaDeixarDeSeguir = id
+            };
+
+            await _deixarDeSeguirUsuarioHandler.HandleAsync(usuarioLogadoId, request);
+
+            return NoContent();
+        }
+
+        [HttpGet("{id}/seguidores")]
+        [Authorize]
+        public async Task<IActionResult> ObterSeguidores(Guid id)
+        {
+            var request = new ObterSeguidoresRequest(id);
+            var seguidores = await _obterSeguidoresHandler.HandleAsync(request);
+            return Ok(seguidores);
+        }
+
+        [HttpGet("{id}/seguindo")]
+        [Authorize]
+        public async Task<IActionResult> ObterSeguindo(Guid id)
+        {
+            var request = new ObterSeguindoRequest(id);
+            var seguindo = await _obterSeguindoHandler.HandleAsync(request);
+            return Ok(seguindo);
         }
     }
 }

@@ -28,6 +28,8 @@ using WebApiLivraria.Application.UseCases.Usuarios.Excluir;
 using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico;
 using WebApiLivraria.Application.UseCases.Leitura.Resumo;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo;
+using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguidores;
+using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguindo;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -79,6 +81,9 @@ builder.Services.AddScoped<ExcluirUsuarioUseCase>();
 builder.Services.AddScoped<IObterPerfilPublicoUseCase, ObterPerfilPublicoUseCase>();
 builder.Services.AddScoped<ObterResumoStatusLeituraUseCase>();
 builder.Services.AddScoped<SeguirUsuarioHandler>();
+builder.Services.AddScoped<DeixarDeSeguirUsuarioHandler>();
+builder.Services.AddScoped<ObterSeguidoresHandler>();
+builder.Services.AddScoped<ObterSeguindoHandler>();
 
 builder.Services.AddScoped<LoginUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();

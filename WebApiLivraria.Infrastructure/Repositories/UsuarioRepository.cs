@@ -105,5 +105,10 @@ namespace WebApiLivraria.Infrastructure.Repositories
         {
             return await _context.Favoritos.CountAsync(f => f.UsuarioId == usuarioId);
         }
+
+        public async Task<bool> ExistePorIdAsync(Guid id)
+        {
+            return await _context.Usuarios.AnyAsync(u => u.Id == id);
+        }
     }
 }
