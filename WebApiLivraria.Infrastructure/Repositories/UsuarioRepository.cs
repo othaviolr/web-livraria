@@ -56,13 +56,17 @@ namespace WebApiLivraria.Infrastructure.Repositories
             return await _context.Usuarios
                 .Include(u => u.Avaliacoes)
                     .ThenInclude(a => a.Livro)
-                        .ThenInclude(l => l.Autor)  
+                        .ThenInclude(l => l.Autor)
                 .Include(u => u.Favoritos)
                     .ThenInclude(f => f.Livro)
-                        .ThenInclude(l => l.Autor)   
+                        .ThenInclude(l => l.Autor)
                 .Include(u => u.LivrosLidos)
                     .ThenInclude(ll => ll.Livro)
-                        .ThenInclude(l => l.Autor)  
+                        .ThenInclude(l => l.Autor)
+                .Include(u => u.Seguidores)
+                    .ThenInclude(s => s.Seguidor)
+                .Include(u => u.Seguindo)
+                    .ThenInclude(s => s.Seguindo)
                 .FirstOrDefaultAsync(u => u.NomeUsuario == nomeUsuario);
         }
 
