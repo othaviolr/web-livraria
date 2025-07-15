@@ -1,5 +1,6 @@
 ﻿using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Domain.Enums;
+using WebApiLivraria.Application.Dto;
 
 namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
 {
@@ -61,6 +62,30 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
 
             var totalResenhas = usuario.Avaliacoes.Count;
 
+            var seguidores = usuario.Seguidores
+                .Select(s => s.Seguidor)
+                .Where(u => u != null)
+                .Select(u => new UsuarioResumoDto
+                {
+                    Nome = u!.Nome,
+                    NomeUsuario = u!.NomeUsuario,
+                    FotoUrl = u!.FotoUrl,
+                    Bio = u!.Bio
+                })
+                .ToList();
+
+            var seguindo = usuario.Seguindo
+                .Select(s => s.Seguindo)
+                .Where(u => u != null)
+                .Select(u => new UsuarioResumoDto
+                {
+                    Nome = u!.Nome,
+                    NomeUsuario = u!.NomeUsuario,
+                    FotoUrl = u!.FotoUrl,
+                    Bio = u!.Bio
+                })
+                .ToList();
+
             return new UsuarioPerfilPublicoDto
             {
                 Nome = usuario.Nome,
@@ -71,6 +96,8 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 LivrosLidos = livrosLidos,
                 Favoritos = favoritos,
                 ResenhasRecentes = resenhas,
+                Seguidores = seguidores,
+                Seguindo = seguindo,
 
                 TotalLido = statusLeituraContagem.GetValueOrDefault(StatusLeitura.Lido),
                 TotalLendo = statusLeituraContagem.GetValueOrDefault(StatusLeitura.Lendo),

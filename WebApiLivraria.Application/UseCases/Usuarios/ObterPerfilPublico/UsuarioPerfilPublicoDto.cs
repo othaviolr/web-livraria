@@ -1,4 +1,6 @@
-﻿namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
+﻿using WebApiLivraria.Application.Dto;
+
+namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
 {
     public class UsuarioPerfilPublicoDto
     {
@@ -18,5 +20,7 @@
         public int TotalRelendo { get; set; }
         public int TotalAbandonei { get; set; }
         public int TotalResenhas { get; set; }
+        public List<UsuarioResumoDto> Seguidores { get; set; } = new();
+        public List<UsuarioResumoDto> Seguindo { get; set; } = new();
     }
 }
