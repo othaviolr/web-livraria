@@ -63,6 +63,9 @@ namespace WebApiLivraria.Infrastructure.Repositories
                 .Include(u => u.LivrosLidos)
                     .ThenInclude(ll => ll.Livro)
                         .ThenInclude(l => l.Autor)
+                .Include(u => u.ListasDesejo)          
+                    .ThenInclude(w => w.Livro)
+                        .ThenInclude(l => l.Autor)
                 .Include(u => u.Seguidores)
                     .ThenInclude(s => s.Seguidor)
                 .Include(u => u.Seguindo)
@@ -81,6 +84,9 @@ namespace WebApiLivraria.Infrastructure.Repositories
                         .ThenInclude(l => l.Autor)
                 .Include(u => u.LivrosLidos)
                     .ThenInclude(ll => ll.Livro)
+                        .ThenInclude(l => l.Autor)
+                .Include(u => u.ListasDesejo)          
+                    .ThenInclude(w => w.Livro)
                         .ThenInclude(l => l.Autor)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }

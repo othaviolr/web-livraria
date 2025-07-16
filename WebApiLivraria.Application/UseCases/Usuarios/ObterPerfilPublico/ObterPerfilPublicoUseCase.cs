@@ -41,6 +41,17 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 })
                 .ToList();
 
+            var wishlist = usuario.ListasDesejo
+                .OrderByDescending(w => w.DataCriacao)
+                .Select(w => new LivroResumoDto
+                {
+                    Id = w.Livro.Id,
+                    Titulo = w.Livro.Titulo,
+                    Autor = w.Livro.Autor.Nome,
+                    ImagemUrl = w.Livro.ImagemUrl
+                })
+                .ToList();
+
             var resenhas = usuario.Avaliacoes
                 .OrderByDescending(a => a.DataCriacao)
                 .Take(3)
@@ -95,6 +106,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 Cidade = usuario.Cidade,
                 LivrosLidos = livrosLidos,
                 Favoritos = favoritos,
+                Wishlist = wishlist,
                 ResenhasRecentes = resenhas,
                 Seguidores = seguidores,
                 Seguindo = seguindo,
