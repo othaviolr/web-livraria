@@ -12,6 +12,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
 
         public List<LivroResumoDto> LivrosLidos { get; set; } = new();
         public List<LivroResumoDto> Favoritos { get; set; } = new();
+        public List<LivroResumoDto> Wishlist { get; set; } = new();
         public List<ResenhaDto> ResenhasRecentes { get; set; } = new();
 
         public int TotalLido { get; set; }
