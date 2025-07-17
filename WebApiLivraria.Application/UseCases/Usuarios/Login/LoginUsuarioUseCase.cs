@@ -60,11 +60,12 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.Login
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
-                new Claim(ClaimTypes.Name, usuario.Nome),
-                new Claim(ClaimTypes.Role, usuario.Role)
-            };
+        new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
+        new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
+        new Claim(ClaimTypes.Name, usuario.Nome),
+        new Claim(ClaimTypes.Role, usuario.Role),
+        new Claim("nomeUsuario", usuario.NomeUsuario ?? usuario.Nome)
+    };
 
             var token = new JwtSecurityToken(
                 issuer,
