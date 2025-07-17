@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using WebApiLivraria.Application.UseCases.Avaliacao.Criar;
@@ -8,6 +9,8 @@ using WebApiLivraria.Application.UseCases.Avaliacao.Editar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Excluir;
 using WebApiLivraria.Application.Dto;
 using System;
+using System.Linq;
+using System.Security.Claims;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -35,11 +38,29 @@ namespace WebApiLivraria.Api.Controllers
             _excluirAvaliacaoUseCase = excluirAvaliacaoUseCase;
         }
 
+        private Guid ObterUsuarioIdDoToken()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c =>
+                c.Type == "id" ||
+                c.Type == ClaimTypes.NameIdentifier ||
+                c.Type == "sub"
+            );
+
+            return userIdClaim == null ? Guid.Empty : Guid.Parse(userIdClaim.Value);
+        }
+
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Criar([FromBody] CriarAvaliacaoRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var usuarioId = ObterUsuarioIdDoToken();
+            if (usuarioId == Guid.Empty)
+                return Unauthorized();
+
+            request.UsuarioId = usuarioId;
 
             try
             {
