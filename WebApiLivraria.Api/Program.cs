@@ -20,7 +20,6 @@ using WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Infra.Data.Repositories;
-using WebApiLivraria.Infrastructure.Context;
 using WebApiLivraria.Infrastructure.Repositories;
 using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
 using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
@@ -30,16 +29,11 @@ using WebApiLivraria.Application.UseCases.Leitura.Resumo;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguidores;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguindo;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-// Banco de dados
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("WebApiLivraria.Infrastructure")
-    ));
 
 // Repositórios
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();
