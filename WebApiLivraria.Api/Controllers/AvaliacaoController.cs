@@ -74,21 +74,21 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpGet("livro/{livroId}")]
-        public async Task<IActionResult> ListarPorLivro(int livroId)
+        public async Task<IActionResult> ListarPorLivro(string livroId)
         {
             var avaliacoes = await _listarAvaliacoesPorLivroUseCase.ExecutarAsync(livroId);
             return Ok(RespostaPadrao<List<AvaliacaoResponse>>.ComSucesso(avaliacoes));
         }
 
         [HttpGet("livro/{livroId}/resumo")]
-        public async Task<IActionResult> ObterResumo(int livroId)
+        public async Task<IActionResult> ObterResumo(string livroId)
         {
             var resumo = await _obterResumoUseCase.ExecutarAsync(livroId);
             return Ok(RespostaPadrao<ResumoAvaliacaoLivroResponse>.ComSucesso(resumo));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Editar(int id, [FromBody] EditarAvaliacaoRequest request)
+        public async Task<IActionResult> Editar(string id, [FromBody] EditarAvaliacaoRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -116,7 +116,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Excluir(int id, [FromQuery] Guid usuarioId)
+        public async Task<IActionResult> Excluir(string id, [FromQuery] Guid usuarioId)
         {
             try
             {

@@ -11,7 +11,7 @@ public class ListarFavoritosUseCase
         _favoritoRepository = favoritoRepository;
     }
 
-    public async Task<List<FavoritoResponse>> Executar(Guid usuarioId)
+    public async Task<List<FavoritoResponse>> Executar(string usuarioId)
     {
         var favoritos = await _favoritoRepository.ListarPorUsuario(usuarioId);
 
@@ -22,7 +22,7 @@ public class ListarFavoritosUseCase
         }).ToList();
     }
 
-    public async Task<bool> VerificarFavorito(Guid usuarioId, int livroId)
+    public async Task<bool> VerificarFavorito(string usuarioId, string livroId)
     {
         return await _favoritoRepository.Existe(usuarioId, livroId);
     }

@@ -21,12 +21,12 @@ namespace WebApiLivraria.Application.UseCases.ListaDesejo
 
             return listaDesejos.Select(ld => new ListaDesejoResponse
             {
-                LivroId = ld.LivroId,
+                LivroId = ld.LivroId, 
                 DataCriacao = ld.DataCriacao
             }).ToList();
         }
 
-        public async Task<bool> VerificarListaDesejo(Guid usuarioId, int livroId)
+        public async Task<bool> VerificarListaDesejo(Guid usuarioId, string livroId)
         {
             return await _listaDesejoRepository.Existe(usuarioId, livroId);
         }

@@ -17,17 +17,23 @@ namespace WebApiLivraria.Application.UseCases.UsuarioSeguindo
             _usuarioSeguindoRepository = usuarioSeguindoRepository;
         }
 
-        public async Task HandleAsync(Guid usuarioAutenticadoId, SeguirUsuarioRequest request)
+        public async Task HandleAsync(string usuarioAutenticadoId, SeguirUsuarioRequest request)
         {
-            if (usuarioAutenticadoId == request.UsuarioIdParaSeguir)
+            if (!Guid.TryParse(usuarioAutenticadoId, out var usuarioAutIdGuid))
+                throw new ArgumentException("Id do usuário autenticado inválido.");
+
+            if (!Guid.TryParse(request.UsuarioIdParaSeguir, out var usuarioParaSeguirGuid))
+                throw new ArgumentException("Id do usuário a seguir inválido.");
+
+            if (usuarioAutIdGuid == usuarioParaSeguirGuid)
                 throw new InvalidOperationException("Você não pode seguir a si mesmo.");
 
-            var existeUsuario = await _usuarioRepository.ExistePorIdAsync(request.UsuarioIdParaSeguir);
+            var existeUsuario = await _usuarioRepository.ExistePorIdAsync(usuarioParaSeguirGuid);
             if (!existeUsuario)
                 throw new InvalidOperationException("Usuário que você está tentando seguir não existe.");
 
             var jaSegue = await _usuarioSeguindoRepository
-                .ExisteRelacionamentoAsync(usuarioAutenticadoId, request.UsuarioIdParaSeguir);
+                .ExisteRelacionamentoAsync(usuarioAutIdGuid, usuarioParaSeguirGuid);
 
             if (jaSegue)
                 throw new InvalidOperationException("Você já está seguindo este usuário.");
@@ -35,7 +41,7 @@ namespace WebApiLivraria.Application.UseCases.UsuarioSeguindo
             var usuarioSeguindo = new Domain.Entities.UsuarioSeguindo(
                 usuarioAutenticadoId,
                 request.UsuarioIdParaSeguir
-                );
+            );
 
             await _usuarioSeguindoRepository.SeguirAsync(usuarioSeguindo);
         }

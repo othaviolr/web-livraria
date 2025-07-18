@@ -2,6 +2,9 @@
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Application.Services
 {
@@ -26,7 +29,7 @@ namespace WebApiLivraria.Application.Services
             });
         }
 
-        public async Task<EditoraDto> ObterPorIdAsync(int id)
+        public async Task<EditoraDto> ObterPorIdAsync(string id)
         {
             var editora = await _editoraRepository.ObterPorIdAsync(id);
             if (editora == null) return null;
@@ -67,7 +70,7 @@ namespace WebApiLivraria.Application.Services
             await _editoraRepository.AtualizarAsync(editoraExistente);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task RemoverAsync(string id)
         {
             await _editoraRepository.RemoverAsync(id);
         }

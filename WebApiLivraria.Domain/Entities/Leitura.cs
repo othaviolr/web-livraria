@@ -1,23 +1,40 @@
-﻿using WebApiLivraria.Domain.Enums;
+﻿using System;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using WebApiLivraria.Domain.Enums;
 
 namespace WebApiLivraria.Domain.Entities
 {
     public class Leitura
     {
-        public Guid Id { get; private set; }
-        public Guid UsuarioId { get; private set; }
-        public int LivroId { get; private set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; private set; } = null!;
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string UsuarioId { get; private set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string LivroId { get; private set; }
+
         public StatusLeitura Status { get; private set; }
+
         public DateTime DataAtualizacao { get; private set; }
 
-        public virtual Livro Livro { get; private set; }
-        public virtual Usuario Usuario { get; private set; }
+        [BsonIgnore]
+        public virtual Livro Livro { get; private set; } = null!;
+
+        [BsonIgnore]
+        public virtual Usuario Usuario { get; private set; } = null!;
 
         protected Leitura() { }
 
-        public Leitura(Guid usuarioId, int livroId, StatusLeitura status)
+        public Leitura(string usuarioId, string livroId, StatusLeitura status)
         {
-            Id = Guid.NewGuid();
+            if (string.IsNullOrWhiteSpace(usuarioId)) throw new ArgumentException("UsuarioId inválido.");
+            if (string.IsNullOrWhiteSpace(livroId)) throw new ArgumentException("LivroId inválido.");
+
+            Id = ObjectId.GenerateNewId().ToString();
             UsuarioId = usuarioId;
             LivroId = livroId;
             Status = status;

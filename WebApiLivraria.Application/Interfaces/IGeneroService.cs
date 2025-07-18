@@ -7,9 +7,9 @@ namespace WebApiLivraria.Application.Interfaces
     public interface IGeneroService
     {
         Task<IEnumerable<GeneroDto>> ListarAsync();
-        Task<GeneroDto> ObterPorIdAsync(int id);
+        Task<GeneroDto> ObterPorIdAsync(string id);
         Task<GeneroDto> AdicionarAsync(GeneroDto dto);
         Task AtualizarAsync(GeneroDto dto);
-        Task RemoverAsync(int id);
+        Task RemoverAsync(string id);
     }
 }

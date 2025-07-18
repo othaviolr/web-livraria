@@ -2,6 +2,6 @@
 {
     public class SeguirUsuarioRequest
     {
-        public Guid UsuarioIdParaSeguir { get; set; }
+        public string UsuarioIdParaSeguir { get; set; } = null!;
     }
 }

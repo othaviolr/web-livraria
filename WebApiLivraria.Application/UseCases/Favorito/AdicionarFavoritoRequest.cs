@@ -2,8 +2,6 @@
 
 public class AdicionarFavoritoRequest
 {
-    public int LivroId { get; set; }
-
-    [System.Text.Json.Serialization.JsonIgnore]
-    public Guid UsuarioId { get; set; }
+    public string UsuarioId { get; set; } = string.Empty;
+    public string LivroId { get; set; } = string.Empty;
 }

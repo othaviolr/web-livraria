@@ -25,10 +25,10 @@ namespace WebApiLivraria.Api.Controllers
         {
             var usuarioIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!Guid.TryParse(usuarioIdString, out var usuarioId))
+            if (string.IsNullOrEmpty(usuarioIdString))
                 return Unauthorized("Usuário inválido");
 
-            var leitura = await _atualizarLeituraUseCase.ExecutarAsync(usuarioId, dto);
+            var leitura = await _atualizarLeituraUseCase.ExecutarAsync(usuarioIdString, dto);
 
             return Ok(new
             {

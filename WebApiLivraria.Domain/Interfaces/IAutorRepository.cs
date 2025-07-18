@@ -6,10 +6,10 @@ namespace WebApiLivraria.Application.Interfaces
 {
     public interface IAutorRepository
     {
-        Task<IEnumerable<Autor>> ListarAsync(string filtro = null, int? editoraId = null);
-        Task<Autor> ObterPorIdAsync(int id);
+        Task<IEnumerable<Autor>> ListarAsync(string? filtro = null, string? editoraId = null);
+        Task<Autor?> ObterPorIdAsync(string id);
         Task<Autor> AdicionarAsync(Autor autor);
         Task AtualizarAsync(Autor autor);
-        Task RemoverAsync(int id);
+        Task RemoverAsync(string id);
     }
 }

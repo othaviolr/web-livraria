@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Org.BouncyCastle.Crypto.Generators;
-using WebApiLivraria.Domain.Repositories;
+﻿using WebApiLivraria.Domain.Repositories;
+using WebApiLivraria.Domain.Entities;
 
 namespace WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario
 {
@@ -17,7 +12,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario
             _usuarioRepository = usuarioRepository;
         }
 
-        public async Task<Guid> Executar(RegistrarUsuarioRequest request)
+        public async Task<string> Executar(RegistrarUsuarioRequest request)
         {
             var usuarioExistente = await _usuarioRepository.ObterPorEmail(request.Email);
             if (usuarioExistente != null)

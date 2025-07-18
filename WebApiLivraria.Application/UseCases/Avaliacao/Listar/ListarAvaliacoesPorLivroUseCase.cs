@@ -15,7 +15,7 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Listar
             _avaliacaoRepository = avaliacaoRepository;
         }
 
-        public async Task<List<AvaliacaoResponse>> ExecutarAsync(int livroId)
+        public async Task<List<AvaliacaoResponse>> ExecutarAsync(string livroId)
         {
             var avaliacoes = await _avaliacaoRepository.ListarPorLivroIdAsync(livroId);
 

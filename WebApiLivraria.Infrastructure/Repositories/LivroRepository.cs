@@ -1,108 +1,80 @@
-﻿using WebApiLivraria.Domain.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MongoDB.Driver;
 using WebApiLivraria.Domain.Entities;
-using WebApiLivraria.Infrastructure.Context;
-using Microsoft.EntityFrameworkCore;
+using WebApiLivraria.Domain.Interfaces;
+using WebApiLivraria.Infrastructure.Contexts;
 
 namespace WebApiLivraria.Infrastructure.Repositories
 {
     public class LivroRepository : ILivroRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IMongoCollection<Livro> _livros;
 
-        public LivroRepository(AppDbContext context)
+        public LivroRepository(MongoDbContext context)
         {
-            _context = context;
+            _livros = context.Livros;
         }
 
         public async Task AdicionarAsync(Livro livro)
         {
-            await _context.Livros.AddAsync(livro);
-            await _context.SaveChangesAsync();
+            await _livros.InsertOneAsync(livro);
         }
 
         public async Task AtualizarAsync(Livro livro)
         {
-            _context.Livros.Update(livro);
-            await _context.SaveChangesAsync();
+            await _livros.ReplaceOneAsync(l => l.Id == livro.Id, livro);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task RemoverAsync(string id)
         {
-            var livro = await _context.Livros.FindAsync(id);
-            if (livro != null)
-            {
-                _context.Livros.Remove(livro);
-                await _context.SaveChangesAsync();
-            }
+            await _livros.DeleteOneAsync(l => l.Id == id);
         }
 
-        public async Task<Livro> ObterPorIdAsync(int id)
+        public async Task<Livro> ObterPorIdAsync(string id)
         {
-            return await _context.Livros
-                .Include(l => l.Autor)
-                .Include(l => l.Editora)
-                .Include(l => l.LivroGeneros)
-                    .ThenInclude(lg => lg.Genero)
-                .Include(l => l.Sinopse)
-                .FirstOrDefaultAsync(l => l.Id == id);
+            return await _livros.Find(l => l.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Livro>> ListarAsync()
         {
-            return await _context.Livros
-                .Include(l => l.Autor)
-                .Include(l => l.Editora)
-                .Include(l => l.LivroGeneros)
-                    .ThenInclude(lg => lg.Genero)
-                .Include(l => l.Sinopse)
-                .ToListAsync();
+            return await _livros.Find(_ => true).ToListAsync();
         }
 
         public async Task<IEnumerable<Livro>> ListarComFiltroAsync(string? search)
         {
-            var query = _context.Livros
-                .Include(l => l.Autor)
-                .Include(l => l.Editora)
-                .Include(l => l.LivroGeneros)
-                    .ThenInclude(lg => lg.Genero)
-                .Include(l => l.Sinopse)
-                .AsQueryable();
+            var filter = Builders<Livro>.Filter.Empty;
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var filtroLower = search.ToLower();
-                query = query.Where(l =>
-                    l.Titulo.ToLower().Contains(filtroLower) ||
-                    l.Autor.Nome.ToLower().Contains(filtroLower) ||
-                    l.Editora.Nome.ToLower().Contains(filtroLower)
-                );
+                var regex = new MongoDB.Bson.BsonRegularExpression(search, "i");
+                var filterTitulo = Builders<Livro>.Filter.Regex(l => l.Titulo, regex);
+                var filterAutor = Builders<Livro>.Filter.Regex("Autor.Nome", regex);
+                var filterEditora = Builders<Livro>.Filter.Regex("Editora.Nome", regex);
+
+                filter = Builders<Livro>.Filter.Or(filterTitulo, filterAutor, filterEditora);
             }
 
-            return await query.ToListAsync();
+            return await _livros.Find(filter).ToListAsync();
         }
 
         public async Task<IEnumerable<Livro>> ObterLivrosComFiltroAsync(int? anoPublicacao, string? genero)
         {
-            var query = _context.Livros
-                .Include(l => l.Autor)
-                .Include(l => l.Editora)
-                .Include(l => l.LivroGeneros)
-                    .ThenInclude(lg => lg.Genero)
-                .Include(l => l.Avaliacoes)
-                .Include(l => l.Sinopse)
-                .AsQueryable();
+            var builder = Builders<Livro>.Filter;
+            var filter = builder.Empty;
 
             if (anoPublicacao.HasValue)
             {
-                query = query.Where(l => l.AnoPublicacao.Year == anoPublicacao.Value);
+                filter &= builder.Eq(l => l.AnoPublicacao.Year, anoPublicacao.Value);
             }
 
             if (!string.IsNullOrEmpty(genero))
             {
-                query = query.Where(l => l.LivroGeneros.Any(g => g.Genero.Nome == genero));
+                filter &= builder.ElemMatch(l => l.LivroGeneros, lg => lg.Genero.Nome == genero);
             }
 
-            return await query.ToListAsync();
+            return await _livros.Find(filter).ToListAsync();
         }
     }
 }

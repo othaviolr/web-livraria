@@ -1,43 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using WebApiLivraria.Application.Dto;
-using WebApiLivraria.Infrastructure.Context;
+using WebApiLivraria.Domain.Entities;
+using WebApiLivraria.Infrastructure.Contexts;
 using EntLeitura = WebApiLivraria.Domain.Entities.Leitura;
 
 namespace WebApiLivraria.Application.UseCases.Leitura.Atualizar
 {
     public class AtualizarLeituraUseCase
     {
-        private readonly AppDbContext _context;
+        private readonly IMongoCollection<EntLeitura> _leiturasCollection;
 
-        public AtualizarLeituraUseCase(AppDbContext context)
+        public AtualizarLeituraUseCase(MongoDbContext context)
         {
-            _context = context;
+            _leiturasCollection = context.Leituras;
         }
 
-        public async Task<EntLeitura> ExecutarAsync(Guid usuarioId, AtualizarLeituraDto dto)
+        public async Task<EntLeitura> ExecutarAsync(string usuarioId, AtualizarLeituraDto dto)
         {
-            var leitura = await _context.Leituras
-                .FirstOrDefaultAsync(l => l.UsuarioId == usuarioId && l.LivroId == dto.LivroId);
+            var filtroUsuario = Builders<EntLeitura>.Filter.Eq(l => l.UsuarioId, usuarioId);
+            var filtroLivro = Builders<EntLeitura>.Filter.Eq(l => l.LivroId, dto.LivroId);
+            var filtro = Builders<EntLeitura>.Filter.And(filtroUsuario, filtroLivro);
 
-            if (leitura == null)
+            var leituraExistente = await _leiturasCollection.Find(filtro).FirstOrDefaultAsync();
+
+            if (leituraExistente == null)
             {
-                leitura = new EntLeitura(usuarioId, dto.LivroId, dto.Status);
-                await _context.Leituras.AddAsync(leitura);
+                var novaLeitura = new EntLeitura(usuarioId, dto.LivroId, dto.Status);
+                await _leiturasCollection.InsertOneAsync(novaLeitura);
+                return novaLeitura;
             }
             else
             {
-                leitura.AtualizarStatus(dto.Status);
-                _context.Leituras.Update(leitura);
+                leituraExistente.AtualizarStatus(dto.Status);
+
+                var update = Builders<EntLeitura>.Update.Set(l => l.Status, dto.Status);
+
+                await _leiturasCollection.UpdateOneAsync(filtro, update);
+
+                return leituraExistente;
             }
-
-            await _context.SaveChangesAsync();
-
-            return leitura;
         }
     }
 }

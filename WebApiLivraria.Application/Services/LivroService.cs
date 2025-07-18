@@ -49,10 +49,9 @@ namespace WebApiLivraria.Application.Services
             });
         }
 
-        public async Task<LivroDto> ObterPorIdAsync(int id)
+        public async Task<LivroDto> ObterPorIdAsync(string id)
         {
             var livro = await _livroRepository.ObterPorIdAsync(id);
-
             if (livro == null) return null;
 
             return new LivroDto
@@ -82,13 +81,20 @@ namespace WebApiLivraria.Application.Services
             if (editora == null)
                 throw new Exception($"Editora com Id {dto.EditoraId} não encontrada.");
 
-            var generosValidos = await _generoRepository.ListarPorIdsAsync(dto.Generos ?? Enumerable.Empty<int>());
+            var generosValidos = await _generoRepository.ListarPorIdsAsync(dto.Generos ?? Enumerable.Empty<string>());
             if (generosValidos == null || !generosValidos.Any())
                 throw new Exception("Gêneros inválidos ou não encontrados.");
 
-            var livro = new Livro(dto.Titulo, dto.AutorId, dto.EditoraId, dto.AnoPublicacao, dto.NumeroPaginas, dto.Idioma, dto.ImagemUrl);
+            var livro = new Livro(
+                dto.Titulo,
+                dto.AutorId,
+                dto.EditoraId,
+                dto.AnoPublicacao,
+                dto.NumeroPaginas,
+                dto.Idioma,
+                dto.ImagemUrl);
 
-            foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
+            foreach (var generoId in dto.Generos ?? Enumerable.Empty<string>())
             {
                 if (generosValidos.Any(g => g.Id == generoId))
                     livro.AdicionarGenero(generoId);
@@ -106,9 +112,9 @@ namespace WebApiLivraria.Application.Services
             {
                 Id = livro.Id,
                 Titulo = livro.Titulo,
-                AutorId = livro.AutorId,
+                AutorId = autor.Id,
                 AutorNome = autor.Nome,
-                EditoraId = livro.EditoraId,
+                EditoraId = editora.Id,
                 EditoraNome = editora.Nome,
                 AnoPublicacao = livro.AnoPublicacao,
                 ImagemUrl = livro.ImagemUrl,
@@ -139,7 +145,7 @@ namespace WebApiLivraria.Application.Services
 
             livroExistente.LimparGeneros();
 
-            foreach (var generoId in dto.Generos ?? Enumerable.Empty<int>())
+            foreach (var generoId in dto.Generos ?? Enumerable.Empty<string>())
             {
                 livroExistente.AdicionarGenero(generoId);
             }
@@ -147,7 +153,7 @@ namespace WebApiLivraria.Application.Services
             await _livroRepository.AtualizarAsync(livroExistente);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task RemoverAsync(string id)
         {
             await _livroRepository.RemoverAsync(id);
         }

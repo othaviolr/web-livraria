@@ -2,6 +2,8 @@
 using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Constantes.Editora;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -17,7 +19,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
             var editora = await _editoraService.ObterPorIdAsync(id);
 
@@ -40,7 +42,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] EditoraDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] EditoraDto dto)
         {
             if (id != dto.Id)
                 return BadRequest(RespostaPadrao<EditoraDto>.ComErro("ID inconsistente."));
@@ -51,7 +53,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             await _editoraService.RemoverAsync(id);
 

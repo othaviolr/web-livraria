@@ -11,7 +11,7 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Resumo
             _avaliacaoRepository = avaliacaoRepository;
         }
 
-        public async Task<ResumoAvaliacaoLivroResponse> ExecutarAsync(int livroId)
+        public async Task<ResumoAvaliacaoLivroResponse> ExecutarAsync(string livroId)
         {
             var notaMedia = await _avaliacaoRepository.ObterMediaNotasPorLivroAsync(livroId);
             var totalAvaliacoes = await _avaliacaoRepository.ObterQuantidadeAvaliacoesPorLivroAsync(livroId);
