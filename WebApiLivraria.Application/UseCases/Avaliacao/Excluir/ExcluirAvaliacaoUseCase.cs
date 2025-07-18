@@ -1,6 +1,7 @@
 ﻿using WebApiLivraria.Domain.Interfaces;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace WebApiLivraria.Application.UseCases.Avaliacao.Excluir
 {
@@ -13,13 +14,13 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Excluir
             _avaliacaoRepository = avaliacaoRepository;
         }
 
-        public async Task ExecutarAsync(int id, Guid usuarioId)
+        public async Task ExecutarAsync(string id, Guid usuarioId)
         {
             var avaliacao = await _avaliacaoRepository.ObterPorIdAsync(id);
             if (avaliacao == null)
                 throw new KeyNotFoundException("Avaliação não encontrada");
 
-            if (avaliacao.UsuarioId != usuarioId)
+            if (avaliacao.UsuarioId != usuarioId.ToString())
                 throw new UnauthorizedAccessException("Usuário não pode excluir essa avaliação");
 
             await _avaliacaoRepository.RemoverAsync(id);

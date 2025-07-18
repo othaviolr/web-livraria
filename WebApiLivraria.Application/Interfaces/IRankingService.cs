@@ -1,12 +1,13 @@
-﻿namespace WebApiLivraria.Application.Services;
-
-using WebApiLivraria.Application.UseCases.RankingLivro;
+﻿using WebApiLivraria.Application.UseCases.RankingLivro;
 using WebApiLivraria.Domain.Entities;
 
-public interface IRankingService
+namespace WebApiLivraria.Application.Services
 {
-    Task<List<RankingLivro>> ObterRankingGeralAsync(int pagina, int tamanhoPagina);
-    Task<List<RankingLivro>> ObterRankingPorGeneroAsync(string genero, int pagina, int tamanhoPagina);
-    Task AtualizarRankingAsync();
-    Task<List<RankingLivroResponse>> ObterRankingAsync(RankingLivroRequest request);
+    public interface IRankingService
+    {
+        Task<List<RankingLivro>> ObterRankingGeralAsync(int pagina, int tamanhoPagina);
+        Task<List<RankingLivro>> ObterRankingPorGeneroAsync(string genero, int pagina, int tamanhoPagina);
+        Task AtualizarRankingAsync();
+        Task<List<RankingLivroResponse>> ObterRankingAsync(RankingLivroRequest request);
+    }
 }

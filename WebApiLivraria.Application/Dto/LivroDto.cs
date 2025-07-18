@@ -2,17 +2,28 @@
 {
     public class LivroDto
     {
-        public int Id { get; set; }
-        public string Titulo { get; set; }
-        public int AutorId { get; set; }
+        public string Id { get; set; } = null!;
+
+        public string Titulo { get; set; } = null!;
+
+        public string AutorId { get; set; } = null!;
+
         public string? AutorNome { get; set; }
-        public int EditoraId { get; set; }
+
+        public string EditoraId { get; set; } = null!;
+
         public string? EditoraNome { get; set; }
+
         public string? ImagemUrl { get; set; }
+
         public DateTime AnoPublicacao { get; set; }
-        public List<int> Generos { get; set; } = new();
+
+        public List<string> Generos { get; set; } = new();
+
         public string? Sinopse { get; set; }
+
         public int NumeroPaginas { get; set; }
+
         public string? Idioma { get; set; }
     }
 }

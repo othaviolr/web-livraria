@@ -1,7 +1,6 @@
 ﻿using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Entities;
-using WebApiLivraria.Domain.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,13 +22,13 @@ namespace WebApiLivraria.Application.Services
             return autores.Select(a => MapToDto(a));
         }
 
-        public async Task<List<AutorDto>> ObterTodosAsync(string filtro = null, int? editoraId = null)
+        public async Task<List<AutorDto>> ObterTodosAsync(string filtro = null, string? editoraId = null)
         {
             var autores = await _autorRepository.ListarAsync(filtro, editoraId);
             return autores.Select(a => MapToDto(a)).ToList();
         }
 
-        public async Task<AutorDto> ObterPorIdAsync(int id)
+        public async Task<AutorDto?> ObterPorIdAsync(string id)
         {
             var autor = await _autorRepository.ObterPorIdAsync(id);
             if (autor == null) return null;
@@ -46,7 +45,6 @@ namespace WebApiLivraria.Application.Services
                 dto.LocalNascimento,
                 dto.FotoUrl
             );
-
 
             await _autorRepository.AdicionarAsync(autor);
 
@@ -70,7 +68,7 @@ namespace WebApiLivraria.Application.Services
             await _autorRepository.AtualizarAsync(autorExistente);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task RemoverAsync(string id)
         {
             await _autorRepository.RemoverAsync(id);
         }

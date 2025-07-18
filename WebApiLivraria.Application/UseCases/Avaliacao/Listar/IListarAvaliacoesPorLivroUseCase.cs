@@ -5,6 +5,6 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Listar
 {
     public interface IListarAvaliacoesPorLivroUseCase
     {
-        Task<List<AvaliacaoResponse>> ExecutarAsync(int livroId);
+        Task<List<AvaliacaoResponse>> ExecutarAsync(string livroId);
     }
 }

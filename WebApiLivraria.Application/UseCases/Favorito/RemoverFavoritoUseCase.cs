@@ -13,6 +13,6 @@ public class RemoverFavoritoUseCase
 
     public async Task Executar(Guid usuarioId, int livroId)
     {
-        await _favoritoRepository.Remover(usuarioId, livroId);
+        await _favoritoRepository.Remover(usuarioId.ToString(), livroId.ToString());
     }
 }

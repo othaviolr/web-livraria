@@ -2,6 +2,6 @@
 {
     public interface IObterResumoAvaliacaoLivroUseCase
     {
-        Task<ResumoAvaliacaoLivroResponse> ExecutarAsync(int livroId);
+        Task<ResumoAvaliacaoLivroResponse> ExecutarAsync(string livroId);
     }
 }

@@ -1,70 +1,60 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
-using WebApiLivraria.Infrastructure.Context;
-using WebApiLivraria.Infrastructure.Data;
+using WebApiLivraria.Infrastructure.Contexts;
 
 namespace WebApiLivraria.Infrastructure.Repositories
 {
     public class AutorRepository : IAutorRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IMongoCollection<Autor> _autores;
 
-        public AutorRepository(AppDbContext context)
+        public AutorRepository(MongoDbContext context)
         {
-            _context = context;
+            _autores = context.Autores;
         }
 
-        public async Task<IEnumerable<Autor>> ListarAsync(string filtro = null, int? editoraId = null)
+        public async Task<IEnumerable<Autor>> ListarAsync(string filtro = null, string? editoraId = null)
         {
-            var query = _context.Autores.AsQueryable();
+            var filterBuilder = Builders<Autor>.Filter;
+            var filter = filterBuilder.Empty;
 
             if (!string.IsNullOrWhiteSpace(filtro))
             {
                 var filtroLower = filtro.ToLower();
-                query = query.Where(a => a.Nome.ToLower().Contains(filtroLower));
+                filter &= filterBuilder.Regex(a => a.Nome, new MongoDB.Bson.BsonRegularExpression(filtroLower, "i"));
             }
 
-            if (editoraId.HasValue)
+            if (!string.IsNullOrWhiteSpace(editoraId))
             {
-                query = query.Where(a => a.EditoraId == editoraId.Value);
+                filter &= filterBuilder.Eq(a => a.EditoraId, editoraId);
             }
 
-            return await query.ToListAsync();
+            return await _autores.Find(filter).ToListAsync();
         }
 
-        public async Task<Autor> ObterPorIdAsync(int id)
+        public async Task<Autor?> ObterPorIdAsync(string id)
         {
-            return await _context.Autores
-                .Include(a => a.Livros)
-                .FirstOrDefaultAsync(a => a.Id == id);
+            return await _autores.Find(a => a.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Autor> AdicionarAsync(Autor autor)
         {
-            _context.Autores.Add(autor);
-            await _context.SaveChangesAsync();
+            await _autores.InsertOneAsync(autor);
             return autor;
         }
 
         public async Task AtualizarAsync(Autor autor)
         {
-            _context.Autores.Update(autor);
-            await _context.SaveChangesAsync();
+            await _autores.ReplaceOneAsync(a => a.Id == autor.Id, autor);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task RemoverAsync(string id)
         {
-            var autor = await _context.Autores.FindAsync(id);
-            if (autor != null)
-            {
-                _context.Autores.Remove(autor);
-                await _context.SaveChangesAsync();
-            }
+            await _autores.DeleteOneAsync(a => a.Id == id);
         }
     }
 }

@@ -62,7 +62,7 @@ public class ListaDesejoController : ControllerBase
         try
         {
             var usuarioId = ObterUsuarioId();
-            await _removerUseCase.Executar(usuarioId, livroId);
+            await _removerUseCase.Executar(usuarioId, livroId.ToString());
             return NoContent();
         }
         catch (UnauthorizedAccessException)
@@ -96,7 +96,7 @@ public class ListaDesejoController : ControllerBase
         try
         {
             var usuarioId = ObterUsuarioId();
-            bool existe = await _listarUseCase.VerificarListaDesejo(usuarioId, livroId);
+            bool existe = await _listarUseCase.VerificarListaDesejo(usuarioId, livroId.ToString());
             return Ok(existe);
         }
         catch (UnauthorizedAccessException)

@@ -1,4 +1,7 @@
-﻿using WebApiLivraria.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Enums;
 
 namespace WebApiLivraria.Domain.Repositories
@@ -9,9 +12,9 @@ namespace WebApiLivraria.Domain.Repositories
         Task<Usuario?> ObterPorId(Guid id);
         Task Adicionar(Usuario usuario);
         Task Atualizar(Usuario usuario);
+        Task Remover(Usuario usuario);
         Task<Usuario?> ObterPorIdComAvaliacoesAsync(Guid id);
         Task<Usuario?> ObterPorNomeUsuarioComRelacionamentosAsync(string nomeUsuario);
-        Task Remover(Usuario usuario);
         Task<Usuario?> ObterPorIdComDetalhesAsync(Guid id);
 
         Task<Dictionary<StatusLeitura, int>> ObterContagemLivrosPorStatusAsync(Guid usuarioId);

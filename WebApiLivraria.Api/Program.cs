@@ -1,8 +1,7 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 using WebApiLivraria.Application.Interfaces;
 using WebApiLivraria.Application.Services;
 using WebApiLivraria.Application.UseCases.Auth;
@@ -12,28 +11,32 @@ using WebApiLivraria.Application.UseCases.Avaliacao.Excluir;
 using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Resumo;
 using WebApiLivraria.Application.UseCases.Favorito;
-using WebApiLivraria.Application.UseCases.ListaDesejo;
 using WebApiLivraria.Application.UseCases.Leitura.Atualizar;
+using WebApiLivraria.Application.UseCases.Leitura.Resumo;
+using WebApiLivraria.Application.UseCases.ListaDesejo;
 using WebApiLivraria.Application.UseCases.RankingLivro;
-using WebApiLivraria.Application.UseCases.Usuarios.Login;
-using WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario;
-using WebApiLivraria.Domain.Interfaces;
-using WebApiLivraria.Domain.Repositories;
-using WebApiLivraria.Infra.Data.Repositories;
-using WebApiLivraria.Infrastructure.Repositories;
-using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
 using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
 using WebApiLivraria.Application.UseCases.Usuarios.Excluir;
+using WebApiLivraria.Application.UseCases.Usuarios.Login;
+using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
 using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico;
-using WebApiLivraria.Application.UseCases.Leitura.Resumo;
+using WebApiLivraria.Application.UseCases.Usuarios.RegistrarUsuario;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguidores;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguindo;
-using System;
+using WebApiLivraria.Domain.Interfaces;
+using WebApiLivraria.Domain.Repositories;
+using WebApiLivraria.Infrastructure.Configurations;
+using WebApiLivraria.Infrastructure.Contexts;
+using WebApiLivraria.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+builder.Services.Configure<MongoDbSettings>(
+builder.Configuration.GetSection("MongoDbSettings"));
+
+builder.Services.AddSingleton<MongoDbContext>();
 
 // Repositórios
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();

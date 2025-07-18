@@ -1,82 +1,102 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebApiLivraria.Application.Services;
 using WebApiLivraria.Application.UseCases.RankingLivro;
 using WebApiLivraria.Domain.Entities;
-using WebApiLivraria.Infrastructure.Context;
+using WebApiLivraria.Infrastructure.Contexts;
 
 public class RankingService : IRankingService
 {
-    private readonly AppDbContext _context;
+    private readonly IMongoCollection<RankingLivro> _rankingCollection;
+    private readonly IMongoCollection<Livro> _livrosCollection;
+    private readonly IMongoCollection<Genero> _generosCollection;
+    private readonly IMongoCollection<LivroGenero> _livroGenerosCollection;
 
-    public RankingService(AppDbContext context)
+    public RankingService(MongoDbContext context)
     {
-        _context = context;
+        _rankingCollection = context.RankingLivros;
+        _livrosCollection = context.Livros;
+        _generosCollection = context.Generos;
+        _livroGenerosCollection = context.LivroGeneros;
     }
 
     public async Task<List<RankingLivro>> ObterRankingGeralAsync(int pagina, int tamanhoPagina)
     {
-        return await _context.RankingLivros
-            .Where(r => r.Genero == null)
-            .OrderBy(r => r.Posicao)
+        var filter = Builders<RankingLivro>.Filter.Eq(r => r.Genero, null);
+        var sort = Builders<RankingLivro>.Sort.Ascending(r => r.Posicao);
+
+        return await _rankingCollection
+            .Find(filter)
+            .Sort(sort)
             .Skip((pagina - 1) * tamanhoPagina)
-            .Take(tamanhoPagina)
-            .Include(r => r.Livro)
+            .Limit(tamanhoPagina)
             .ToListAsync();
     }
 
     public async Task<List<RankingLivro>> ObterRankingPorGeneroAsync(string genero, int pagina, int tamanhoPagina)
     {
-        return await _context.RankingLivros
-            .Where(r => r.Genero != null && r.Genero.ToLower() == genero.ToLower())
-            .OrderBy(r => r.Posicao)
+        var filter = Builders<RankingLivro>.Filter.Eq(r => r.Genero, genero);
+        var sort = Builders<RankingLivro>.Sort.Ascending(r => r.Posicao);
+
+        return await _rankingCollection
+            .Find(filter)
+            .Sort(sort)
             .Skip((pagina - 1) * tamanhoPagina)
-            .Take(tamanhoPagina)
-            .Include(r => r.Livro)
+            .Limit(tamanhoPagina)
             .ToListAsync();
     }
 
     public async Task AtualizarRankingAsync()
     {
-        var todosRankings = await _context.RankingLivros.ToListAsync();
-        _context.RankingLivros.RemoveRange(todosRankings);
-        await _context.SaveChangesAsync();
+        // Remove todos os rankings atuais
+        await _rankingCollection.DeleteManyAsync(Builders<RankingLivro>.Filter.Empty);
 
-        var rankingGeral = await _context.Livros
-            .Include(l => l.Avaliacoes)
-            .Where(l => l.Avaliacoes.Any())
+        // Livros que têm avaliações
+        var livrosComAvaliacoes = await _livrosCollection
+            .Find(l => l.Avaliacoes != null && l.Avaliacoes.Count > 0)
+            .ToListAsync();
+
+        // Ranking geral (sem gênero)
+        var rankingGeral = livrosComAvaliacoes
             .Select(l => new RankingLivro
             {
-                LivroId = l.Id,
-                Genero = null,
+                LivroId = l.Id, // l.Id é string
+                Genero = null!,
                 NotaMedia = l.Avaliacoes.Average(a => a.Nota),
                 TotalAvaliacoes = l.Avaliacoes.Count,
                 DataAtualizacao = DateTime.UtcNow
             })
             .OrderByDescending(r => r.NotaMedia)
-            .ToListAsync();
+            .ToList();
 
         for (int i = 0; i < rankingGeral.Count; i++)
-        {
             rankingGeral[i].Posicao = i + 1;
-        }
 
-        var generos = await _context.Generos.Select(g => g.Nome).ToListAsync();
+        // Ranking por gênero
+        var generos = await _generosCollection.Find(_ => true).ToListAsync();
         var rankingPorGenero = new List<RankingLivro>();
 
         foreach (var genero in generos)
         {
-            var livrosGenero = await _context.LivroGeneros
-                .Where(lg => lg.Genero.Nome == genero)
-                .Select(lg => lg.Livro)
-                .Include(l => l.Avaliacoes)
-                .Where(l => l.Avaliacoes.Any())
+            // Pegando os IDs de livros que pertencem a esse gênero
+            var livroIds = await _livroGenerosCollection
+                .Find(lg => lg.Genero.Nome == genero.Nome)
+                .Project(lg => lg.Livro.Id) // Livro.Id é string
+                .ToListAsync();
+
+            // Livros com avaliações desse gênero
+            var livrosGenero = await _livrosCollection
+                .Find(l => livroIds.Contains(l.Id) && l.Avaliacoes != null && l.Avaliacoes.Count > 0)
                 .ToListAsync();
 
             var rankingGenero = livrosGenero
                 .Select(l => new RankingLivro
                 {
                     LivroId = l.Id,
-                    Genero = genero,
+                    Genero = genero.Nome,
                     NotaMedia = l.Avaliacoes.Average(a => a.Nota),
                     TotalAvaliacoes = l.Avaliacoes.Count,
                     DataAtualizacao = DateTime.UtcNow
@@ -85,16 +105,13 @@ public class RankingService : IRankingService
                 .ToList();
 
             for (int i = 0; i < rankingGenero.Count; i++)
-            {
                 rankingGenero[i].Posicao = i + 1;
-            }
 
             rankingPorGenero.AddRange(rankingGenero);
         }
 
-        await _context.RankingLivros.AddRangeAsync(rankingGeral);
-        await _context.RankingLivros.AddRangeAsync(rankingPorGenero);
-        await _context.SaveChangesAsync();
+        // Inserir rankings no banco
+        await _rankingCollection.InsertManyAsync(rankingGeral.Concat(rankingPorGenero));
     }
 
     public async Task<List<RankingLivroResponse>> ObterRankingAsync(RankingLivroRequest request)
@@ -102,36 +119,31 @@ public class RankingService : IRankingService
         List<RankingLivro> rankings;
 
         if (string.IsNullOrWhiteSpace(request.Genero))
-        {
             rankings = await ObterRankingGeralAsync(request.Pagina, request.TamanhoPagina);
-        }
         else
-        {
             rankings = await ObterRankingPorGeneroAsync(request.Genero, request.Pagina, request.TamanhoPagina);
-        }
 
-        var livros = await _context.Livros
-            .Where(l => rankings.Select(r => r.LivroId).Contains(l.Id))
-            .Include(l => l.Autor)
+        var livroIds = rankings.Select(r => r.LivroId).ToList();
+
+        var livros = await _livrosCollection
+            .Find(l => livroIds.Contains(l.Id))
             .ToListAsync();
 
-        var resultado = rankings
-            .Select(r =>
+        var resultado = rankings.Select(r =>
+        {
+            var livro = livros.FirstOrDefault(l => l.Id == r.LivroId);
+            return new RankingLivroResponse
             {
-                var livro = livros.FirstOrDefault(l => l.Id == r.LivroId);
-                return new RankingLivroResponse
-                {
-                    LivroId = r.LivroId,
-                    Titulo = livro?.Titulo ?? "Desconhecido",
-                    Autor = livro?.Autor?.Nome ?? "Desconhecido",
-                    NotaMedia = r.NotaMedia,
-                    Posicao = r.Posicao,
-                    TotalAvaliacoes = r.TotalAvaliacoes,
-                    Genero = r.Genero,
-                    DataAtualizacao = r.DataAtualizacao
-                };
-            })
-            .ToList();
+                LivroId = r.LivroId,
+                Titulo = livro?.Titulo ?? "Desconhecido",
+                Autor = livro?.Autor?.Nome ?? "Desconhecido",
+                NotaMedia = r.NotaMedia,
+                Posicao = r.Posicao,
+                TotalAvaliacoes = r.TotalAvaliacoes,
+                Genero = r.Genero,
+                DataAtualizacao = r.DataAtualizacao
+            };
+        }).ToList();
 
         return resultado;
     }

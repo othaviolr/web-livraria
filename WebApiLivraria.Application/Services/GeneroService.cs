@@ -27,7 +27,7 @@ namespace WebApiLivraria.Application.Services
             });
         }
 
-        public async Task<GeneroDto> ObterPorIdAsync(int id)
+        public async Task<GeneroDto> ObterPorIdAsync(string id)
         {
             var genero = await _generoRepository.ObterPorIdAsync(id);
             if (genero == null) return null;
@@ -57,7 +57,7 @@ namespace WebApiLivraria.Application.Services
             await _generoRepository.AtualizarAsync(generoExistente);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task RemoverAsync(string id)
         {
             await _generoRepository.RemoverAsync(id);
         }

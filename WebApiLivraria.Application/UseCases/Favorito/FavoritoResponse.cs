@@ -2,6 +2,6 @@
 
 public class FavoritoResponse
 {
-    public int LivroId { get; set; }
+    public string LivroId { get; set; } = string.Empty;
     public DateTime DataCriacao { get; set; }
 }

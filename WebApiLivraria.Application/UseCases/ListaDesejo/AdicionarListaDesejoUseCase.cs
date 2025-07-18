@@ -19,7 +19,7 @@ namespace WebApiLivraria.Application.UseCases.ListaDesejo
             if (existe)
                 throw new Exception("Livro já está na lista de desejos.");
 
-            var listaDesejo = new Domain.Entities.ListaDesejo(request.UsuarioId, request.LivroId);
+            var listaDesejo = new Domain.Entities.ListaDesejo(request.UsuarioId.ToString(), request.LivroId);
             await _repository.Adicionar(listaDesejo);
         }
     }

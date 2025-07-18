@@ -1,47 +1,59 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MongoDB.Driver;
 using WebApiLivraria.Domain.Entities;
+using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Domain.Repositories;
-using WebApiLivraria.Infrastructure.Context;
+using WebApiLivraria.Infrastructure.Contexts;
 
-namespace WebApiLivraria.Infra.Data.Repositories;
-
-public class ListaDesejoRepository : IListaDesejoRepository
+namespace WebApiLivraria.Infrastructure.Repositories
 {
-    private readonly AppDbContext _context;
-
-    public ListaDesejoRepository(AppDbContext context)
+    public class ListaDesejoRepository : IListaDesejoRepository
     {
-        _context = context;
-    }
+        private readonly IMongoCollection<ListaDesejo> _listasDesejo;
 
-    public async Task Adicionar(ListaDesejo listaDesejo)
-    {
-        _context.ListasDesejo.Add(listaDesejo);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task Remover(Guid usuarioId, int livroId) 
-    {
-        var item = await _context.ListasDesejo
-            .FirstOrDefaultAsync(ld => ld.UsuarioId == usuarioId && ld.LivroId == livroId);
-
-        if (item != null)
+        public ListaDesejoRepository(MongoDbContext context)
         {
-            _context.ListasDesejo.Remove(item);
-            await _context.SaveChangesAsync();
+            _listasDesejo = context.ListasDesejo;
         }
-    }
 
-    public async Task<bool> Existe(Guid usuarioId, int livroId) 
-    {
-        return await _context.ListasDesejo
-            .AnyAsync(ld => ld.UsuarioId == usuarioId && ld.LivroId == livroId);
-    }
+        public async Task Adicionar(ListaDesejo listaDesejo)
+        {
+            await _listasDesejo.InsertOneAsync(listaDesejo);
+        }
 
-    public async Task<IReadOnlyCollection<ListaDesejo>> ListarPorUsuario(Guid usuarioId)
-    {
-        return await _context.ListasDesejo
-            .Where(ld => ld.UsuarioId == usuarioId)
-            .ToListAsync();
+        public async Task Remover(Guid usuarioId, string livroId)
+        {
+            var usuarioIdStr = usuarioId.ToString();
+
+            var filter = Builders<ListaDesejo>.Filter.And(
+                Builders<ListaDesejo>.Filter.Eq(ld => ld.UsuarioId, usuarioIdStr),
+                Builders<ListaDesejo>.Filter.Eq(ld => ld.LivroId, livroId)
+            );
+
+            await _listasDesejo.DeleteOneAsync(filter);
+        }
+
+        public async Task<bool> Existe(Guid usuarioId, string livroId)
+        {
+            var usuarioIdStr = usuarioId.ToString();
+
+            var filter = Builders<ListaDesejo>.Filter.And(
+                Builders<ListaDesejo>.Filter.Eq(ld => ld.UsuarioId, usuarioIdStr),
+                Builders<ListaDesejo>.Filter.Eq(ld => ld.LivroId, livroId)
+            );
+
+            var count = await _listasDesejo.CountDocumentsAsync(filter);
+            return count > 0;
+        }
+
+        public async Task<IReadOnlyCollection<ListaDesejo>> ListarPorUsuario(Guid usuarioId)
+        {
+            var usuarioIdStr = usuarioId.ToString();
+
+            var filter = Builders<ListaDesejo>.Filter.Eq(ld => ld.UsuarioId, usuarioIdStr);
+            return await _listasDesejo.Find(filter).ToListAsync();
+        }
     }
 }

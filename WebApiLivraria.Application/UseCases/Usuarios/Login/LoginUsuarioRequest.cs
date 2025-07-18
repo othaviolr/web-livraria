@@ -9,7 +9,7 @@
     public class LoginUsuarioResponse
     {
         public string Token { get; set; } = null!;
-        public Guid UsuarioId { get; set; }
+        public string UsuarioId { get; set; } = null!;
         public string Nome { get; set; } = null!;
         public string Email { get; set; } = null!;
     }

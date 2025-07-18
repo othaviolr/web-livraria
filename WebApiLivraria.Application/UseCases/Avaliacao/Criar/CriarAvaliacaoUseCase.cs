@@ -17,11 +17,11 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Criar
         public async Task ExecutarAsync(CriarAvaliacaoRequest request)
         {
             var avaliacao = new WebApiLivraria.Domain.Entities.Avaliacao(
-                livroId: request.LivroId,
-                usuarioId: request.UsuarioId,
+                livroId: request.LivroId.ToString(),         
+                usuarioId: request.UsuarioId.ToString(),     
                 nota: request.Nota,
                 comentario: request.Comentario
-                );
+            );
 
             await _avaliacaoRepository.AdicionarAsync(avaliacao);
         }

@@ -133,7 +133,7 @@ namespace WebApiLivraria.Api.Controllers
             if (userId == Guid.Empty)
                 return Unauthorized();
 
-            var resumo = await _obterResumoStatusLeituraUseCase.ExecutarAsync(userId);
+            var resumo = await _obterResumoStatusLeituraUseCase.ExecutarAsync(userId.ToString());
             return Ok(resumo);
         }
 
@@ -147,10 +147,10 @@ namespace WebApiLivraria.Api.Controllers
 
             var request = new SeguirUsuarioRequest
             {
-                UsuarioIdParaSeguir = id
+                UsuarioIdParaSeguir = id.ToString() 
             };
 
-            await _seguirUsuarioHandler.HandleAsync(usuarioLogadoId, request);
+            await _seguirUsuarioHandler.HandleAsync(usuarioLogadoId.ToString(), request); 
 
             return NoContent();
         }

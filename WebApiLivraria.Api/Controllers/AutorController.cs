@@ -19,7 +19,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
             var autor = await _autorService.ObterPorIdAsync(id);
 
@@ -42,7 +42,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] AutorDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] AutorDto dto)
         {
             if (id != dto.Id)
                 return BadRequest(RespostaPadrao<AutorDto>.ComErro("O ID informado na URL não confere com o ID do objeto."));
@@ -53,7 +53,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             await _autorService.RemoverAsync(id);
 
@@ -61,7 +61,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string filtro = null, [FromQuery] int? editoraId = null)
+        public async Task<IActionResult> GetAll([FromQuery] string filtro = null, [FromQuery] string editoraId = null)
         {
             var autores = await _autorService.ObterTodosAsync(filtro, editoraId);
 

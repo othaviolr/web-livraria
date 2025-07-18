@@ -17,7 +17,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
             var genero = await _generoService.ObterPorIdAsync(id);
 
@@ -30,17 +30,17 @@ namespace WebApiLivraria.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] GeneroDto dto)
         {
-            await _generoService.AdicionarAsync(dto);
+            var generoCriado = await _generoService.AdicionarAsync(dto);
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = dto.Id },
-                RespostaPadrao<GeneroDto>.ComSucesso(dto, MensagensGenero.GeneroCriadoSucesso)
+                new { id = generoCriado.Id },
+                RespostaPadrao<GeneroDto>.ComSucesso(generoCriado, MensagensGenero.GeneroCriadoSucesso)
             );
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] GeneroDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] GeneroDto dto)
         {
             if (id != dto.Id)
                 return BadRequest(RespostaPadrao<GeneroDto>.ComErro("ID inconsistente."));
@@ -51,7 +51,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             await _generoService.RemoverAsync(id);
 

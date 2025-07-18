@@ -4,7 +4,7 @@ namespace WebApiLivraria.Application.Dto
 {
     public class AtualizarLeituraDto
     {
-        public int LivroId { get; set; }
+        public string LivroId { get; set; } = null!;
         public StatusLeitura Status { get; set; }
     }
 }

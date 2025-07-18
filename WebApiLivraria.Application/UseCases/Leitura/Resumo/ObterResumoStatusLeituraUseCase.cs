@@ -1,30 +1,30 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using MongoDB.Driver;
 using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Domain.Enums;
-using WebApiLivraria.Infrastructure.Context;
+using WebApiLivraria.Infrastructure.Contexts;
+using EntAvaliacao = WebApiLivraria.Domain.Entities.Avaliacao;
+using EntLeitura = WebApiLivraria.Domain.Entities.Leitura;
 
 namespace WebApiLivraria.Application.UseCases.Leitura.Resumo
 {
     public class ObterResumoStatusLeituraUseCase
     {
-        private readonly AppDbContext _context;
+        private readonly IMongoCollection<EntLeitura> _leiturasCollection;
+        private readonly IMongoCollection<EntAvaliacao> _avaliacoesCollection;
 
-        public ObterResumoStatusLeituraUseCase(AppDbContext context)
+        public ObterResumoStatusLeituraUseCase(MongoDbContext context)
         {
-            _context = context;
+            _leiturasCollection = context.Leituras;
+            _avaliacoesCollection = context.Avaliacoes;
         }
 
-        public async Task<ResumoStatusLeituraDto> ExecutarAsync(Guid usuarioId)
+        public async Task<ResumoStatusLeituraDto> ExecutarAsync(string usuarioId)
         {
-            var leituras = await _context.Leituras
-                .Where(l => l.UsuarioId == usuarioId)
-                .ToListAsync();
+            var filtroLeituras = Builders<EntLeitura>.Filter.Eq(l => l.UsuarioId, usuarioId);
+            var leituras = await _leiturasCollection.Find(filtroLeituras).ToListAsync();
 
-            var resenhasCount = await _context.Avaliacoes
-                .CountAsync(a => a.UsuarioId == usuarioId);
+            var filtroAvaliacoes = Builders<EntAvaliacao>.Filter.Eq(a => a.UsuarioId, usuarioId);
+            var resenhasCount = await _avaliacoesCollection.CountDocumentsAsync(filtroAvaliacoes);
 
             var resumo = new ResumoStatusLeituraDto
             {
@@ -33,7 +33,7 @@ namespace WebApiLivraria.Application.UseCases.Leitura.Resumo
                 Lidos = leituras.Count(l => l.Status == StatusLeitura.Lido),
                 Abandonei = leituras.Count(l => l.Status == StatusLeitura.Abandonei),
                 Relendo = leituras.Count(l => l.Status == StatusLeitura.Relendo),
-                Resenhas = resenhasCount
+                Resenhas = (int)resenhasCount
             };
 
             return resumo;

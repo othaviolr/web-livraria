@@ -7,9 +7,9 @@ namespace WebApiLivraria.Application.Interfaces
     public interface ILivroService
     {
         Task<IEnumerable<LivroDto>> ListarAsync(string? search = null);
-        Task<LivroDto> ObterPorIdAsync(int id);
+        Task<LivroDto> ObterPorIdAsync(string id);
         Task<LivroDto> AdicionarAsync(LivroDto dto);
         Task AtualizarAsync(LivroDto dto);
-        Task RemoverAsync(int id);
+        Task RemoverAsync(string id);
     }
 }

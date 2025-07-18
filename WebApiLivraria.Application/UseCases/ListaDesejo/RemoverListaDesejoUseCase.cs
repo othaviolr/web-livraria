@@ -13,7 +13,7 @@ namespace WebApiLivraria.Application.UseCases.ListaDesejo
             _listaDesejoRepository = listaDesejoRepository;
         }
 
-        public async Task Executar(Guid usuarioId, int livroId)
+        public async Task Executar(Guid usuarioId, string livroId)
         {
             await _listaDesejoRepository.Remover(usuarioId, livroId);
         }

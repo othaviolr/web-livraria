@@ -1,5 +1,6 @@
 ﻿using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Domain.Enums;
+using System.Linq;
 using WebApiLivraria.Application.Dto;
 
 namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
@@ -53,25 +54,25 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 .ToList();
 
             var resenhas = usuario.Avaliacoes
-                .OrderByDescending(a => a.DataCriacao)
-                .Take(3)
-                .Select(a => new ResenhaDto
-                {
-                    LivroId = a.Livro?.Id ?? 0,
-                    Titulo = a.Livro?.Titulo ?? "Título desconhecido",
-                    Autor = a.Livro?.Autor?.Nome ?? "Autor desconhecido",
-                    ImagemUrl = string.IsNullOrEmpty(a.Livro?.ImagemUrl) ? "/default-book.png" : a.Livro.ImagemUrl,
-                    Nota = a.Nota,
-                    Comentario = a.Comentario,
-                    Data = a.DataCriacao
-                })
-                .ToList();
+    .OrderByDescending(a => a.DataCriacao)
+    .Take(3)
+    .Select(a => new ResenhaDto
+    {
+        LivroId = a.Livro?.Id ?? "",
+        Titulo = a.Livro?.Titulo ?? "Título desconhecido",
+        Autor = a.Livro?.Autor?.Nome ?? "Autor desconhecido",
+        ImagemUrl = string.IsNullOrEmpty(a.Livro?.ImagemUrl) ? "/default-book.png" : a.Livro.ImagemUrl,
+        Nota = a.Nota,
+        Comentario = a.Comentario,
+        Data = a.DataCriacao
+    })
+    .ToList();
 
             var statusLeituraContagem = usuario.LivrosLidos
                 .GroupBy(l => l.Status)
                 .ToDictionary(g => g.Key, g => g.Count());
 
-            var totalResenhas = usuario.Avaliacoes.Count;
+            var totalResenhas = usuario.Avaliacoes.Count();
 
             var seguidores = usuario.Seguidores
                 .Select(s => s.Seguidor)

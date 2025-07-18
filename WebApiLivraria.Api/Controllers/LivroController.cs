@@ -17,7 +17,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
             var livro = await _livroService.ObterPorIdAsync(id);
 
@@ -47,7 +47,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] LivroDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] LivroDto dto)
         {
             if (id != dto.Id)
                 return BadRequest(RespostaPadrao<string>.ComErro("O ID informado na URL não confere com o ID do objeto."));
@@ -58,7 +58,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             await _livroService.RemoverAsync(id);
 

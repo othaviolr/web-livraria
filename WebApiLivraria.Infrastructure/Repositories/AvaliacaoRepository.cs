@@ -1,79 +1,93 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
+using MongoDB.Driver;
+using MongoDB.Bson;
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Interfaces;
-using WebApiLivraria.Infrastructure.Context;
+using WebApiLivraria.Infrastructure.Contexts;
+using System.Linq;
 
 namespace WebApiLivraria.Infrastructure.Repositories
 {
     public class AvaliacaoRepository : IAvaliacaoRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IMongoCollection<Avaliacao> _avaliacoes;
+        private readonly IMongoCollection<Usuario> _usuarios;
+        private readonly IMongoCollection<Livro> _livros;
 
-        public AvaliacaoRepository(AppDbContext context)
+        public AvaliacaoRepository(MongoDbContext context)
         {
-            _context = context;
+            _avaliacoes = context.Avaliacoes;
+            _usuarios = context.Usuarios;
+            _livros = context.Livros;
         }
 
-        public async Task<IEnumerable<Avaliacao>> ListarPorLivroIdAsync(int livroId)
+        public async Task<IEnumerable<Avaliacao>> ListarPorLivroIdAsync(string livroId)
         {
-            return await _context.Avaliacoes
-                .AsNoTracking()
-                .Where(a => a.LivroId == livroId)
-                .Include(a => a.Usuario)
-                .ToListAsync();
+            var filtro = Builders<Avaliacao>.Filter.Eq(a => a.LivroId, livroId);
+            var avaliacoes = await _avaliacoes.Find(filtro).ToListAsync();
+
+            foreach (var a in avaliacoes)
+            {
+                var usuario = await _usuarios.Find(u => u.Id == a.UsuarioId).FirstOrDefaultAsync();
+                if (usuario != null)
+                {
+                    a.DefinirUsuario(usuario);
+                }
+            }
+
+            return avaliacoes;
         }
 
-        public async Task<IEnumerable<Avaliacao>> ListarPorUsuarioIdAsync(Guid usuarioId)
+        public async Task<IEnumerable<Avaliacao>> ListarPorUsuarioIdAsync(string usuarioId)
         {
-            return await _context.Avaliacoes
-                .AsNoTracking()
-                .Where(a => a.UsuarioId == usuarioId)
-                .Include(a => a.Livro)
-                .ToListAsync();
+            var filtro = Builders<Avaliacao>.Filter.Eq(a => a.UsuarioId, usuarioId);
+            var avaliacoes = await _avaliacoes.Find(filtro).ToListAsync();
+
+            foreach (var a in avaliacoes)
+            {
+                var livro = await _livros.Find(l => l.Id == a.LivroId).FirstOrDefaultAsync();
+                if (livro != null)
+                {
+                    a.DefinirLivro(livro);
+                }
+            }
+
+            return avaliacoes;
         }
 
         public async Task AdicionarAsync(Avaliacao avaliacao)
         {
-            await _context.Avaliacoes.AddAsync(avaliacao);
-            await _context.SaveChangesAsync();
+            await _avaliacoes.InsertOneAsync(avaliacao);
         }
 
         public async Task AtualizarAsync(Avaliacao avaliacao)
         {
-            _context.Avaliacoes.Update(avaliacao);
-            await _context.SaveChangesAsync();
+            await _avaliacoes.ReplaceOneAsync(a => a.Id == avaliacao.Id, avaliacao);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task RemoverAsync(string id)
         {
-            var avaliacao = await _context.Avaliacoes.FindAsync(id);
-            if (avaliacao != null)
-            {
-                _context.Avaliacoes.Remove(avaliacao);
-                await _context.SaveChangesAsync();
-            }
+            await _avaliacoes.DeleteOneAsync(a => a.Id == id);
         }
 
-        public async Task<double> ObterMediaNotasPorLivroAsync(int livroId)
+        public async Task<double> ObterMediaNotasPorLivroAsync(string livroId)
         {
-            return await _context.Avaliacoes
-                .Where(a => a.LivroId == livroId)
-                .AverageAsync(a => (double?)a.Nota) ?? 0.0;
+            var filtro = Builders<Avaliacao>.Filter.Eq(a => a.LivroId, livroId);
+            var avaliacoes = await _avaliacoes.Find(filtro).ToListAsync();
+
+            return avaliacoes.Any() ? avaliacoes.Average(a => a.Nota) : 0.0;
         }
 
-        public async Task<int> ObterQuantidadeAvaliacoesPorLivroAsync(int livroId)
+        public async Task<int> ObterQuantidadeAvaliacoesPorLivroAsync(string livroId)
         {
-            return await _context.Avaliacoes
-                .CountAsync(a => a.LivroId == livroId);
+            var filtro = Builders<Avaliacao>.Filter.Eq(a => a.LivroId, livroId);
+            return (int)await _avaliacoes.CountDocumentsAsync(filtro);
         }
 
-        public async Task<Avaliacao> ObterPorIdAsync(int id)
+        public async Task<Avaliacao?> ObterPorIdAsync(string id)
         {
-            return await _context.Avaliacoes.FindAsync(id);
+            return await _avaliacoes.Find(a => a.Id == id).FirstOrDefaultAsync();
         }
     }
 }

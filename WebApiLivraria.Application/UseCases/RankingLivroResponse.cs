@@ -2,7 +2,7 @@
 
 public class RankingLivroResponse
 {
-    public int LivroId { get; set; }
+    public string LivroId { get; set; } = string.Empty;
     public string Titulo { get; set; } = string.Empty;
     public string Autor { get; set; } = string.Empty;
     public double NotaMedia { get; set; }
