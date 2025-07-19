@@ -9,7 +9,7 @@ namespace WebApiLivraria.Application.Interfaces
         Task<IEnumerable<Autor>> ListarAsync(string? filtro = null, string? editoraId = null);
         Task<Autor?> ObterPorIdAsync(string id);
         Task<Autor> AdicionarAsync(Autor autor);
-        Task AtualizarAsync(Autor autor);
+        Task<bool> AtualizarAsync(Autor autor);
         Task RemoverAsync(string id);
     }
 }

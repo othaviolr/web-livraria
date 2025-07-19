@@ -33,7 +33,6 @@ public class AuthUseCase : IAuthUseCase
             usuario = new Usuario(payload.Name, payload.Email);
             await _usuarioRepository.Adicionar(usuario);
 
-            // Recarrega para garantir que o Id foi preenchido corretamente
             usuario = await _usuarioRepository.ObterPorEmail(payload.Email);
         }
 

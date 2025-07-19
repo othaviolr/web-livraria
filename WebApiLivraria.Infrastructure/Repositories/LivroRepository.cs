@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using WebApiLivraria.Domain.Entities;
@@ -44,17 +43,16 @@ namespace WebApiLivraria.Infrastructure.Repositories
 
         public async Task<IEnumerable<Livro>> ListarComFiltroAsync(string? search)
         {
-            var filter = Builders<Livro>.Filter.Empty;
+            if (string.IsNullOrWhiteSpace(search))
+                return await ListarAsync();
 
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                var regex = new MongoDB.Bson.BsonRegularExpression(search, "i");
-                var filterTitulo = Builders<Livro>.Filter.Regex(l => l.Titulo, regex);
-                var filterAutor = Builders<Livro>.Filter.Regex("Autor.Nome", regex);
-                var filterEditora = Builders<Livro>.Filter.Regex("Editora.Nome", regex);
+            var regex = new MongoDB.Bson.BsonRegularExpression(search, "i");
 
-                filter = Builders<Livro>.Filter.Or(filterTitulo, filterAutor, filterEditora);
-            }
+            var filterTitulo = Builders<Livro>.Filter.Regex(l => l.Titulo, regex);
+            var filterAutor = Builders<Livro>.Filter.Regex("Autor.Nome", regex);
+            var filterEditora = Builders<Livro>.Filter.Regex("Editora.Nome", regex);
+
+            var filter = Builders<Livro>.Filter.Or(filterTitulo, filterAutor, filterEditora);
 
             return await _livros.Find(filter).ToListAsync();
         }

@@ -32,14 +32,20 @@ namespace WebApiLivraria.Application.Services
         {
             var livros = await _livroRepository.ListarComFiltroAsync(search);
 
+            var autores = (await _autorRepository.ListarAsync())
+                .ToDictionary(a => a.Id, a => a.Nome);
+
+            var editoras = (await _editoraRepository.ListarAsync())
+                .ToDictionary(e => e.Id, e => e.Nome);
+
             return livros.Select(l => new LivroDto
             {
                 Id = l.Id,
                 Titulo = l.Titulo,
                 AutorId = l.AutorId,
-                AutorNome = l.Autor?.Nome,
+                AutorNome = autores.GetValueOrDefault(l.AutorId),
                 EditoraId = l.EditoraId,
-                EditoraNome = l.Editora?.Nome,
+                EditoraNome = editoras.GetValueOrDefault(l.EditoraId),
                 AnoPublicacao = l.AnoPublicacao,
                 ImagemUrl = l.ImagemUrl,
                 NumeroPaginas = l.NumeroPaginas,
@@ -54,14 +60,17 @@ namespace WebApiLivraria.Application.Services
             var livro = await _livroRepository.ObterPorIdAsync(id);
             if (livro == null) return null;
 
+            var autor = await _autorRepository.ObterPorIdAsync(livro.AutorId);
+            var editora = await _editoraRepository.ObterPorIdAsync(livro.EditoraId);
+
             return new LivroDto
             {
                 Id = livro.Id,
                 Titulo = livro.Titulo,
                 AutorId = livro.AutorId,
-                AutorNome = livro.Autor?.Nome,
+                AutorNome = autor?.Nome,
                 EditoraId = livro.EditoraId,
-                EditoraNome = livro.Editora?.Nome,
+                EditoraNome = editora?.Nome,
                 AnoPublicacao = livro.AnoPublicacao,
                 ImagemUrl = livro.ImagemUrl,
                 NumeroPaginas = livro.NumeroPaginas,
