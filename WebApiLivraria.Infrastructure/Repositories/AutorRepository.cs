@@ -47,9 +47,10 @@ namespace WebApiLivraria.Infrastructure.Repositories
             return autor;
         }
 
-        public async Task AtualizarAsync(Autor autor)
+        public async Task<bool> AtualizarAsync(Autor autor)
         {
-            await _autores.ReplaceOneAsync(a => a.Id == autor.Id, autor);
+            var result = await _autores.ReplaceOneAsync(a => a.Id == autor.Id, autor);
+            return result.ModifiedCount > 0;
         }
 
         public async Task RemoverAsync(string id)

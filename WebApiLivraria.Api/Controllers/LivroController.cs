@@ -37,13 +37,23 @@ namespace WebApiLivraria.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] LivroDto dto)
         {
-            var livroCriado = await _livroService.AdicionarAsync(dto);
+            if (!ModelState.IsValid)
+                return BadRequest(RespostaPadrao<string>.ComErro("Dados inválidos para criação do livro."));
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = livroCriado.Id },
-                RespostaPadrao<LivroDto>.ComSucesso(livroCriado, MensagensLivro.LivroCriadoSucesso)
-            );
+            try
+            {
+                var livroCriado = await _livroService.AdicionarAsync(dto);
+
+                return CreatedAtAction(
+                    nameof(GetById),
+                    new { id = livroCriado.Id },
+                    RespostaPadrao<LivroDto>.ComSucesso(livroCriado, MensagensLivro.LivroCriadoSucesso)
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(RespostaPadrao<string>.ComErro(ex.Message));
+            }
         }
 
         [HttpPut("{id}")]
@@ -52,17 +62,32 @@ namespace WebApiLivraria.Api.Controllers
             if (id != dto.Id)
                 return BadRequest(RespostaPadrao<string>.ComErro("O ID informado na URL não confere com o ID do objeto."));
 
-            await _livroService.AtualizarAsync(dto);
+            if (!ModelState.IsValid)
+                return BadRequest(RespostaPadrao<string>.ComErro("Dados inválidos para atualização do livro."));
 
-            return Ok(RespostaPadrao<string>.ComSucesso(MensagensLivro.LivroAtualizadoSucesso));
+            try
+            {
+                await _livroService.AtualizarAsync(dto);
+                return Ok(RespostaPadrao<string>.ComSucesso(MensagensLivro.LivroAtualizadoSucesso));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(RespostaPadrao<string>.ComErro(ex.Message));
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            await _livroService.RemoverAsync(id);
-
-            return Ok(RespostaPadrao<string>.ComSucesso(MensagensLivro.LivroRemovidoSucesso));
+            try
+            {
+                await _livroService.RemoverAsync(id);
+                return Ok(RespostaPadrao<string>.ComSucesso(MensagensLivro.LivroRemovidoSucesso));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(RespostaPadrao<string>.ComErro(ex.Message));
+            }
         }
     }
 }
