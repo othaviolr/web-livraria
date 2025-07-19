@@ -94,22 +94,23 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilRequest request)
     {
-        try
-        {
-            var usuarioIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(usuarioIdStr, out var usuarioId))
-                return Unauthorized(new { message = "Usuário não autenticado." });
+        var usuarioIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(usuarioIdStr))
+            return Unauthorized(new { message = "Usuário não autenticado." });
 
-            var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(usuarioId, request);
+        var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(usuarioIdStr, request);
 
-            if (!sucesso)
-                return NotFound(new { message = "Usuário não encontrado." });
+        if (!sucesso)
+            return NotFound(new { message = "Usuário não encontrado." });
 
-            return Ok(new { message = "Perfil atualizado com sucesso." });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = $"Erro ao atualizar perfil: {ex.Message}" });
-        }
+        return Ok(new { message = "Perfil atualizado com sucesso." });
+    }
+
+    [HttpGet("claims")]
+    [Authorize]
+    public IActionResult ListarClaims()
+    {
+        var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+        return Ok(claims);
     }
 }

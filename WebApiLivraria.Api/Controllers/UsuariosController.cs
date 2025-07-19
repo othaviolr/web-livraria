@@ -4,17 +4,17 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using WebApiLivraria.Application.UseCases.Usuarios;
-using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
-using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
-using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico;
-using WebApiLivraria.Application.UseCases.Usuarios.Excluir;
-using WebApiLivraria.Application.UseCases.Leitura.Resumo;
 using WebApiLivraria.Application.Requests.UsuarioSeguindo;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo;
-using WebApiLivraria.Domain.Repositories;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguidores;
 using WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguindo;
+using WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil;
+using WebApiLivraria.Application.UseCases.Usuarios.Excluir;
+using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase;
+using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico;
+using WebApiLivraria.Application.UseCases.Leitura.Resumo;
+using WebApiLivraria.Domain.Repositories;
+using WebApiLivraria.Application.UseCases.Usuarios;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -58,7 +58,7 @@ namespace WebApiLivraria.Api.Controllers
             _obterSeguindoHandler = obterSeguindoHandler;
         }
 
-        private Guid ObterUsuarioIdDoToken()
+        private bool TryObterUsuarioIdDoToken(out Guid userId)
         {
             var userIdClaim = User.Claims.FirstOrDefault(c =>
                 c.Type == "id" ||
@@ -66,7 +66,13 @@ namespace WebApiLivraria.Api.Controllers
                 c.Type == "sub"
             );
 
-            return userIdClaim == null ? Guid.Empty : Guid.Parse(userIdClaim.Value);
+            if (userIdClaim == null)
+            {
+                userId = Guid.Empty;
+                return false;
+            }
+
+            return Guid.TryParse(userIdClaim.Value, out userId);
         }
 
         [HttpGet("{nomeUsuario}")]
@@ -84,8 +90,7 @@ namespace WebApiLivraria.Api.Controllers
         [Authorize]
         public async Task<IActionResult> ObterPerfil()
         {
-            var userId = ObterUsuarioIdDoToken();
-            if (userId == Guid.Empty)
+            if (!TryObterUsuarioIdDoToken(out var userId))
                 return Unauthorized();
 
             var perfilDto = await _obterPerfilCompletoUseCase.ExecutarAsync(userId);
@@ -99,11 +104,10 @@ namespace WebApiLivraria.Api.Controllers
         [Authorize]
         public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilRequest request)
         {
-            var userId = ObterUsuarioIdDoToken();
-            if (userId == Guid.Empty)
+            if (!TryObterUsuarioIdDoToken(out var userId))
                 return Unauthorized();
 
-            var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(userId, request);
+            var sucesso = await _atualizarPerfilUseCase.ExecutarAsync(userId.ToString(), request);
             if (!sucesso)
                 return NotFound();
 
@@ -114,8 +118,7 @@ namespace WebApiLivraria.Api.Controllers
         [Authorize]
         public async Task<IActionResult> ExcluirPerfil()
         {
-            var userId = ObterUsuarioIdDoToken();
-            if (userId == Guid.Empty)
+            if (!TryObterUsuarioIdDoToken(out var userId))
                 return Unauthorized();
 
             var sucesso = await _excluirUsuarioUseCase.ExecutarAsync(userId);
@@ -129,8 +132,7 @@ namespace WebApiLivraria.Api.Controllers
         [Authorize]
         public async Task<IActionResult> ObterResumoLeitura()
         {
-            var userId = ObterUsuarioIdDoToken();
-            if (userId == Guid.Empty)
+            if (!TryObterUsuarioIdDoToken(out var userId))
                 return Unauthorized();
 
             var resumo = await _obterResumoStatusLeituraUseCase.ExecutarAsync(userId.ToString());
@@ -141,16 +143,15 @@ namespace WebApiLivraria.Api.Controllers
         [Authorize]
         public async Task<IActionResult> SeguirUsuario(Guid id)
         {
-            var usuarioLogadoId = ObterUsuarioIdDoToken();
-            if (usuarioLogadoId == Guid.Empty)
+            if (!TryObterUsuarioIdDoToken(out var usuarioLogadoId))
                 return Unauthorized();
 
             var request = new SeguirUsuarioRequest
             {
-                UsuarioIdParaSeguir = id.ToString() 
+                UsuarioIdParaSeguir = id.ToString()
             };
 
-            await _seguirUsuarioHandler.HandleAsync(usuarioLogadoId.ToString(), request); 
+            await _seguirUsuarioHandler.HandleAsync(usuarioLogadoId.ToString(), request);
 
             return NoContent();
         }
@@ -159,8 +160,7 @@ namespace WebApiLivraria.Api.Controllers
         [Authorize]
         public async Task<IActionResult> DeixarDeSeguirUsuario(Guid id)
         {
-            var usuarioLogadoId = ObterUsuarioIdDoToken();
-            if (usuarioLogadoId == Guid.Empty)
+            if (!TryObterUsuarioIdDoToken(out var usuarioLogadoId))
                 return Unauthorized();
 
             var request = new DeixarDeSeguirRequest

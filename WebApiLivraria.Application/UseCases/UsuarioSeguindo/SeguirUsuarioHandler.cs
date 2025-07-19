@@ -28,7 +28,7 @@ namespace WebApiLivraria.Application.UseCases.UsuarioSeguindo
             if (usuarioAutIdGuid == usuarioParaSeguirGuid)
                 throw new InvalidOperationException("Você não pode seguir a si mesmo.");
 
-            var existeUsuario = await _usuarioRepository.ExistePorIdAsync(usuarioParaSeguirGuid);
+            var existeUsuario = await _usuarioRepository.ExistePorIdAsync(usuarioParaSeguirGuid.ToString());
             if (!existeUsuario)
                 throw new InvalidOperationException("Usuário que você está tentando seguir não existe.");
 

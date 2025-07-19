@@ -16,13 +16,13 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCas
 
         public async Task<UsuarioPerfilDto> ExecutarAsync(Guid usuarioId)
         {
-            var usuario = await _usuarioRepository.ObterPorIdComDetalhesAsync(usuarioId);
+            var usuario = await _usuarioRepository.ObterPorIdComDetalhesAsync(usuarioId.ToString());
             if (usuario == null)
                 throw new Exception("Usuário não encontrado");
 
-            var contagemStatus = await _usuarioRepository.ObterContagemLivrosPorStatusAsync(usuarioId);
+            var contagemStatus = await _usuarioRepository.ObterContagemLivrosPorStatusAsync(usuarioId.ToString());
 
-            var quantidadeFavoritos = await _usuarioRepository.ObterQuantidadeFavoritosAsync(usuarioId);
+            var quantidadeFavoritos = await _usuarioRepository.ObterQuantidadeFavoritosAsync(usuarioId.ToString());
 
             var livrosMarcados = usuario.LivrosLidos.Select(l => new LivroResumoDto
             {

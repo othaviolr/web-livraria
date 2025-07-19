@@ -33,9 +33,8 @@ using WebApiLivraria.Infrastructure.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-builder.Services.Configure<MongoDbSettings>(
-builder.Configuration.GetSection("MongoDbSettings"));
-
+// MongoDB
+builder.Services.Configure<MongoDbSettings>(configuration.GetSection("MongoDbSettings"));
 builder.Services.AddSingleton<MongoDbContext>();
 
 // Repositórios
@@ -55,6 +54,7 @@ builder.Services.AddScoped<IAutorService, AutorService>();
 builder.Services.AddScoped<IGeneroService, GeneroService>();
 builder.Services.AddScoped<IEditoraService, EditoraService>();
 builder.Services.AddScoped<IRankingService, RankingService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // UseCases
 builder.Services.AddScoped<IRankingLivroUseCase, RankingLivroUseCase>();
@@ -64,7 +64,6 @@ builder.Services.AddScoped<IObterResumoAvaliacaoLivroUseCase, ObterResumoAvaliac
 builder.Services.AddScoped<IEditarAvaliacaoUseCase, EditarAvaliacaoUseCase>();
 builder.Services.AddScoped<IExcluirAvaliacaoUseCase, ExcluirAvaliacaoUseCase>();
 builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAdicionarFavoritoUseCase, AdicionarFavoritoUseCase>();
 builder.Services.AddScoped<RemoverFavoritoUseCase>();
 builder.Services.AddScoped<ListarFavoritosUseCase>();
@@ -81,7 +80,6 @@ builder.Services.AddScoped<SeguirUsuarioHandler>();
 builder.Services.AddScoped<DeixarDeSeguirUsuarioHandler>();
 builder.Services.AddScoped<ObterSeguidoresHandler>();
 builder.Services.AddScoped<ObterSeguindoHandler>();
-
 builder.Services.AddScoped<LoginUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 
@@ -98,11 +96,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = configuration["Jwt:Issuer"],
             ValidAudience = configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
         };
     });
 
-// Controllers e Swagger
+builder.Services.AddAuthorization();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -116,7 +115,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Informe o token JWT com o prefixo 'Bearer '"
+        Description = "Informe o token JWT no campo abaixo. Exemplo: 'Bearer {seu_token}'"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -148,21 +147,22 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Middleware
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Middlewares customizados de exceção
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<TratamentoExcecaoMiddleware>();
-app.UseDeveloperExceptionPage();
 
 app.MapControllers();
 app.Run();
