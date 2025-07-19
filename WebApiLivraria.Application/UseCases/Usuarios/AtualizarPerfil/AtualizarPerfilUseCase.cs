@@ -11,10 +11,9 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.AtualizarPerfil
             _usuarioRepository = usuarioRepository;
         }
 
-        public async Task<bool> ExecutarAsync(Guid usuarioId, AtualizarPerfilRequest request)
+        public async Task<bool> ExecutarAsync(string usuarioId, AtualizarPerfilRequest request)
         {
             var usuario = await _usuarioRepository.ObterPorId(usuarioId);
-
             if (usuario == null)
                 return false;
 
