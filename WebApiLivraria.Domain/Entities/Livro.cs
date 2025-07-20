@@ -34,7 +34,6 @@ namespace WebApiLivraria.Domain.Entities
 
         public string? ImagemUrl { get; private set; }
 
-        [BsonIgnore]
         public Sinopse? Sinopse { get; private set; }
 
         [BsonIgnore]
@@ -109,7 +108,8 @@ namespace WebApiLivraria.Domain.Entities
 
         public void AtualizarSinopse(string texto)
         {
-            if (string.IsNullOrWhiteSpace(texto)) throw new ArgumentException("Texto da sinopse inválido.");
+            if (string.IsNullOrWhiteSpace(texto))
+                throw new ArgumentException("Texto da sinopse inválido.");
 
             if (Sinopse == null)
             {
