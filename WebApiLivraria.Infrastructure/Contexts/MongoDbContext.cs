@@ -27,4 +27,5 @@ public class MongoDbContext
     public IMongoCollection<Leitura> Leituras => _database.GetCollection<Leitura>("Leituras");
     public IMongoCollection<RankingLivro> RankingLivros => _database.GetCollection<RankingLivro>("RankingLivros");
     public IMongoCollection<LivroGenero> LivroGeneros => _database.GetCollection<LivroGenero>("LivroGeneros");
+    public IMongoCollection<Sinopse> Sinopses => _database.GetCollection<Sinopse>("Sinopses");
 }

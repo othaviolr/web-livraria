@@ -15,17 +15,20 @@ namespace WebApiLivraria.Application.Services
         private readonly IGeneroRepository _generoRepository;
         private readonly IAutorRepository _autorRepository;
         private readonly IEditoraRepository _editoraRepository;
+        private readonly ISinopseRepository _sinopseRepository;
 
         public LivroService(
             ILivroRepository livroRepository,
             IGeneroRepository generoRepository,
             IAutorRepository autorRepository,
-            IEditoraRepository editoraRepository)
+            IEditoraRepository editoraRepository,
+            ISinopseRepository sinopseRepository)
         {
             _livroRepository = livroRepository;
             _generoRepository = generoRepository;
             _autorRepository = autorRepository;
             _editoraRepository = editoraRepository;
+            _sinopseRepository = sinopseRepository;
         }
 
         public async Task<IEnumerable<LivroDto>> ListarAsync(string? search = null)
@@ -37,6 +40,10 @@ namespace WebApiLivraria.Application.Services
 
             var editoras = (await _editoraRepository.ListarAsync())
                 .ToDictionary(e => e.Id, e => e.Nome);
+
+            var livroIds = livros.Select(l => l.Id).ToList();
+            var sinopses = (await _sinopseRepository.ListarPorLivroIdsAsync(livroIds))
+                           .ToDictionary(s => s.LivroId, s => s.Texto);
 
             return livros.Select(l => new LivroDto
             {
@@ -51,7 +58,7 @@ namespace WebApiLivraria.Application.Services
                 NumeroPaginas = l.NumeroPaginas,
                 Idioma = l.Idioma,
                 Generos = l.LivroGeneros.Select(g => g.GeneroId).ToList(),
-                Sinopse = l.Sinopse?.Texto
+                Sinopse = sinopses.GetValueOrDefault(l.Id)
             });
         }
 
@@ -62,6 +69,7 @@ namespace WebApiLivraria.Application.Services
 
             var autor = await _autorRepository.ObterPorIdAsync(livro.AutorId);
             var editora = await _editoraRepository.ObterPorIdAsync(livro.EditoraId);
+            var sinopse = await _sinopseRepository.ObterPorLivroIdAsync(id);
 
             return new LivroDto
             {
@@ -76,7 +84,7 @@ namespace WebApiLivraria.Application.Services
                 NumeroPaginas = livro.NumeroPaginas,
                 Idioma = livro.Idioma,
                 Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList(),
-                Sinopse = livro.Sinopse?.Texto
+                Sinopse = sinopse?.Texto
             };
         }
 
@@ -113,8 +121,8 @@ namespace WebApiLivraria.Application.Services
 
             if (!string.IsNullOrWhiteSpace(dto.Sinopse))
             {
-                livro.AtualizarSinopse(dto.Sinopse);
-                await _livroRepository.AtualizarAsync(livro);
+                var sinopse = new Sinopse(livro.Id, dto.Sinopse);
+                await _sinopseRepository.AdicionarAsync(sinopse);
             }
 
             return new LivroDto
@@ -130,7 +138,7 @@ namespace WebApiLivraria.Application.Services
                 NumeroPaginas = livro.NumeroPaginas,
                 Idioma = livro.Idioma,
                 Generos = livro.LivroGeneros.Select(g => g.GeneroId).ToList(),
-                Sinopse = livro.Sinopse?.Texto
+                Sinopse = dto.Sinopse
             };
         }
 
@@ -147,11 +155,6 @@ namespace WebApiLivraria.Application.Services
             livroExistente.AtualizarNumeroPaginas(dto.NumeroPaginas);
             livroExistente.AtualizarIdioma(dto.Idioma);
 
-            if (!string.IsNullOrWhiteSpace(dto.Sinopse))
-            {
-                livroExistente.AtualizarSinopse(dto.Sinopse);
-            }
-
             livroExistente.LimparGeneros();
 
             foreach (var generoId in dto.Generos ?? Enumerable.Empty<string>())
@@ -160,11 +163,31 @@ namespace WebApiLivraria.Application.Services
             }
 
             await _livroRepository.AtualizarAsync(livroExistente);
+
+            var sinopseExistente = await _sinopseRepository.ObterPorLivroIdAsync(dto.Id);
+            if (sinopseExistente == null && !string.IsNullOrWhiteSpace(dto.Sinopse))
+            {
+                var novaSinopse = new Sinopse(dto.Id, dto.Sinopse);
+                await _sinopseRepository.AdicionarAsync(novaSinopse);
+            }
+            else if (sinopseExistente != null)
+            {
+                if (string.IsNullOrWhiteSpace(dto.Sinopse))
+                {
+                    await _sinopseRepository.RemoverPorLivroIdAsync(dto.Id);
+                }
+                else
+                {
+                    sinopseExistente.AtualizarTexto(dto.Sinopse);
+                    await _sinopseRepository.AtualizarAsync(sinopseExistente);
+                }
+            }
         }
 
         public async Task RemoverAsync(string id)
         {
             await _livroRepository.RemoverAsync(id);
+            await _sinopseRepository.RemoverPorLivroIdAsync(id);
         }
     }
 }
