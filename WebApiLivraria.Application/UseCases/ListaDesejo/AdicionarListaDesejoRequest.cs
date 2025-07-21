@@ -2,7 +2,7 @@
 {
     public class AdicionarListaDesejoRequest
     {
-        public Guid UsuarioId { get; set; }
+        public string UsuarioId { get; set; }
         public string LivroId { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             await _listasDesejo.InsertOneAsync(listaDesejo);
         }
 
-        public async Task Remover(Guid usuarioId, string livroId)
+        public async Task Remover(string usuarioId, string livroId)
         {
             var usuarioIdStr = usuarioId.ToString();
 
@@ -35,7 +35,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             await _listasDesejo.DeleteOneAsync(filter);
         }
 
-        public async Task<bool> Existe(Guid usuarioId, string livroId)
+        public async Task<bool> Existe(string usuarioId, string livroId)
         {
             var usuarioIdStr = usuarioId.ToString();
 
@@ -48,7 +48,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             return count > 0;
         }
 
-        public async Task<IReadOnlyCollection<ListaDesejo>> ListarPorUsuario(Guid usuarioId)
+        public async Task<IReadOnlyCollection<ListaDesejo>> ListarPorUsuario(string usuarioId)
         {
             var usuarioIdStr = usuarioId.ToString();
 

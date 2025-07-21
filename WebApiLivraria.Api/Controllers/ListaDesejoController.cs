@@ -24,13 +24,13 @@ public class ListaDesejoController : ControllerBase
         _listarUseCase = listarUseCase;
     }
 
-    private Guid ObterUsuarioId()
+    private string ObterUsuarioId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim == null)
+        if (string.IsNullOrEmpty(userIdClaim))
             throw new UnauthorizedAccessException("Usuário não autenticado.");
 
-        return Guid.Parse(userIdClaim);
+        return userIdClaim;
     }
 
     [HttpPost]
@@ -57,12 +57,12 @@ public class ListaDesejoController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Remover([FromQuery] int livroId)
+    public async Task<IActionResult> Remover([FromQuery] string livroId)
     {
         try
         {
             var usuarioId = ObterUsuarioId();
-            await _removerUseCase.Executar(usuarioId, livroId.ToString());
+            await _removerUseCase.Executar(usuarioId, livroId);
             return NoContent();
         }
         catch (UnauthorizedAccessException)
@@ -91,12 +91,12 @@ public class ListaDesejoController : ControllerBase
     }
 
     [HttpGet("verificar/{livroId}")]
-    public async Task<ActionResult<bool>> Verificar(int livroId)
+    public async Task<ActionResult<bool>> Verificar(string livroId)
     {
         try
         {
             var usuarioId = ObterUsuarioId();
-            bool existe = await _listarUseCase.VerificarListaDesejo(usuarioId, livroId.ToString());
+            bool existe = await _listarUseCase.VerificarListaDesejo(usuarioId, livroId);
             return Ok(existe);
         }
         catch (UnauthorizedAccessException)

@@ -32,15 +32,16 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 .ToList();
 
             var favoritos = usuario.Favoritos
-                .OrderByDescending(f => f.DataCriacao)
-                .Select(f => new LivroResumoDto
-                {
-                    Id = f.Livro.Id,
-                    Titulo = f.Livro.Titulo,
-                    Autor = f.Livro.Autor.Nome,
-                    ImagemUrl = f.Livro.ImagemUrl
-                })
-                .ToList();
+    .Where(f => f.Livro != null) 
+    .OrderByDescending(f => f.DataCriacao)
+    .Select(f => new LivroResumoDto
+    {
+        Id = f.Livro.Id,
+        Titulo = f.Livro.Titulo,
+        Autor = f.Livro.Autor?.Nome ?? "Autor desconhecido",
+        ImagemUrl = f.Livro.ImagemUrl
+    })
+    .ToList();
 
             var wishlist = usuario.ListasDesejo
                 .OrderByDescending(w => w.DataCriacao)
