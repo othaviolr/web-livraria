@@ -14,7 +14,7 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Excluir
             _avaliacaoRepository = avaliacaoRepository;
         }
 
-        public async Task ExecutarAsync(string id, Guid usuarioId)
+        public async Task ExecutarAsync(string id, string usuarioId)
         {
             var avaliacao = await _avaliacaoRepository.ObterPorIdAsync(id);
             if (avaliacao == null)
