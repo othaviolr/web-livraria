@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using WebApiLivraria.Domain.Repositories;
 
 namespace WebApiLivraria.Application.UseCases.ListaDesejo
@@ -13,7 +12,7 @@ namespace WebApiLivraria.Application.UseCases.ListaDesejo
             _listaDesejoRepository = listaDesejoRepository;
         }
 
-        public async Task Executar(Guid usuarioId, string livroId)
+        public async Task Executar(string usuarioId, string livroId)
         {
             await _listaDesejoRepository.Remover(usuarioId, livroId);
         }

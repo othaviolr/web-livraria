@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using WebApiLivraria.Domain.Repositories;
 
 namespace WebApiLivraria.Application.UseCases.ListaDesejo
@@ -19,7 +18,7 @@ namespace WebApiLivraria.Application.UseCases.ListaDesejo
             if (existe)
                 throw new Exception("Livro já está na lista de desejos.");
 
-            var listaDesejo = new Domain.Entities.ListaDesejo(request.UsuarioId.ToString(), request.LivroId);
+            var listaDesejo = new Domain.Entities.ListaDesejo(request.UsuarioId, request.LivroId);
             await _repository.Adicionar(listaDesejo);
         }
     }

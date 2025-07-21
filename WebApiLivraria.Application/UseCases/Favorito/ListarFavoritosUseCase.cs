@@ -1,29 +1,33 @@
 ﻿using WebApiLivraria.Domain.Repositories;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace WebApiLivraria.Application.UseCases.Favorito;
-
-public class ListarFavoritosUseCase
+namespace WebApiLivraria.Application.UseCases.Favorito
 {
-    private readonly IFavoritoRepository _favoritoRepository;
-
-    public ListarFavoritosUseCase(IFavoritoRepository favoritoRepository)
+    public class ListarFavoritosUseCase : IListarFavoritosUseCase
     {
-        _favoritoRepository = favoritoRepository;
-    }
+        private readonly IFavoritoRepository _favoritoRepository;
 
-    public async Task<List<FavoritoResponse>> Executar(string usuarioId)
-    {
-        var favoritos = await _favoritoRepository.ListarPorUsuario(usuarioId);
-
-        return favoritos.Select(f => new FavoritoResponse
+        public ListarFavoritosUseCase(IFavoritoRepository favoritoRepository)
         {
-            LivroId = f.LivroId,
-            DataCriacao = f.DataCriacao
-        }).ToList();
-    }
+            _favoritoRepository = favoritoRepository;
+        }
 
-    public async Task<bool> VerificarFavorito(string usuarioId, string livroId)
-    {
-        return await _favoritoRepository.Existe(usuarioId, livroId);
+        public async Task<List<FavoritoResponse>> Executar(string usuarioId)
+        {
+            var favoritos = await _favoritoRepository.ListarPorUsuario(usuarioId);
+
+            return favoritos.Select(f => new FavoritoResponse
+            {
+                LivroId = f.LivroId,
+                DataCriacao = f.DataCriacao
+            }).ToList();
+        }
+
+        public async Task<bool> VerificarFavorito(string usuarioId, string livroId)
+        {
+            return await _favoritoRepository.Existe(usuarioId, livroId);
+        }
     }
 }

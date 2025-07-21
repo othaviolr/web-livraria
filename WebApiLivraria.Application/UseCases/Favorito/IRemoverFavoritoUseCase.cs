@@ -2,7 +2,7 @@
 {
     public interface IRemoverFavoritoUseCase
     {
-        Task Executar(string usuarioId, int livroId);
+        Task Executar(string usuarioId, string livroId);
     }
 
     public interface IListarFavoritosUseCase

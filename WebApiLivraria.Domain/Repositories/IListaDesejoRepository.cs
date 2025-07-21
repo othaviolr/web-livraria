@@ -8,8 +8,8 @@ namespace WebApiLivraria.Domain.Repositories
     public interface IListaDesejoRepository
     {
         Task Adicionar(ListaDesejo item);
-        Task Remover(Guid usuarioId, string livroId);
-        Task<bool> Existe(Guid usuarioId, string livroId);
-        Task<IReadOnlyCollection<ListaDesejo>> ListarPorUsuario(Guid usuarioId);
+        Task Remover(string usuarioId, string livroId);
+        Task<bool> Existe(string usuarioId, string livroId);
+        Task<IReadOnlyCollection<ListaDesejo>> ListarPorUsuario(string usuarioId);
     }
 }

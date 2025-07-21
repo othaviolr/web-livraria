@@ -1,18 +1,19 @@
 ﻿using WebApiLivraria.Domain.Repositories;
 
-namespace WebApiLivraria.Application.UseCases.Favorito;
-
-public class RemoverFavoritoUseCase
+namespace WebApiLivraria.Application.UseCases.Favorito
 {
-    private readonly IFavoritoRepository _favoritoRepository;
-
-    public RemoverFavoritoUseCase(IFavoritoRepository favoritoRepository)
+    public class RemoverFavoritoUseCase : IRemoverFavoritoUseCase
     {
-        _favoritoRepository = favoritoRepository;
-    }
+        private readonly IFavoritoRepository _favoritoRepository;
 
-    public async Task Executar(Guid usuarioId, int livroId)
-    {
-        await _favoritoRepository.Remover(usuarioId.ToString(), livroId.ToString());
+        public RemoverFavoritoUseCase(IFavoritoRepository favoritoRepository)
+        {
+            _favoritoRepository = favoritoRepository;
+        }
+
+        public async Task Executar(string usuarioId, string livroId)
+        {
+            await _favoritoRepository.Remover(usuarioId, livroId);
+        }
     }
 }

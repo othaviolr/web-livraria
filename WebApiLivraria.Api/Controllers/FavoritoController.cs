@@ -39,81 +39,89 @@ namespace WebApiLivraria.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Adicionar([FromBody] AdicionarFavoritoRequest request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(RespostaPadrao<string>.ComErro("Dados inválidos para adicionar favorito."));
+
             try
             {
                 request.UsuarioId = ObterUsuarioId();
                 await _adicionarUseCase.Executar(request);
-                return Ok();
+                return Ok(RespostaPadrao<string>.ComSucesso("Livro adicionado aos favoritos com sucesso."));
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(RespostaPadrao<string>.ComErro(ex.Message));
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized();
+                return Unauthorized(RespostaPadrao<string>.ComErro("Usuário não autorizado."));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    message = "Ocorreu um erro inesperado no servidor.",
-                    detail = ex.Message,
-                    stackTrace = ex.StackTrace
-                });
+                return StatusCode(500, RespostaPadrao<string>.ComErro($"Erro interno: {ex.Message}"));
             }
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Remover([FromQuery] int livroId)
+        public async Task<IActionResult> Remover([FromQuery] string livroId)
         {
+            if (string.IsNullOrWhiteSpace(livroId))
+                return BadRequest(RespostaPadrao<string>.ComErro("LivroId não pode ser vazio."));
+
             try
             {
                 var usuarioId = ObterUsuarioId();
                 await _removerUseCase.Executar(usuarioId, livroId);
-                return NoContent();
+                return Ok(RespostaPadrao<string>.ComSucesso("Livro removido dos favoritos com sucesso."));
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized();
+                return Unauthorized(RespostaPadrao<string>.ComErro("Usuário não autorizado."));
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Ocorreu um erro inesperado no servidor." });
+                return StatusCode(500, RespostaPadrao<string>.ComErro($"Erro interno: {ex.Message}"));
             }
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<FavoritoResponse>>> Listar()
+        public async Task<IActionResult> Listar()
         {
             try
             {
                 var usuarioId = ObterUsuarioId();
                 var favoritos = await _listarUseCase.Executar(usuarioId);
-                return Ok(favoritos);
+                return Ok(RespostaPadrao<List<FavoritoResponse>>.ComSucesso(favoritos, "Favoritos listados com sucesso."));
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized();
+                return Unauthorized(RespostaPadrao<string>.ComErro("Usuário não autorizado."));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, RespostaPadrao<string>.ComErro($"Erro interno: {ex.Message}"));
             }
         }
 
         [HttpGet("verificar/{livroId}")]
-        public async Task<ActionResult<bool>> Verificar(int livroId)
+        public async Task<IActionResult> Verificar(string livroId)
         {
+            if (string.IsNullOrWhiteSpace(livroId))
+                return BadRequest(RespostaPadrao<string>.ComErro("LivroId não pode ser vazio."));
+
             try
             {
                 var usuarioId = ObterUsuarioId();
-                bool existe = await _listarUseCase.VerificarFavorito(usuarioId, livroId.ToString());
-                return Ok(existe);
+                bool existe = await _listarUseCase.VerificarFavorito(usuarioId, livroId);
+                return Ok(RespostaPadrao<bool>.ComSucesso(existe, "Verificação realizada com sucesso."));
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized();
+                return Unauthorized(RespostaPadrao<string>.ComErro("Usuário não autorizado."));
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Ocorreu um erro inesperado no servidor." });
+                return StatusCode(500, RespostaPadrao<string>.ComErro($"Erro interno: {ex.Message}"));
             }
         }
     }

@@ -65,9 +65,11 @@ builder.Services.AddScoped<IObterResumoAvaliacaoLivroUseCase, ObterResumoAvaliac
 builder.Services.AddScoped<IEditarAvaliacaoUseCase, EditarAvaliacaoUseCase>();
 builder.Services.AddScoped<IExcluirAvaliacaoUseCase, ExcluirAvaliacaoUseCase>();
 builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
+
 builder.Services.AddScoped<IAdicionarFavoritoUseCase, AdicionarFavoritoUseCase>();
-builder.Services.AddScoped<RemoverFavoritoUseCase>();
-builder.Services.AddScoped<ListarFavoritosUseCase>();
+builder.Services.AddScoped<IRemoverFavoritoUseCase, RemoverFavoritoUseCase>();
+builder.Services.AddScoped<IListarFavoritosUseCase, ListarFavoritosUseCase>();
+
 builder.Services.AddScoped<IAdicionarListaDesejoUseCase, AdicionarListaDesejoUseCase>();
 builder.Services.AddScoped<RemoverListaDesejoUseCase>();
 builder.Services.AddScoped<ListarListaDesejoUseCase>();
@@ -162,8 +164,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Middlewares customizados de exceção
-app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<TratamentoExcecaoMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<TratamentoExcecaoMiddleware>();
 
 app.MapControllers();
 app.Run();
