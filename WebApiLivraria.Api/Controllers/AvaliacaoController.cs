@@ -2,15 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Claims;
+using System.Linq;
+using System;
 using WebApiLivraria.Application.UseCases.Avaliacao.Criar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Resumo;
 using WebApiLivraria.Application.UseCases.Avaliacao.Editar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Excluir;
 using WebApiLivraria.Application.Dto;
-using System;
-using System.Linq;
-using System.Security.Claims;
 
 namespace WebApiLivraria.Api.Controllers
 {
@@ -38,7 +38,7 @@ namespace WebApiLivraria.Api.Controllers
             _excluirAvaliacaoUseCase = excluirAvaliacaoUseCase;
         }
 
-        private Guid ObterUsuarioIdDoToken()
+        private string ObterUsuarioIdDoToken()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c =>
                 c.Type == "id" ||
@@ -46,7 +46,7 @@ namespace WebApiLivraria.Api.Controllers
                 c.Type == "sub"
             );
 
-            return userIdClaim == null ? Guid.Empty : Guid.Parse(userIdClaim.Value);
+            return userIdClaim?.Value ?? string.Empty;
         }
 
         [HttpPost]
@@ -57,7 +57,7 @@ namespace WebApiLivraria.Api.Controllers
                 return BadRequest(ModelState);
 
             var usuarioId = ObterUsuarioIdDoToken();
-            if (usuarioId == Guid.Empty)
+            if (string.IsNullOrEmpty(usuarioId))
                 return Unauthorized();
 
             request.UsuarioId = usuarioId;
@@ -88,6 +88,7 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Editar(string id, [FromBody] EditarAvaliacaoRequest request)
         {
             if (!ModelState.IsValid)
@@ -95,6 +96,13 @@ namespace WebApiLivraria.Api.Controllers
 
             if (id != request.Id)
                 return BadRequest(RespostaPadrao<string>.ComErro("Id da avaliação inconsistente."));
+
+            var usuarioId = ObterUsuarioIdDoToken();
+            if (string.IsNullOrEmpty(usuarioId))
+                return Unauthorized();
+
+            if (request.UsuarioId != usuarioId)
+                return Unauthorized(RespostaPadrao<string>.ComErro("Usuário não autorizado a editar esta avaliação."));
 
             try
             {
@@ -116,8 +124,13 @@ namespace WebApiLivraria.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Excluir(string id, [FromQuery] Guid usuarioId)
+        [Authorize]
+        public async Task<IActionResult> Excluir(string id)
         {
+            var usuarioId = ObterUsuarioIdDoToken();
+            if (string.IsNullOrEmpty(usuarioId))
+                return Unauthorized();
+
             try
             {
                 await _excluirAvaliacaoUseCase.ExecutarAsync(id, usuarioId);

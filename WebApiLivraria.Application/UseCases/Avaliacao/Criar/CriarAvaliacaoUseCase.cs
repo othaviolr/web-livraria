@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using WebApiLivraria.Domain.Interfaces;
 using WebApiLivraria.Domain.Entities;
-using System;
 
 namespace WebApiLivraria.Application.UseCases.Avaliacao.Criar
 {
@@ -17,8 +16,8 @@ namespace WebApiLivraria.Application.UseCases.Avaliacao.Criar
         public async Task ExecutarAsync(CriarAvaliacaoRequest request)
         {
             var avaliacao = new WebApiLivraria.Domain.Entities.Avaliacao(
-                livroId: request.LivroId.ToString(),         
-                usuarioId: request.UsuarioId.ToString(),     
+                livroId: request.LivroId.ToString(),
+                usuarioId: request.UsuarioId,
                 nota: request.Nota,
                 comentario: request.Comentario
             );

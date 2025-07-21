@@ -2,6 +2,6 @@
 {
     public interface IExcluirAvaliacaoUseCase
     {
-        Task ExecutarAsync(string id, Guid usuarioId);
+        Task ExecutarAsync(string id, string usuarioId);
     }
 }
