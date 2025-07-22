@@ -6,6 +6,10 @@ namespace WebApiLivraria.Domain.Entities
 {
     public class UsuarioSeguindo
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
+
         [BsonRepresentation(BsonType.ObjectId)]
         public string SeguidorId { get; private set; } = null!;
 
