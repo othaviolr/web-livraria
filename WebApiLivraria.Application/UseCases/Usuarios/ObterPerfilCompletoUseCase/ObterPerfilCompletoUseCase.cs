@@ -21,32 +21,34 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCas
                 throw new Exception("Usuário não encontrado");
 
             var contagemStatus = await _usuarioRepository.ObterContagemLivrosPorStatusAsync(usuarioId);
-
             var quantidadeFavoritos = await _usuarioRepository.ObterQuantidadeFavoritosAsync(usuarioId);
 
             var livrosMarcados = usuario.LivrosLidos != null
-                ? usuario.LivrosLidos.Select(l => new LivroResumoDto
-                {
-                    Id = l.Livro.Id,
-                    Titulo = l.Livro.Titulo,
-                    Autor = l.Livro.Autor.Nome,
-                    ImagemUrl = l.Livro.ImagemUrl,
-                    StatusLeitura = l.Status
-                }).ToList()
+                ? usuario.LivrosLidos
+                    .Where(l => l.Livro != null && l.Livro.Autor != null)
+                    .Select(l => new LivroResumoDto
+                    {
+                        Id = l.Livro.Id,
+                        Titulo = l.Livro.Titulo,
+                        Autor = l.Livro.Autor.Nome,
+                        ImagemUrl = l.Livro.ImagemUrl,
+                        StatusLeitura = l.Status
+                    })
+                    .ToList()
                 : new List<LivroResumoDto>();
 
             var atividades = usuario.Avaliacoes != null
                 ? usuario.Avaliacoes
-            .OrderByDescending(a => a.DataCriacao)
-            .Take(10)
-            .Select(a => new AtividadeDto
-            {
-                Tipo = "Avaliação",
-                Descricao = $"Avaliou o livro '{a.Livro?.Titulo ?? "Livro desconhecido"}' com nota {a.Nota}",
-             Data = a.DataCriacao
-            })
-                .ToList()
-                    : new List<AtividadeDto>();
+                    .OrderByDescending(a => a.DataCriacao)
+                    .Take(10)
+                    .Select(a => new AtividadeDto
+                    {
+                        Tipo = "Avaliação",
+                        Descricao = $"Avaliou o livro '{a.Livro?.Titulo ?? "Livro desconhecido"}' com nota {a.Nota}",
+                        Data = a.DataCriacao
+                    })
+                    .ToList()
+                : new List<AtividadeDto>();
 
             return new UsuarioPerfilDto
             {

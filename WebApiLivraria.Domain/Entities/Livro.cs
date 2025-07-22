@@ -176,5 +176,16 @@ namespace WebApiLivraria.Domain.Entities
         }
 
         public double NotaMedia => Avaliacoes.Any() ? Avaliacoes.Average(a => a.Nota) : 0;
+
+
+        public void DefinirAutor(Autor autor)
+        {
+            Autor = autor ?? throw new ArgumentNullException(nameof(autor));
+        }
+
+        public void DefinirEditora(Editora editora)
+        {
+            Editora = editora ?? throw new ArgumentNullException(nameof(editora));
+        }
     }
 }
