@@ -36,5 +36,10 @@ namespace WebApiLivraria.Domain.Entities
             LivroId = livroId;
             DataCriacao = DateTime.UtcNow;
         }
+
+        public void DefinirLivro(Livro livro)
+        {
+            this.Livro = livro;
+        }
     }
 }
