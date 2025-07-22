@@ -142,7 +142,7 @@ namespace WebApiLivraria.Api.Controllers
 
         [HttpPost("{id}/seguir")]
         [Authorize]
-        public async Task<IActionResult> SeguirUsuario(Guid id)
+        public async Task<IActionResult> SeguirUsuario(string id)
         {
             if (!TryObterUsuarioIdDoToken(out var usuarioLogadoId))
                 return Unauthorized();

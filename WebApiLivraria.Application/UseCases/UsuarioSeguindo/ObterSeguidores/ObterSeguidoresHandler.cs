@@ -1,6 +1,7 @@
 ﻿using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.Requests.UsuarioSeguindo;
 using WebApiLivraria.Domain.Repositories;
+using MongoDB.Bson;
 
 namespace WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguidores
 {
@@ -15,7 +16,10 @@ namespace WebApiLivraria.Application.UseCases.UsuarioSeguindo.ObterSeguidores
 
         public async Task<List<UsuarioResumoDto>> HandleAsync(ObterSeguidoresRequest request)
         {
-            var seguidores = await _usuarioSeguindoRepository.ObterSeguidoresAsync(request.UsuarioId);
+            if (!ObjectId.TryParse(request.UsuarioId, out var usuarioId))
+                throw new ArgumentException("Id do usuário inválido.");
+
+            var seguidores = await _usuarioSeguindoRepository.ObterSeguidoresAsync(usuarioId.ToString());
 
             return seguidores.Select(u => new UsuarioResumoDto
             {
