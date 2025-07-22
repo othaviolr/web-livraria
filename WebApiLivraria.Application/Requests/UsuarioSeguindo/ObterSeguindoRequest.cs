@@ -2,9 +2,9 @@
 {
     public class ObterSeguindoRequest
     {
-        public Guid UsuarioId { get; set; }
+        public string UsuarioId { get; set; }
 
-        public ObterSeguindoRequest(Guid usuarioId)
+        public ObterSeguindoRequest(string usuarioId)
         {
             UsuarioId = usuarioId;
         }

@@ -14,35 +14,39 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCas
             _usuarioRepository = usuarioRepository;
         }
 
-        public async Task<UsuarioPerfilDto> ExecutarAsync(Guid usuarioId)
+        public async Task<UsuarioPerfilDto> ExecutarAsync(string usuarioId)
         {
-            var usuario = await _usuarioRepository.ObterPorIdComDetalhesAsync(usuarioId.ToString());
+            var usuario = await _usuarioRepository.ObterPorIdComDetalhesAsync(usuarioId);
             if (usuario == null)
                 throw new Exception("Usuário não encontrado");
 
-            var contagemStatus = await _usuarioRepository.ObterContagemLivrosPorStatusAsync(usuarioId.ToString());
+            var contagemStatus = await _usuarioRepository.ObterContagemLivrosPorStatusAsync(usuarioId);
 
-            var quantidadeFavoritos = await _usuarioRepository.ObterQuantidadeFavoritosAsync(usuarioId.ToString());
+            var quantidadeFavoritos = await _usuarioRepository.ObterQuantidadeFavoritosAsync(usuarioId);
 
-            var livrosMarcados = usuario.LivrosLidos.Select(l => new LivroResumoDto
-            {
-                Id = l.Livro.Id,
-                Titulo = l.Livro.Titulo,
-                Autor = l.Livro.Autor.Nome,
-                ImagemUrl = l.Livro.ImagemUrl,
-                StatusLeitura = l.Status
-            }).ToList();
-
-            var atividades = usuario.Avaliacoes
-                .OrderByDescending(a => a.DataCriacao)
-                .Take(10)
-                .Select(a => new AtividadeDto
+            var livrosMarcados = usuario.LivrosLidos != null
+                ? usuario.LivrosLidos.Select(l => new LivroResumoDto
                 {
-                    Tipo = "Avaliação",
-                    Descricao = $"Avaliou o livro '{a.Livro.Titulo}' com nota {a.Nota}",
-                    Data = a.DataCriacao
-                })
-                .ToList();
+                    Id = l.Livro.Id,
+                    Titulo = l.Livro.Titulo,
+                    Autor = l.Livro.Autor.Nome,
+                    ImagemUrl = l.Livro.ImagemUrl,
+                    StatusLeitura = l.Status
+                }).ToList()
+                : new List<LivroResumoDto>();
+
+            var atividades = usuario.Avaliacoes != null
+                ? usuario.Avaliacoes
+            .OrderByDescending(a => a.DataCriacao)
+            .Take(10)
+            .Select(a => new AtividadeDto
+            {
+                Tipo = "Avaliação",
+                Descricao = $"Avaliou o livro '{a.Livro?.Titulo ?? "Livro desconhecido"}' com nota {a.Nota}",
+             Data = a.DataCriacao
+            })
+                .ToList()
+                    : new List<AtividadeDto>();
 
             return new UsuarioPerfilDto
             {

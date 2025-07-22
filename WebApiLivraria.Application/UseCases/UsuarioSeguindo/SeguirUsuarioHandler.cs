@@ -33,14 +33,14 @@ namespace WebApiLivraria.Application.UseCases.UsuarioSeguindo
                 throw new InvalidOperationException("Usuário que você está tentando seguir não existe.");
 
             var jaSegue = await _usuarioSeguindoRepository
-                .ExisteRelacionamentoAsync(usuarioAutIdGuid, usuarioParaSeguirGuid);
+                .ExisteRelacionamentoAsync(usuarioAutIdGuid.ToString(), usuarioParaSeguirGuid.ToString());
 
             if (jaSegue)
                 throw new InvalidOperationException("Você já está seguindo este usuário.");
 
             var usuarioSeguindo = new Domain.Entities.UsuarioSeguindo(
-                usuarioAutenticadoId,
-                request.UsuarioIdParaSeguir
+                usuarioAutIdGuid.ToString(),          
+                usuarioParaSeguirGuid.ToString()      
             );
 
             await _usuarioSeguindoRepository.SeguirAsync(usuarioSeguindo);

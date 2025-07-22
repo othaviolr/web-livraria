@@ -11,7 +11,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.Excluir
             _usuarioRepository = usuarioRepository;
         }
 
-        public async Task<bool> ExecutarAsync(Guid usuarioId)
+        public async Task<bool> ExecutarAsync(string usuarioId)
         {
             var usuario = await _usuarioRepository.ObterPorId(usuarioId.ToString());
             if (usuario == null)

@@ -2,6 +2,6 @@
 {
     public class DeixarDeSeguirRequest
     {
-        public Guid UsuarioIdParaDeixarDeSeguir { get; set; }
+        public string UsuarioIdParaDeixarDeSeguir { get; set; }
     }
 }
