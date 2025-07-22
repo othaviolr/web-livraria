@@ -19,7 +19,9 @@ namespace WebApiLivraria.Infrastructure.Repositories
         private readonly IMongoCollection<Livro> _livros;
         private readonly IMongoCollection<Autor> _autores;
 
-        public UsuarioRepository(MongoDbContext context)
+        private readonly IUsuarioSeguindoRepository _usuarioSeguindoRepository;
+
+        public UsuarioRepository(MongoDbContext context, IUsuarioSeguindoRepository usuarioSeguindoRepository)
         {
             _usuarios = context.Usuarios;
             _avaliacoes = context.Avaliacoes;
@@ -27,6 +29,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             _leituras = context.Leituras;
             _livros = context.Livros;
             _autores = context.Autores;
+            _usuarioSeguindoRepository = usuarioSeguindoRepository;
         }
 
         public async Task<Usuario?> ObterPorEmail(string email)
@@ -103,6 +106,24 @@ namespace WebApiLivraria.Infrastructure.Repositories
                     favorito.DefinirLivro(livro);
             }
             usuario.DefinirFavoritos(favoritos);
+
+            var seguidoresUsuarios = await _usuarioSeguindoRepository.ObterSeguidoresAsync(usuario.Id);
+            var seguidoresRelacionamentos = seguidoresUsuarios.Select(s =>
+            {
+                var rel = new UsuarioSeguindo(s.Id, usuario.Id);
+                rel.DefinirSeguidor(s);
+                return rel;
+            }).ToList();
+            usuario.DefinirSeguidores(seguidoresRelacionamentos);
+
+            var seguindoUsuarios = await _usuarioSeguindoRepository.ObterSeguindoAsync(usuario.Id);
+            var seguindoRelacionamentos = seguindoUsuarios.Select(s =>
+            {
+                var rel = new UsuarioSeguindo(usuario.Id, s.Id);
+                rel.DefinirSeguindo(s);
+                return rel;
+            }).ToList();
+            usuario.DefinirSeguindo(seguindoRelacionamentos);
 
             return usuario;
         }
