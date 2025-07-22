@@ -16,6 +16,8 @@ namespace WebApiLivraria.Infrastructure.Repositories
         private readonly IMongoCollection<Avaliacao> _avaliacoes;
         private readonly IMongoCollection<Favorito> _favoritos;
         private readonly IMongoCollection<Leitura> _leituras;
+        private readonly IMongoCollection<Livro> _livros;
+        private readonly IMongoCollection<Autor> _autores;
 
         public UsuarioRepository(MongoDbContext context)
         {
@@ -23,6 +25,8 @@ namespace WebApiLivraria.Infrastructure.Repositories
             _avaliacoes = context.Avaliacoes;
             _favoritos = context.Favoritos;
             _leituras = context.Leituras;
+            _livros = context.Livros;
+            _autores = context.Autores;
         }
 
         public async Task<Usuario?> ObterPorEmail(string email)
@@ -62,6 +66,13 @@ namespace WebApiLivraria.Infrastructure.Repositories
             var filtroAval = Builders<Avaliacao>.Filter.Eq(a => a.UsuarioId, id);
             var avaliacoes = await _avaliacoes.Find(filtroAval).ToListAsync();
 
+            foreach (var avaliacao in avaliacoes)
+            {
+                var livro = await BuscarLivroCompletoPorIdAsync(avaliacao.LivroId);
+                if (livro != null)
+                    avaliacao.DefinirLivro(livro);
+            }
+
             usuario.DefinirAvaliacoes(avaliacoes);
             return usuario;
         }
@@ -75,10 +86,22 @@ namespace WebApiLivraria.Infrastructure.Repositories
 
             var filtroAval = Builders<Avaliacao>.Filter.Eq(a => a.UsuarioId, usuario.Id);
             var avaliacoes = await _avaliacoes.Find(filtroAval).ToListAsync();
+            foreach (var avaliacao in avaliacoes)
+            {
+                var livro = await BuscarLivroCompletoPorIdAsync(avaliacao.LivroId);
+                if (livro != null)
+                    avaliacao.DefinirLivro(livro);
+            }
             usuario.DefinirAvaliacoes(avaliacoes);
 
             var filtroFav = Builders<Favorito>.Filter.Eq(f => f.UsuarioId, usuario.Id);
             var favoritos = await _favoritos.Find(filtroFav).ToListAsync();
+            foreach (var favorito in favoritos)
+            {
+                var livro = await BuscarLivroCompletoPorIdAsync(favorito.LivroId);
+                if (livro != null)
+                    favorito.DefinirLivro(livro);
+            }
             usuario.DefinirFavoritos(favoritos);
 
             return usuario;
@@ -91,13 +114,41 @@ namespace WebApiLivraria.Infrastructure.Repositories
 
             var filtroAval = Builders<Avaliacao>.Filter.Eq(a => a.UsuarioId, id);
             var avaliacoes = await _avaliacoes.Find(filtroAval).ToListAsync();
+            foreach (var avaliacao in avaliacoes)
+            {
+                var livro = await BuscarLivroCompletoPorIdAsync(avaliacao.LivroId);
+                if (livro != null)
+                    avaliacao.DefinirLivro(livro);
+            }
             usuario.DefinirAvaliacoes(avaliacoes);
 
             var filtroFav = Builders<Favorito>.Filter.Eq(f => f.UsuarioId, id);
             var favoritos = await _favoritos.Find(filtroFav).ToListAsync();
+            foreach (var favorito in favoritos)
+            {
+                var livro = await BuscarLivroCompletoPorIdAsync(favorito.LivroId);
+                if (livro != null)
+                    favorito.DefinirLivro(livro);
+            }
             usuario.DefinirFavoritos(favoritos);
 
             return usuario;
+        }
+
+        private async Task<Livro?> BuscarLivroCompletoPorIdAsync(string livroId)
+        {
+            if (string.IsNullOrEmpty(livroId))
+                return null;
+
+            var livro = await _livros.Find(l => l.Id == livroId).FirstOrDefaultAsync();
+            if (livro == null)
+                return null;
+
+            var autor = await _autores.Find(a => a.Id == livro.AutorId).FirstOrDefaultAsync();
+            if (autor != null)
+                livro.DefinirAutor(autor);
+
+            return livro;
         }
 
         public async Task<Dictionary<StatusLeitura, int>> ObterContagemLivrosPorStatusAsync(string usuarioId)

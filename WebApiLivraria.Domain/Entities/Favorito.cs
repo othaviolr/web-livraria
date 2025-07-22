@@ -39,5 +39,15 @@ namespace WebApiLivraria.Domain.Entities
             LivroId = livroId;
             DataCriacao = DateTime.UtcNow;
         }
+
+        public void DefinirLivro(Livro livro)
+        {
+            Livro = livro ?? throw new ArgumentNullException(nameof(livro));
+        }
+
+        public void DefinirUsuario(Usuario usuario)
+        {
+            Usuario = usuario ?? throw new ArgumentNullException(nameof(usuario));
+        }
     }
 }

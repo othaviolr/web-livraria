@@ -1,7 +1,6 @@
-﻿using WebApiLivraria.Domain.Repositories;
+﻿using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Domain.Enums;
-using System.Linq;
-using WebApiLivraria.Application.Dto;
+using WebApiLivraria.Domain.Repositories;
 
 namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
 {
@@ -19,8 +18,8 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
             var usuario = await _usuarioRepository.ObterPorNomeUsuarioComRelacionamentosAsync(nomeUsuario);
             if (usuario == null) return null;
 
-            var livrosLidos = usuario.LivrosLidos
-                .Where(l => l.Status == StatusLeitura.Lido)
+            var livrosLidos = usuario.LivrosLidos?
+                .Where(l => l.Status == StatusLeitura.Lido && l.Livro != null && l.Livro.Autor != null)
                 .OrderByDescending(l => l.DataAtualizacao)
                 .Select(l => new LivroResumoDto
                 {
@@ -29,21 +28,22 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                     Autor = l.Livro.Autor.Nome,
                     ImagemUrl = l.Livro.ImagemUrl
                 })
-                .ToList();
+                .ToList() ?? new List<LivroResumoDto>();
 
-            var favoritos = usuario.Favoritos
-    .Where(f => f.Livro != null) 
-    .OrderByDescending(f => f.DataCriacao)
-    .Select(f => new LivroResumoDto
-    {
-        Id = f.Livro.Id,
-        Titulo = f.Livro.Titulo,
-        Autor = f.Livro.Autor?.Nome ?? "Autor desconhecido",
-        ImagemUrl = f.Livro.ImagemUrl
-    })
-    .ToList();
+            var favoritos = usuario.Favoritos?
+                .Where(f => f.Livro != null && f.Livro.Autor != null)
+                .OrderByDescending(f => f.DataCriacao)
+                .Select(f => new LivroResumoDto
+                {
+                    Id = f.Livro.Id,
+                    Titulo = f.Livro.Titulo,
+                    Autor = f.Livro.Autor?.Nome ?? "Autor desconhecido",
+                    ImagemUrl = f.Livro.ImagemUrl
+                })
+                .ToList() ?? new List<LivroResumoDto>();
 
-            var wishlist = usuario.ListasDesejo
+            var wishlist = usuario.ListasDesejo?
+                .Where(w => w.Livro != null && w.Livro.Autor != null)
                 .OrderByDescending(w => w.DataCriacao)
                 .Select(w => new LivroResumoDto
                 {
@@ -52,9 +52,9 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                     Autor = w.Livro.Autor.Nome,
                     ImagemUrl = w.Livro.ImagemUrl
                 })
-                .ToList();
+                .ToList() ?? new List<LivroResumoDto>();
 
-            var resenhas = usuario.Avaliacoes
+            var resenhas = usuario.Avaliacoes?
                 .OrderByDescending(a => a.DataCriacao)
                 .Take(3)
                 .Select(a => new ResenhaDto
@@ -67,45 +67,47 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                     Comentario = a.Comentario,
                     Data = a.DataCriacao
                 })
-                .ToList();
+                .ToList() ?? new List<ResenhaDto>();
 
-            var statusLeituraContagem = usuario.LivrosLidos
+            var statusLeituraContagem = usuario.LivrosLidos?
                 .GroupBy(l => l.Status)
-                .ToDictionary(g => g.Key, g => g.Count());
+                .ToDictionary(g => g.Key, g => g.Count())
+                ?? new Dictionary<StatusLeitura, int>();
 
-            var totalResenhas = usuario.Avaliacoes.Count();
+            var totalResenhas = usuario.Avaliacoes?.Count() ?? 0;
 
-            var seguidores = usuario.Seguidores
+            var seguidores = usuario.Seguidores?
                 .Select(s => s.Seguidor)
                 .Where(u => u != null)
                 .Select(u => new UsuarioResumoDto
                 {
                     Nome = u!.Nome,
-                    NomeUsuario = u!.NomeUsuario,
-                    FotoUrl = u!.FotoUrl,
-                    Bio = u!.Bio
+                    NomeUsuario = u.NomeUsuario,
+                    FotoUrl = u.FotoUrl,
+                    Bio = u.Bio
                 })
-                .ToList();
+                .ToList() ?? new List<UsuarioResumoDto>();
 
-            var seguindo = usuario.Seguindo
+            var seguindo = usuario.Seguindo?
                 .Select(s => s.Seguindo)
                 .Where(u => u != null)
                 .Select(u => new UsuarioResumoDto
                 {
                     Nome = u!.Nome,
-                    NomeUsuario = u!.NomeUsuario,
-                    FotoUrl = u!.FotoUrl,
-                    Bio = u!.Bio
+                    NomeUsuario = u.NomeUsuario,
+                    FotoUrl = u.FotoUrl,
+                    Bio = u.Bio
                 })
-                .ToList();
+                .ToList() ?? new List<UsuarioResumoDto>();
 
             return new UsuarioPerfilPublicoDto
             {
                 Nome = usuario.Nome,
-                NomeUsuario = usuario.NomeUsuario!,
+                NomeUsuario = usuario.NomeUsuario ?? string.Empty,
                 FotoUrl = usuario.FotoUrl,
                 Bio = usuario.Bio,
                 Cidade = usuario.Cidade,
+
                 LivrosLidos = livrosLidos,
                 Favoritos = favoritos,
                 Wishlist = wishlist,
