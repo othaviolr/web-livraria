@@ -37,5 +37,15 @@ namespace WebApiLivraria.Domain.Entities
             SeguindoId = seguindoId;
             Data = DateTime.UtcNow;
         }
+
+        public void DefinirSeguidor(Usuario seguidor)
+        {
+            Seguidor = seguidor;
+        }
+
+        public void DefinirSeguindo(Usuario seguindo)
+        {
+            Seguindo = seguindo;
+        }
     }
 }
