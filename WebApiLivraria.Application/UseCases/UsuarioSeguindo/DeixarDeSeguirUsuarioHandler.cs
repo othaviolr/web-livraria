@@ -12,7 +12,7 @@ namespace WebApiLivraria.Application.UseCases.UsuarioSeguindo
             _usuarioSeguindoRepository = usuarioSeguindoRepository;
         }
 
-        public async Task HandleAsync(Guid usuarioAutenticadoId, DeixarDeSeguirRequest request)
+        public async Task HandleAsync(string usuarioAutenticadoId, DeixarDeSeguirRequest request)
         {
             if (usuarioAutenticadoId == request.UsuarioIdParaDeixarDeSeguir)
                 throw new InvalidOperationException("Você não pode deixar de seguir a si mesmo.");
