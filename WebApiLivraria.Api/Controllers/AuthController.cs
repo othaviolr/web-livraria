@@ -105,12 +105,4 @@ public class AuthController : ControllerBase
 
         return Ok(new { message = "Perfil atualizado com sucesso." });
     }
-
-    [HttpGet("claims")]
-    [Authorize]
-    public IActionResult ListarClaims()
-    {
-        var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-        return Ok(claims);
-    }
 }
