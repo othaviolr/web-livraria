@@ -2,6 +2,6 @@
 {
     public interface IObterPerfilPublicoUseCase
     {
-        Task<UsuarioPerfilPublicoDto?> ExecutarAsync(string nomeUsuario);
+        Task<UsuarioPerfilPublicoDto?> ExecutarAsync(string nomeUsuario, string? idUsuarioLogado = null);
     }
 }

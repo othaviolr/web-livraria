@@ -1,19 +1,26 @@
 ﻿using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Domain.Enums;
 using WebApiLivraria.Domain.Repositories;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
 {
     public class ObterPerfilPublicoUseCase : IObterPerfilPublicoUseCase
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IUsuarioSeguindoRepository _usuarioSeguindoRepository;
 
-        public ObterPerfilPublicoUseCase(IUsuarioRepository usuarioRepository)
+        public ObterPerfilPublicoUseCase(
+            IUsuarioRepository usuarioRepository,
+            IUsuarioSeguindoRepository usuarioSeguindoRepository)
         {
             _usuarioRepository = usuarioRepository;
+            _usuarioSeguindoRepository = usuarioSeguindoRepository;
         }
 
-        public async Task<UsuarioPerfilPublicoDto?> ExecutarAsync(string nomeUsuario)
+        public async Task<UsuarioPerfilPublicoDto?> ExecutarAsync(string nomeUsuario, string? usuarioLogadoId = null)
         {
             var usuario = await _usuarioRepository.ObterPorNomeUsuarioComRelacionamentosAsync(nomeUsuario);
             if (usuario == null) return null;
@@ -103,6 +110,12 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 })
                 .ToList() ?? new List<UsuarioResumoDto>();
 
+            bool seguindoAtualmente = false;
+            if (!string.IsNullOrEmpty(usuarioLogadoId))
+            {
+                seguindoAtualmente = await _usuarioSeguindoRepository.VerificarSeSegueAsync(usuarioLogadoId, usuario.Id);
+            }
+
             return new UsuarioPerfilPublicoDto
             {
                 Nome = usuario.Nome,
@@ -123,7 +136,9 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 TotalQueroLer = statusLeituraContagem.GetValueOrDefault(StatusLeitura.QueroLer),
                 TotalRelendo = statusLeituraContagem.GetValueOrDefault(StatusLeitura.Relendo),
                 TotalAbandonei = statusLeituraContagem.GetValueOrDefault(StatusLeitura.Abandonei),
-                TotalResenhas = totalResenhas
+                TotalResenhas = totalResenhas,
+
+                SeguindoAtualmente = seguindoAtualmente
             };
         }
     }

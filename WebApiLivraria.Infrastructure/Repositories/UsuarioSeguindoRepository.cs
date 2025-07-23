@@ -77,5 +77,15 @@ namespace WebApiLivraria.Infrastructure.Repositories
             var filterUsuarios = Builders<Usuario>.Filter.In(u => u.Id, seguindoIds);
             return await _usuarios.Find(filterUsuarios).ToListAsync();
         }
+
+        public async Task<bool> VerificarSeSegueAsync(string seguidorId, string seguindoId)
+        {
+            var filtro = Builders<UsuarioSeguindo>.Filter.And(
+                Builders<UsuarioSeguindo>.Filter.Eq(us => us.SeguidorId, seguidorId),
+                Builders<UsuarioSeguindo>.Filter.Eq(us => us.SeguindoId, seguindoId)
+            );
+
+            return await _usuariosSeguindo.Find(filtro).AnyAsync();
+        }
     }
 }

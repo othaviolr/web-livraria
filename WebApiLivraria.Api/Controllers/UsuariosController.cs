@@ -80,7 +80,11 @@ namespace WebApiLivraria.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ObterPerfilPublico(string nomeUsuario)
         {
-            var perfilPublico = await _obterPerfilPublicoUseCase.ExecutarAsync(nomeUsuario);
+            string? usuarioLogadoId = null;
+            if (TryObterUsuarioIdDoToken(out var id))
+                usuarioLogadoId = id;
+
+            var perfilPublico = await _obterPerfilPublicoUseCase.ExecutarAsync(nomeUsuario, usuarioLogadoId);
             if (perfilPublico == null)
                 return NotFound(new { mensagem = "Usuário não encontrado." });
 

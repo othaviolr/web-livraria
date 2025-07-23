@@ -21,5 +21,6 @@ namespace WebApiLivraria.Domain.Repositories
 
         Task<int> ObterQuantidadeFavoritosAsync(string usuarioId);
         Task<bool> ExistePorIdAsync(string id);
+        Task<bool> VerificarSeUsuarioSegueOutroAsync(string usuarioLogadoId, string usuarioPerfilId);
     }
 }
