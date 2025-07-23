@@ -23,5 +23,6 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
         public int TotalResenhas { get; set; }
         public List<UsuarioResumoDto> Seguidores { get; set; } = new();
         public List<UsuarioResumoDto> Seguindo { get; set; } = new();
+        public bool SeguindoAtualmente { get; set; } = false;
     }
 }

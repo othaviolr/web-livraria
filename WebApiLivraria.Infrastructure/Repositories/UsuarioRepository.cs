@@ -224,5 +224,10 @@ namespace WebApiLivraria.Infrastructure.Repositories
             var filter = Builders<Usuario>.Filter.Eq(u => u.Id, id);
             return await _usuarios.Find(filter).AnyAsync();
         }
+
+        public async Task<bool> VerificarSeUsuarioSegueOutroAsync(string usuarioLogadoId, string usuarioPerfilId)
+        {
+            return await _usuarioSeguindoRepository.VerificarSeSegueAsync(usuarioLogadoId, usuarioPerfilId);
+        }
     }
 }
