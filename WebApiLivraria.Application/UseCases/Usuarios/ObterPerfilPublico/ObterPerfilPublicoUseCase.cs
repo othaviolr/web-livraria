@@ -26,7 +26,8 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                     Id = l.Livro!.Id,
                     Titulo = l.Livro.Titulo,
                     Autor = l.Livro.Autor!.Nome,
-                    ImagemUrl = l.Livro.ImagemUrl
+                    ImagemUrl = l.Livro.ImagemUrl,
+                    StatusLeitura = l.Status
                 })
                 .ToList() ?? new List<LivroResumoDto>();
 
@@ -38,7 +39,8 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                     Id = f.Livro!.Id,
                     Titulo = f.Livro.Titulo,
                     Autor = f.Livro.Autor?.Nome ?? "Autor desconhecido",
-                    ImagemUrl = f.Livro.ImagemUrl
+                    ImagemUrl = f.Livro.ImagemUrl,
+                    StatusLeitura = StatusLeitura.Lido // Se quiser, pode ajustar o StatusLeitura aqui também
                 })
                 .ToList() ?? new List<LivroResumoDto>();
 
@@ -50,7 +52,8 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                     Id = w.Livro!.Id,
                     Titulo = w.Livro.Titulo,
                     Autor = w.Livro.Autor!.Nome,
-                    ImagemUrl = w.Livro.ImagemUrl
+                    ImagemUrl = w.Livro.ImagemUrl,
+                    StatusLeitura = StatusLeitura.QueroLer // Ou outro status adequado
                 })
                 .ToList() ?? new List<LivroResumoDto>();
 
