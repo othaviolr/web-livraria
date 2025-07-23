@@ -12,6 +12,8 @@ using WebApiLivraria.Application.UseCases.Avaliacao.Listar;
 using WebApiLivraria.Application.UseCases.Avaliacao.Resumo;
 using WebApiLivraria.Application.UseCases.Favorito;
 using WebApiLivraria.Application.UseCases.Leitura.Atualizar;
+using WebApiLivraria.Application.UseCases.Leitura.Listar;
+using WebApiLivraria.Application.UseCases.Leitura.Remover;
 using WebApiLivraria.Application.UseCases.Leitura.Resumo;
 using WebApiLivraria.Application.UseCases.ListaDesejo;
 using WebApiLivraria.Application.UseCases.RankingLivro;
@@ -65,6 +67,9 @@ builder.Services.AddScoped<IObterResumoAvaliacaoLivroUseCase, ObterResumoAvaliac
 builder.Services.AddScoped<IEditarAvaliacaoUseCase, EditarAvaliacaoUseCase>();
 builder.Services.AddScoped<IExcluirAvaliacaoUseCase, ExcluirAvaliacaoUseCase>();
 builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
+builder.Services.AddScoped<AtualizarLeituraUseCase>();
+builder.Services.AddScoped<ObterLeiturasUseCase>();
+builder.Services.AddScoped<RemoverLeituraUseCase>();
 
 builder.Services.AddScoped<IAdicionarFavoritoUseCase, AdicionarFavoritoUseCase>();
 builder.Services.AddScoped<IRemoverFavoritoUseCase, RemoverFavoritoUseCase>();
