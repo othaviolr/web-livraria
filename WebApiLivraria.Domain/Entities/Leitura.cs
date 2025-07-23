@@ -46,5 +46,10 @@ namespace WebApiLivraria.Domain.Entities
             Status = novoStatus;
             DataAtualizacao = DateTime.UtcNow;
         }
+
+        public void DefinirLivro(Livro livro)
+        {
+            Livro = livro ?? throw new ArgumentNullException(nameof(livro));
+        }
     }
 }

@@ -1,8 +1,4 @@
 ﻿using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Domain.Enums;
 using WebApiLivraria.Domain.Repositories;
@@ -89,7 +85,6 @@ namespace WebApiLivraria.Infrastructure.Repositories
 
             if (usuario == null) return null;
 
-            // Avaliações
             var filtroAval = Builders<Avaliacao>.Filter.Eq(a => a.UsuarioId, usuario.Id);
             var avaliacoes = await _avaliacoes.Find(filtroAval).ToListAsync();
             foreach (var avaliacao in avaliacoes)
@@ -119,6 +114,19 @@ namespace WebApiLivraria.Infrastructure.Repositories
                     item.DefinirLivro(livro);
             }
             usuario.DefinirListasDesejo(listasDesejo);
+
+            var leituras = await _leituras
+            .Find(l => l.UsuarioId == usuario.Id)
+            .ToListAsync();
+
+            foreach (var leitura in leituras)
+            {
+                var livro = await BuscarLivroCompletoPorIdAsync(leitura.LivroId);
+                if (livro != null)
+                    leitura.DefinirLivro(livro);
+            }
+
+            usuario.DefinirLivrosLidos(leituras);
 
             var seguidoresUsuarios = await _usuarioSeguindoRepository.ObterSeguidoresAsync(usuario.Id);
             var seguidoresRelacionamentos = seguidoresUsuarios.Select(s =>
