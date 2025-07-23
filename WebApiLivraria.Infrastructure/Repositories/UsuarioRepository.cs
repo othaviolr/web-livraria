@@ -15,7 +15,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
         private readonly IMongoCollection<Usuario> _usuarios;
         private readonly IMongoCollection<Avaliacao> _avaliacoes;
         private readonly IMongoCollection<Favorito> _favoritos;
-        private readonly IMongoCollection<ListaDesejo> _listasDesejo; // <-- ADICIONADO
+        private readonly IMongoCollection<ListaDesejo> _listasDesejo;
         private readonly IMongoCollection<Leitura> _leituras;
         private readonly IMongoCollection<Livro> _livros;
         private readonly IMongoCollection<Autor> _autores;
@@ -27,7 +27,7 @@ namespace WebApiLivraria.Infrastructure.Repositories
             _usuarios = context.Usuarios;
             _avaliacoes = context.Avaliacoes;
             _favoritos = context.Favoritos;
-            _listasDesejo = context.ListasDesejo; // <-- INICIALIZADO
+            _listasDesejo = context.ListasDesejo;
             _leituras = context.Leituras;
             _livros = context.Livros;
             _autores = context.Autores;

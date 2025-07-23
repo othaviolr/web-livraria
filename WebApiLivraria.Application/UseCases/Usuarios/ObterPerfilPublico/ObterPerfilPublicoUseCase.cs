@@ -23,9 +23,9 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 .OrderByDescending(l => l.DataAtualizacao)
                 .Select(l => new LivroResumoDto
                 {
-                    Id = l.Livro.Id,
+                    Id = l.Livro!.Id,
                     Titulo = l.Livro.Titulo,
-                    Autor = l.Livro.Autor.Nome,
+                    Autor = l.Livro.Autor!.Nome,
                     ImagemUrl = l.Livro.ImagemUrl
                 })
                 .ToList() ?? new List<LivroResumoDto>();
@@ -35,7 +35,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 .OrderByDescending(f => f.DataCriacao)
                 .Select(f => new LivroResumoDto
                 {
-                    Id = f.Livro.Id,
+                    Id = f.Livro!.Id,
                     Titulo = f.Livro.Titulo,
                     Autor = f.Livro.Autor?.Nome ?? "Autor desconhecido",
                     ImagemUrl = f.Livro.ImagemUrl
@@ -47,9 +47,9 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 .OrderByDescending(w => w.DataCriacao)
                 .Select(w => new LivroResumoDto
                 {
-                    Id = w.Livro.Id,
+                    Id = w.Livro!.Id,
                     Titulo = w.Livro.Titulo,
-                    Autor = w.Livro.Autor.Nome,
+                    Autor = w.Livro.Autor!.Nome,
                     ImagemUrl = w.Livro.ImagemUrl
                 })
                 .ToList() ?? new List<LivroResumoDto>();
@@ -62,7 +62,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                     LivroId = a.Livro?.Id ?? string.Empty,
                     Titulo = a.Livro?.Titulo ?? "Título desconhecido",
                     Autor = a.Livro?.Autor?.Nome ?? "Autor desconhecido",
-                    ImagemUrl = string.IsNullOrEmpty(a.Livro?.ImagemUrl) ? "/default-book.png" : a.Livro.ImagemUrl,
+                    ImagemUrl = string.IsNullOrEmpty(a.Livro?.ImagemUrl) ? "/default-book.png" : a.Livro!.ImagemUrl,
                     Nota = a.Nota,
                     Comentario = a.Comentario,
                     Data = a.DataCriacao

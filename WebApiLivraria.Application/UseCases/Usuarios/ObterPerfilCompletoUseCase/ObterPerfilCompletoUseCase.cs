@@ -1,54 +1,115 @@
-﻿using WebApiLivraria.Application.Dto;
+﻿using MongoDB.Driver;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WebApiLivraria.Application.Dto;
 using WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico;
 using WebApiLivraria.Domain.Enums;
-using WebApiLivraria.Domain.Repositories;
+using WebApiLivraria.Infrastructure.Contexts;
 
 namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilCompletoUseCase
 {
     public class ObterPerfilCompletoUseCase
     {
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly MongoDbContext _context;
 
-        public ObterPerfilCompletoUseCase(IUsuarioRepository usuarioRepository)
+        public ObterPerfilCompletoUseCase(MongoDbContext context)
         {
-            _usuarioRepository = usuarioRepository;
+            _context = context;
         }
 
         public async Task<UsuarioPerfilDto> ExecutarAsync(string usuarioId)
         {
-            var usuario = await _usuarioRepository.ObterPorIdComDetalhesAsync(usuarioId);
+            var usuario = await _context.Usuarios.Find(u => u.Id == usuarioId).FirstOrDefaultAsync();
             if (usuario == null)
                 throw new Exception("Usuário não encontrado");
 
-            var contagemStatus = await _usuarioRepository.ObterContagemLivrosPorStatusAsync(usuarioId);
-            var quantidadeFavoritos = await _usuarioRepository.ObterQuantidadeFavoritosAsync(usuarioId);
+            var leituras = await _context.Leituras.Find(l => l.UsuarioId == usuarioId).ToListAsync();
 
-            var livrosMarcados = usuario.LivrosLidos != null
-                ? usuario.LivrosLidos
-                    .Where(l => l.Livro != null && l.Livro.Autor != null)
-                    .Select(l => new LivroResumoDto
-                    {
-                        Id = l.Livro.Id,
-                        Titulo = l.Livro.Titulo,
-                        Autor = l.Livro.Autor.Nome,
-                        ImagemUrl = l.Livro.ImagemUrl,
-                        StatusLeitura = l.Status
-                    })
-                    .ToList()
-                : new List<LivroResumoDto>();
+            if (!leituras.Any())
+            {
+                return new UsuarioPerfilDto
+                {
+                    NomeUsuario = usuario.NomeUsuario ?? usuario.Nome,
+                    FotoUrl = usuario.FotoUrl,
+                    Cidade = usuario.Cidade,
+                    Role = usuario.Role,
+                    Bio = usuario.Bio,
+                    QuantidadeFavoritos = 0,
+                    QuantidadeQueroLer = 0,
+                    QuantidadeLendo = 0,
+                    QuantidadeLido = 0,
+                    QuantidadeAbandonei = 0,
+                    QuantidadeRelendo = 0,
+                    LivrosMarcados = new List<LivroResumoDto>(),
+                    Atividades = new List<AtividadeDto>()
+                };
+            }
 
-            var atividades = usuario.Avaliacoes != null
-                ? usuario.Avaliacoes
-                    .OrderByDescending(a => a.DataCriacao)
-                    .Take(10)
-                    .Select(a => new AtividadeDto
-                    {
-                        Tipo = "Avaliação",
-                        Descricao = $"Avaliou o livro '{a.Livro?.Titulo ?? "Livro desconhecido"}' com nota {a.Nota}",
-                        Data = a.DataCriacao
-                    })
-                    .ToList()
-                : new List<AtividadeDto>();
+            var livrosIds = leituras
+                .Select(l => l.LivroId)
+                .Distinct()
+                .ToList();
+
+            var livros = await _context.Livros
+                .Find(l => livrosIds.Contains(l.Id))
+                .ToListAsync();
+
+            var autoresIds = livros
+                .Where(l => !string.IsNullOrEmpty(l.AutorId))
+                .Select(l => l.AutorId)
+                .Distinct()
+                .ToList();
+
+            var autores = await _context.Autores
+                .Find(a => autoresIds.Contains(a.Id))
+                .ToListAsync();
+
+            var livrosMarcados = leituras.Select(leitura =>
+            {
+                var livro = livros.FirstOrDefault(l => l.Id == leitura.LivroId);
+                var autor = livro != null
+                    ? autores.FirstOrDefault(a => a.Id == livro.AutorId)
+                    : null;
+
+                return new LivroResumoDto
+                {
+                    Id = leitura.LivroId,
+                    Titulo = livro?.Titulo ?? "Desconhecido",
+                    Autor = autor?.Nome ?? "Desconhecido",
+                    ImagemUrl = livro?.ImagemUrl ?? string.Empty,
+                    StatusLeitura = leitura.Status
+                };
+            }).ToList();
+
+            var quantidadeFavoritos = (int)await _context.Favoritos.CountDocumentsAsync(f => f.UsuarioId == usuarioId);
+
+            var contagemStatus = leituras
+                .GroupBy(l => l.Status)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            var avaliacoes = await _context.Avaliacoes
+                .Find(a => a.UsuarioId == usuarioId)
+                .SortByDescending(a => a.DataCriacao)
+                .Limit(10)
+                .ToListAsync();
+
+            var livrosAvaliacoesIds = avaliacoes.Select(a => a.LivroId).Distinct().ToList();
+
+            var livrosAvaliacoes = await _context.Livros
+                .Find(l => livrosAvaliacoesIds.Contains(l.Id))
+                .ToListAsync();
+
+            var atividades = avaliacoes.Select(a =>
+            {
+                var livro = livrosAvaliacoes.FirstOrDefault(l => l.Id == a.LivroId);
+                return new AtividadeDto
+                {
+                    Tipo = "Avaliação",
+                    Descricao = $"Avaliou o livro '{livro?.Titulo ?? "Livro desconhecido"}' com nota {a.Nota}",
+                    Data = a.DataCriacao
+                };
+            }).ToList();
 
             return new UsuarioPerfilDto
             {

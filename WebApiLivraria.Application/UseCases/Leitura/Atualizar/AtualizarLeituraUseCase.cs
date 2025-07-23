@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using WebApiLivraria.Application.Dto;
-using WebApiLivraria.Domain.Entities;
 using WebApiLivraria.Infrastructure.Contexts;
 using EntLeitura = WebApiLivraria.Domain.Entities.Leitura;
 
