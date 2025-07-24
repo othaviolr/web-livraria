@@ -4,6 +4,7 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
 {
     public class UsuarioPerfilPublicoDto
     {
+        public string Id { get; set; }
         public string Nome { get; set; }
         public string NomeUsuario { get; set; }
         public string? FotoUrl { get; set; }
