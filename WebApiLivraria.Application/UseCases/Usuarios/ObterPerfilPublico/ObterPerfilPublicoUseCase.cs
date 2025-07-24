@@ -111,13 +111,14 @@ namespace WebApiLivraria.Application.UseCases.Usuarios.ObterPerfilPublico
                 .ToList() ?? new List<UsuarioResumoDto>();
 
             bool seguindoAtualmente = false;
-            if (!string.IsNullOrEmpty(usuarioLogadoId))
+            if (!string.IsNullOrEmpty(usuarioLogadoId) && usuarioLogadoId != usuario.Id)
             {
                 seguindoAtualmente = await _usuarioSeguindoRepository.VerificarSeSegueAsync(usuarioLogadoId, usuario.Id);
             }
 
             return new UsuarioPerfilPublicoDto
             {
+                Id = usuario.Id.ToString(),
                 Nome = usuario.Nome,
                 NomeUsuario = usuario.NomeUsuario ?? string.Empty,
                 FotoUrl = usuario.FotoUrl,
