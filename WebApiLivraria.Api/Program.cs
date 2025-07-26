@@ -173,4 +173,5 @@ app.UseAuthorization();
 //app.UseMiddleware<TratamentoExcecaoMiddleware>();
 
 app.MapControllers();
+app.Urls.Add("http://*:8080");
 app.Run();
