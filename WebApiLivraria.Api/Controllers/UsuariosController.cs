@@ -19,7 +19,7 @@ using WebApiLivraria.Application.UseCases.Usuarios;
 namespace WebApiLivraria.Api.Controllers
 {
     [ApiController]
-    [Route("usuarios")]
+    [Route("api/usuarios")]
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuarioRepository _usuarioRepository;
