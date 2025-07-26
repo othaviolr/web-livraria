@@ -1,23 +1,27 @@
+# Etapa de build
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copia todos os arquivos de projeto para manter a estrutura e restaurar pacotes
-COPY WebApiLivraria.Api/*.csproj ./WebApiLivraria.Api/
-COPY WebApiLivraria.Application/*.csproj ./WebApiLivraria.Application/
-COPY WebApiLivraria.Infrastructure/*.csproj ./WebApiLivraria.Infrastructure/
-COPY WebApiLivraria.Domain/*.csproj ./WebApiLivraria.Domain/
+# Copiando os arquivos .csproj individualmente para restaurar os pacotes
+COPY WebApiLivraria.Api/WebApiLivraria.Api.csproj WebApiLivraria.Api/
+COPY WebApiLivraria.Application/WebApiLivraria.Application.csproj WebApiLivraria.Application/
+COPY WebApiLivraria.Infrastructure/WebApiLivraria.Infrastructure.csproj WebApiLivraria.Infrastructure/
+COPY WebApiLivraria.Domain/WebApiLivraria.Domain.csproj WebApiLivraria.Domain/
 
-RUN dotnet restore ./WebApiLivraria.Api/WebApiLivraria.Api.csproj
+# Restaurar os pacotes
+RUN dotnet restore WebApiLivraria.Api/WebApiLivraria.Api.csproj
 
+# Copiar todo o restante do código
 COPY . .
 
-WORKDIR /app/WebApiLivraria.Api
-RUN dotnet publish -c Release -o out
+# Publicar a aplicação
+WORKDIR /src/WebApiLivraria.Api
+RUN dotnet publish -c Release -o /app/publish
 
+# Etapa de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
-COPY --from=build /app/WebApiLivraria.Api/out ./
+COPY --from=build /app/publish .
 
 EXPOSE 8080
-
 ENTRYPOINT ["dotnet", "WebApiLivraria.Api.dll"]
