@@ -34,14 +34,14 @@ Uma API RESTful robusta para gerenciamento de uma livraria online, com **DDD**, 
 - 🔐 **Autenticação via Google**
 - 🧩 Arquitetura modular, limpa e escalável
 - 💡 Front-end moderno com **React** + consumo da API
-
+- 👤 Perfis de usuário com histórico
+- 🛠️ Painel administrativo
+  
 ---
 
 ## 🚀 Em Breve
 
 - 🛍️ **E-commerce completo** com carrinho, pedidos e checkout
-- 👤 Perfis de usuário com histórico
-- 🛠️ Painel administrativo
 
 ---
 
