@@ -155,6 +155,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.Urls.Add("http://*:8080");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -162,16 +164,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// redirecionando HTTPS
+// app.UseHttpsRedirection();
+
 app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Middlewares customizados de exceção
+// Middlewares customizados de exceção (descomente se usar)
 //app.UseMiddleware<ExceptionMiddleware>();
 //app.UseMiddleware<TratamentoExcecaoMiddleware>();
 
+app.MapGet("/", () => "API WebApiLivraria rodando!");
+
 app.MapControllers();
-app.Urls.Add("http://*:8080");
+
 app.Run();
