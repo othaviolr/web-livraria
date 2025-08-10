@@ -9,10 +9,9 @@ Uma API RESTful moderna e escalável para gerenciamento de uma livraria online, 
 ## ⚙️ Tecnologias e Ferramentas
 
 - ✅ **ASP.NET Core 8**
-- ✅ **MongoDB** com driver oficial
-- ✅ **Domain-Driven Design (DDD)**
+- ✅ **MongoDB**
+- ✅ **Domain-Driven Design**
 - ✅ **AutoMapper**
-- ✅ **FluentValidation**
 - ✅ **Swagger / Swashbuckle**
 - ✅ **Autenticação com Google OAuth 2.0**
 
@@ -36,13 +35,6 @@ Uma API RESTful moderna e escalável para gerenciamento de uma livraria online, 
 - 🧩 Arquitetura modular e organizada por camadas
 - 💡 Front-end em React com integração total via API
 - 🛠️ Painel administrativo (em desenvolvimento)
-
----
-
-## 🚀 Em Breve
-
-- 🛍️ **E-commerce completo** com carrinho, pedidos e checkout
-- 🔄 Integração com recomendação baseada em leitura e avaliações
 
 ---
 
