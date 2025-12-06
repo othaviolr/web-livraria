@@ -39,7 +39,7 @@ var configuration = builder.Configuration;
 builder.Services.Configure<MongoDbSettings>(configuration.GetSection("MongoDbSettings"));
 builder.Services.AddSingleton<MongoDbContext>();
 
-// Repositórios
+// RepositÃ³rios
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();
 builder.Services.AddScoped<IAutorRepository, AutorRepository>();
 builder.Services.AddScoped<IGeneroRepository, GeneroRepository>();
@@ -51,7 +51,7 @@ builder.Services.AddScoped<IListaDesejoRepository, ListaDesejoRepository>();
 builder.Services.AddScoped<IUsuarioSeguindoRepository, UsuarioSeguindoRepository>();
 builder.Services.AddScoped<ISinopseRepository, SinopseRepository>();
 
-// Serviços
+// ServiÃ§os
 builder.Services.AddScoped<ILivroService, LivroService>();
 builder.Services.AddScoped<IAutorService, AutorService>();
 builder.Services.AddScoped<IGeneroService, GeneroService>();
@@ -91,7 +91,7 @@ builder.Services.AddScoped<ObterSeguindoHandler>();
 builder.Services.AddScoped<LoginUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 
-// Autenticação JWT
+// AutenticaÃ§Ã£o JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -172,7 +172,6 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Middlewares customizados de exceção (descomente se usar)
 //app.UseMiddleware<ExceptionMiddleware>();
 //app.UseMiddleware<TratamentoExcecaoMiddleware>();
 
