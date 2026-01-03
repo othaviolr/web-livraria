@@ -2,7 +2,7 @@
 
 Uma API RESTful moderna e escalável para gerenciamento de uma livraria online, construída com **ASP.NET Core**, **MongoDB** e **DDD**, com foco em **qualidade de código**, **organização** e **evolução contínua**.
 
-> 🔮 Este projeto está em constante evolução para se tornar uma **plataforma completa para amantes de livros**.
+> 🔮  **Este projeto é uma plataforma completa para amantes de livros**.
 
 ---
 
